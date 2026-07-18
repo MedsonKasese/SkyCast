@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkyCast | Modern Weather App</title>
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    </head>
+
+  <body>
+    <header class="app-header">
+      <h1>SkyCast</h1>
+    </header>
+    <main>
+      <div class="container">
+        <h1>How's is the sky looking today?</h1>
+        
+        <!--SEARCH INPUT BOX-->
+        <form id="weather-search-form">
+          <label for="searchBox">City Name</label>
+          <input type="search" id="searchBox" name="city" placeholder="Enter a city...">
+        
+          <button type="submit">Search</button>
+        
+        </form>
+        
+        <!--WEATHER CARD SECTION-->
+        <section class="weather-card">
+          
+          <header>
+            <h2>Mzuzu, Malawi</h2>
+            <time datetime="2026-07-15">
+              Wednesday,15 July 2026
+            </time>
+          </header>
+
+          <div class="weather-display">
+            <img class="weather-icon" src="../assets/images/icon-sunny.webp" alt="Sunny">
+            <h2>20</h2>
+            <p>sunny</p>
+        
+          </div>
+        
+        </section>
+        
+        <!--WEATHER DETAILS SECTION-->
+        <section>
+          <div class="weather-details">
+            <div class="details-grid">
+              <span class="details-card">Feel Like</span>
+              <span class="details-card">Humidity</span>
+              <span class="details-card">Wind</span>
+              <span class="details-card">precipitation</span>
+            </div>
+          </div>
+        </section>
+
+
+      </div>
+
+    </main>
+  </body>
+</html>

@@ -1,0 +1,31 @@
+/*====================
+CSS RESETS
+=====================*/
+
+
+*,
+*::before,
+*::after{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/*=========================
+Base styles
+==========================*/
+
+body{
+  font-family: var(--font-family);
+  background-color:var(--background-color);
+  color:var(--text-color);
+}
+img{
+  display: block;
+  max-width: 100%;
+}
+
+button,
+input{
+  font: inherit;
+}

@@ -1,0 +1,14 @@
+main{
+display:flex;
+flex-direction: column;
+gap: var(--spacing-large);
+}
+
+/*================================
+container
+==================================*/
+
+.container{
+width: min(100%-2rem, 1100px);
+margin-inline: auto;
+}
