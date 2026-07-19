@@ -1,3 +1,10 @@
+.app-header{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+
 main{
 display:flex;
 flex-direction: column;

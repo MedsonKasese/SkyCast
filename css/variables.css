@@ -9,7 +9,8 @@
   --spacing-small:0.5rem;
   --spacing-medium: 1rem;
   --spacing-large:2rem;
-  --border-radius:12px;
+  --border-radius:25px;
+  --border-radius-small:15px;
   --shadow:0 8px 24px rgba(0,0,0,0.2);
   --transition:all 0.3s ease;
 }

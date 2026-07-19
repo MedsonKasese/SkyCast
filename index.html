@@ -14,54 +14,94 @@
   <body>
     <header class="app-header">
       <h1>SkyCast</h1>
+      <img class="units-icon" src="../assets/icons/icon-units.svg">
     </header>
     <main>
       <div class="container">
-        <h1>How's is the sky looking today?</h1>
+        <h1 class="welcome-msg">How's is the sky looking today?</h1>
         
         <!--SEARCH INPUT BOX-->
-        <form id="weather-search-form">
-          <label for="searchBox">City Name</label>
-          <input type="search" id="searchBox" name="city" placeholder="Enter a city...">
+        <form class="weather-search-form" id="search-form">
+          <div class="search-input-wrapper">
+            <img class="search-icon" src="../assets/icons/icon-search.svg">
+            <input 
+               type="search" 
+               id="search-box" 
+               name="city" 
+               placeholder="Search for a  place...">
+
+          </div>
+          
         
           <button type="submit">Search</button>
         
         </form>
         
         <!--WEATHER CARD SECTION-->
-        <section class="weather-card">
-          
-          <header>
-            <h2>Mzuzu, Malawi</h2>
-            <time datetime="2026-07-15">
-              Wednesday,15 July 2026
-            </time>
-          </header>
+      <section class="weather-card">
+       <!--<img src="../assets/icons/bg-today-large.svg" alt="">-->
+        <div class="weather-info">
 
-          <div class="weather-display">
-            <img class="weather-icon" src="../assets/images/icon-sunny.webp" alt="Sunny">
-            <h2>20</h2>
-            <p>sunny</p>
-        
+          <div class="location-info">
+            
+              <h2 id="city-name">Mzuzu, Malawi</h2>
+              <p>
+                Sunday, 19 July 2026
+              </p>
           </div>
-        
-        </section>
+            
+          <div class="temperature-info">
+            <div class="temparature-main">
+              <img class="weather-icon" id="weather-icon" src="../assets/images/icon-sunny.webp" alt="Sunny">
+              <h2 class="temperature" id="temperature">24∘C </h2>
+              <p id="weather-condition">sunny</p>
+            </div>
+
+              
+            
+          </div>
+
+        </div>
+
+      </section>
         
         <!--WEATHER DETAILS SECTION-->
-        <section>
-          <div class="weather-details">
-            <div class="details-grid">
-              <span class="details-card">Feel Like</span>
-              <span class="details-card">Humidity</span>
-              <span class="details-card">Wind</span>
-              <span class="details-card">precipitation</span>
+      <section class="weather-details">
+          <div class="detail-card">
+            <div class="detail-header">
+              <h3>Feels Like</h3>
+              <p class="detail-value" id="feels-like">20∘C</p>
             </div>
+          </div>  
+
+            <div class="detail-card">
+              <div class="detail-header">
+                <h3>Humidity</h3>
+                <p class="detail-value" id="humidity">46%</p>
+            </div>
+            </div>
+
+              <div class="detail-card">
+                <div class="detail-header">
+                  <h3>Wind Speed</h3>
+                  <p class="detail-value" id="wind-speed"></p>
+              </div>
+              </div>
+
+                <div class="detail-card">
+                  <div class="detail-header">
+                    <h3>Precipitation</h3>
+                    <p class="detail-value" id="precipitation">0 mm</p>
+                </div>
+
+            
           </div>
         </section>
-
-
-      </div>
+   </div>
 
     </main>
+    <script type="module" src="js/main.js"></script>
+    <script type="module" src="js/api.js"></script>
+    <script type="module" src="js/ui.js"></script>
   </body>
 </html>

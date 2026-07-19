@@ -29,3 +29,7 @@ button,
 input{
   font: inherit;
 }
+
+.welcome-msg{
+  margin-top: var(--spacing-large);
+}

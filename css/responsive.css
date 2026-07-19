@@ -1,0 +1,29 @@
+@media (min-width:768px){
+  .weather-search-form{
+    flex-direction:row;
+  }
+  .search-input-wrapper{
+    flex: 1;
+  }
+
+}
+
+@media (min-width:768px) {
+   .weather-info{
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    text-align: left;
+   }
+   .temperature-info{
+    align-items: flex-end;
+   }  
+}
+
+@media (min-width:768px) {
+
+  .weather-details{
+    grid-template-columns:repeat(4,1fr);
+  }
+  
+}
