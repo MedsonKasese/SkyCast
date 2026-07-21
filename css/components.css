@@ -59,6 +59,13 @@ SEARCH FORM
   transform: scale(0.98);
 }
 
+#error-message {
+  display: none;
+  color: #e53935;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
+
 .weather-card{
   margin-top: var(--spacing-large);
   background: var(--surface-color);

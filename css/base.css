@@ -32,4 +32,6 @@ input{
 
 .welcome-msg{
   margin-top: var(--spacing-large);
+  text-align: center;
+  overflow-wrap: break-word;
 }

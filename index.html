@@ -33,9 +33,11 @@
           </div>
           
         
-          <button type="submit">Search</button>
+          <button type="submit" id="search-button">Search</button>
         
         </form>
+
+        <p id="error-message"></p>
         
         <!--WEATHER CARD SECTION-->
       <section class="weather-card">
@@ -53,8 +55,9 @@
           <div class="temperature-info">
             <div class="temparature-main">
               <img class="weather-icon" id="weather-icon" src="../assets/images/icon-sunny.webp" alt="Sunny">
-              <h2 class="temperature" id="temperature">24∘C </h2>
               <p id="weather-condition">sunny</p>
+              <h2 class="temperature" id="temperature">-</h2>
+              
             </div>
 
               
@@ -70,28 +73,28 @@
           <div class="detail-card">
             <div class="detail-header">
               <h3>Feels Like</h3>
-              <p class="detail-value" id="feels-like">20∘C</p>
+              <p class="detail-value" id="feels-like">-</p>
             </div>
           </div>  
 
             <div class="detail-card">
               <div class="detail-header">
                 <h3>Humidity</h3>
-                <p class="detail-value" id="humidity">46%</p>
+                <p class="detail-value" id="humidity">-</p>
             </div>
             </div>
 
               <div class="detail-card">
                 <div class="detail-header">
                   <h3>Wind Speed</h3>
-                  <p class="detail-value" id="wind-speed"></p>
+                  <p class="detail-value" id="wind-speed">-</p>
               </div>
               </div>
 
                 <div class="detail-card">
                   <div class="detail-header">
                     <h3>Precipitation</h3>
-                    <p class="detail-value" id="precipitation">0 mm</p>
+                    <p class="detail-value" id="precipitation">-</p>
                 </div>
 
             
