@@ -56,12 +56,15 @@ function setLoadingState(isLoading) {
 
 }
 
-let message = "Place not found. Please enter a valid place name.";
-
 // HANDLE ERROR MESSAGE
-function displayErrorMessage(message) {
+function showError(message) {
     errorMessage.textContent = message;
     errorMessage.style.display = "block";
+}
+
+function hideError() {
+    errorMessage.textContent = "";
+    errorMessage.style.display = "none";
 }
 
 // HANDLE SEARCH
@@ -73,7 +76,7 @@ async function handleSearch(event) {
 
     if (!cityName) {
 
-        //alert("Please enter a place name.");
+        showError("Please enter a place name.");
 
         return;
 
@@ -90,6 +93,7 @@ async function handleSearch(event) {
     }
 
     setLoadingState(true);
+    hideError();
 
     try {
 
@@ -103,7 +107,7 @@ async function handleSearch(event) {
 
     } catch (error) {
 
-        displayErrorMessage("Please enter a place name.");
+        showError("Place not found. Please enter a valid place name.");
 
     } finally {
 

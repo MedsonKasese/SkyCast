@@ -1,3 +1,5 @@
+
+
 export function displayLocation(weather){
 
     const city=document.getElementById("city-name");
@@ -6,6 +8,22 @@ export function displayLocation(weather){
         `${weather.location.name}, ${weather.location.country}`;
 
 }
+
+export function displayDate(weather){
+
+    const dateElement = document.getElementById("current-date");
+
+    const localDate = new Date(weather.location.localtime);
+    const formattedDate= localDate.toLocaleDateString("en-US",{
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+
+    dateElement.textContent = formattedDate;
+}
+
 export function displayTemperature(weather){
 
     const temperature=document.getElementById("temperature");
@@ -50,6 +68,7 @@ export function displayFeelsLike(weather){
 export function displayWeather(weather) {
 
     displayLocation(weather);
+    displayDate(weather);
     displayTemperature(weather);
     displayWeatherIcon(weather);
     displayCondition(weather);
