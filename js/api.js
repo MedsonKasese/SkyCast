@@ -5,6 +5,11 @@ export async function getWeather(city) {
   const response = await fetch(
     `${BASE_URL}?key=${API_KEY}&q=${city}&aqi=no`
   );
+  
+  if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
 
   const data = await response.json();
 
