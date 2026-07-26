@@ -9,10 +9,12 @@ let currentCity = "Mzuzu";
 const searchButton = document.getElementById("search-button");
 const weatherForm = document.getElementById("search-form");
 const cityInput = document.getElementById("search-box");
+const currentLocationButton = document.getElementById("current-location-button");
 const errorMessage = document.getElementById("error-message");
 
 // Event Listeners
 weatherForm.addEventListener("submit", handleSearch);
+currentLocationButton.addEventListener("click", getCurrentLocation);
 
 // Function to initialize the app
 async function init() {
@@ -23,7 +25,7 @@ async function init() {
 
     } catch (error) {
 
-        displayErrorMessage(message);
+        showError("place not found");
 
 
     }
@@ -40,21 +42,22 @@ async function loadWeather(cityName) {
 }
 
 // HANDLE LOADING STATE
-function setLoadingState(isLoading) {
+function setLoadingState(button, isLoading, loadingText ) {
 
     if (isLoading) {
-
-        searchButton.textContent = "Searching...";
-        searchButton.disabled = true;
+        button.dataset.originalText = button.textContent;
+        button.textContent = loadingText;
+        button.disabled = true;
 
     } else {
-
-        searchButton.textContent = "Search";
-        searchButton.disabled = false;
+        const originalText =  button.dataset.originalText; 
+        button.textContent = originalText;
+        button.disabled = false;
 
     }
 
 }
+
 
 // HANDLE ERROR MESSAGE
 function showError(message) {
@@ -92,7 +95,7 @@ async function handleSearch(event) {
 
     }
 
-    setLoadingState(true);
+    setLoadingState(searchButton, true , "Searching...");
     hideError();
 
     try {
@@ -111,9 +114,48 @@ async function handleSearch(event) {
 
     } finally {
 
-        setLoadingState(false);
+        setLoadingState(searchButton, false);
 
 }
+}
+
+
+//HANDLE CURRENT POSITION 
+async function handleCurretPosition(position) {
+  const latitude = position.coords.latitude;
+  const longitude = position.coords.longitude;
+  const coordinates = `${latitude},${longitude}`;
+
+  try {
+    const weather = await getWeather(coordinates);
+    displayWeather(weather);
+  } catch (error) {
+    showError("Unable to retrieve weather data for your current location. please check your location permissions or internet connection.");
+  }finally {
+    setLoadingState(currentLocationButton, false);
+  }
+
+    // console.log( "latitude: " + latitude);
+     //console.log("longitude: " + longitude);
+}
+
+function getCurrentLocation() {
+  hideError();
+   setLoadingState(
+    currentLocationButton,
+    true,
+    "Getting Location...");
+
+  navigator.geolocation.getCurrentPosition(
+    handleCurretPosition,
+    handleLocationError);
+ 
+}
+
+function handleLocationError(error){
+ setLoadingState(currentLocationButton,false);
+ showError("Unable to retrieve your location.");
+ console.log(error);
 }
 
 // Start

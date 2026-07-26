@@ -34,26 +34,43 @@
           </div>
           
         
-          <button type="submit" id="search-button">Search</button>
+          <button 
+               type="submit" 
+               id="search-button" 
+               data-originalText="Search">
+               Search
+          </button>
+          <p class="divider"></p>
+          <button 
+               type="button" 
+               id="current-location-button" 
+               class="secondary-button"
+               data-originalText="Use Current Location">
+            Use Current Location
+          </button>
+
+          
         
         </form>
+
 
         <p id="error-message"></p>
         
         <!--WEATHER CARD SECTION-->
+
       <section class="weather-card">
        <!--<img src="../assets/icons/bg-today-large.svg" alt="">-->
         <div class="weather-info">
 
           <div class="location-info">
             
-              <h2 id="city-name">Mzuzu, Malawi</h2>
+              <h2 id="city-name"> Mzuzu, Malawi</h2>
               <p id="current-date">
               </p>
           </div>
             
           <div class="temperature-info">
-            <div class="temparature-main">
+            <div class="temperature-main">
               <img class="weather-icon" id="weather-icon" src="../assets/images/icon-sunny.webp" alt="Sunny">
               <p id="weather-condition">sunny</p>
               <h2 class="temperature" id="temperature">-</h2>
@@ -104,7 +121,5 @@
 
     </main>
     <script type="module" src="js/main.js"></script>
-    <script type="module" src="js/api.js"></script>
-    <script type="module" src="js/ui.js"></script>
   </body>
 </html>

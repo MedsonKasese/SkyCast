@@ -58,7 +58,26 @@ SEARCH FORM
 .weather-search-form button:active {
   transform: scale(0.98);
 }
+/*
+.secondary-button {
+  border: none;
+  border-radius: var(--border-radius);
+  background: var(--secondary-color);
+  color: var(--primary-color);
+  padding: var(--spacing-medium);
+  cursor: pointer;
+  transition: var(--transition);
+  font-weight: 600;
+}
 
+.secondary-button:hover {
+  opacity: 0.9;
+}
+
+.secondary-button:active {
+  transform: scale(0.98);
+}
+*/
 #error-message {
   display: none;
   color: #e53935;
