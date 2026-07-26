@@ -173,6 +173,16 @@ function handleLocationError(error){
   }
  console.log(error);
 }
+if ("serviceWorker" in navigator){
+   window.addEventListener("load",()=>{
+    navigator.serviceWorker
+     .register("/sw.js")
+     .then(() => {
+      console.log("service Worker registered ");
+     })
+     .catch(console.error);
 
+   });
+}
 // Start
 init();
