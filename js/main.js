@@ -3,7 +3,7 @@ import { getWeather } from "./api.js";
 import { displayWeather } from "./ui.js";
 
 // Global Variables
-let currentCity = "Mzuzu";
+let currentCity = "mzuzu";
 
 // DOM Elements
 const searchButton = document.getElementById("search-button");
@@ -153,8 +153,24 @@ function getCurrentLocation() {
 }
 
 function handleLocationError(error){
- setLoadingState(currentLocationButton,false);
- showError("Unable to retrieve your location.");
+  setLoadingState(currentLocationButton,false);
+  // FRIENDLY EEROR MESSEGES
+  switch (error.code) {
+    case error.PERMISSION_DENIED:
+      showError("Location permission denied. Please allow location access in your browser settings.")
+      
+      break;
+    case error.POSITION_UNAVAILABLE:
+      showError("Your device couldn't determine your location");
+      break;
+    case error.TIMEOUT:
+      showError("Location request timed out. Please try again");
+      break;
+  
+    default:
+      showError("Unable to retrieve your location.")
+      break;
+  }
  console.log(error);
 }
 
