@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-   
-=======
 // Utility functions for SkyCast
 
 export function debounce(func, delay) {
@@ -64,4 +61,3 @@ export function addOnlineListener(callback) {
 export function addOfflineListener(callback) {
   window.addEventListener('offline', callback);
 }
->>>>>>> 694bc4296a9ac1fbc352b34f9c657f9c92a875bf
