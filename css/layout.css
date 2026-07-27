@@ -17,5 +17,6 @@ container
 
 .container{
 width: min(100%-2rem, 1100px);
-margin-inline: 1.4rem;
+padding-inline:1.4rem;
+margin-inline: auto;
 }
