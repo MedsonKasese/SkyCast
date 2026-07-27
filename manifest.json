@@ -1,7 +1,7 @@
 {
   "name": "SkyCast MW",
   "short_name": "SkyCast",
-  "Description": "Modern Weather Forecast App",
+  "description": "Modern Weather Forecast App",
   "start_url" : "/",
   "scope" : "/",
   "display" : "standalone",
@@ -10,12 +10,12 @@
   "theme_color" : "#1976d2",
   "icons" : [
     {
-      "src" : "icons/icon-192.png",
+      "src" : "assets/icons/icon-192.png",
       "sizes" : "512x512",
       "type" : "image/png"
     },
     {
-      "src" :"icons/icon-512.png",
+      "src" :"assets/icons/icon-192.png",
       "sizes" :"512x512",
       "type" :"image/png"
     }

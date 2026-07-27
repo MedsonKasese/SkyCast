@@ -36,7 +36,7 @@ SEARCH FORM
 }
 
 .search-input-wrapper :focus-within{
-  outline-offset: 2px solid var(--secondary-color);
+  outline: 2px solid var(--secondary-color);
   outline-offset: 3px;
 }
 
@@ -51,7 +51,7 @@ SEARCH FORM
   font-weight: 600; 
 }
 
-.search-form  button:hover {
+.weather-search-form  button:hover {
   opacity: 0.9;
 }
 
@@ -100,7 +100,7 @@ SEARCH FORM
   align-items: center;
   text-align: center;
 }
-.location-info h3{
+.location-info h2{
  font-size: 2rem;
  margin-bottom: 0.3rem;
 }
