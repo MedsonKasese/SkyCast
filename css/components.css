@@ -51,7 +51,7 @@ SEARCH FORM
   font-weight: 600; 
 }
 
-.search-form  button:hover {
+.weather-search-form  button:hover {
   opacity: 0.9;
 }
 
