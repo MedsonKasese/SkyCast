@@ -1,7 +1,7 @@
 {
   "name": "SkyCast MW",
   "short_name": "SkyCast",
-  "Description": "Modern Weather Forecast App",
+  "description": "Modern Weather Forecast App",
   "start_url" : "/",
   "scope" : "/",
   "display" : "standalone",
