@@ -36,7 +36,7 @@ SEARCH FORM
 }
 
 .search-input-wrapper :focus-within{
-  outline-offset: 2px solid var(--secondary-color);
+  outline: 2px solid var(--secondary-color);
   outline-offset: 3px;
 }
 
