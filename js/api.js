@@ -4,7 +4,12 @@ const BASE_URL = "https://api.weatherapi.com/v1/current.json";
 export async function getWeather(city) {
   const response = await fetch(
     `${BASE_URL}?key=${API_KEY}&q=${city}&aqi=no`
+
   );
+  
+  if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+    }
 
   const data = await response.json();
 
