@@ -35,9 +35,9 @@ SEARCH FORM
   margin-right: var(--spacing-small);
 }
 
-.search-input-wrapper :focus-within{
-  outline: 2px solid var(--secondary-color);
-  outline-offset: 3px;
+.search-input-wrapper:focus-within{
+  outline:2px solid var(--secondary-color);
+  outline-offset: 2px;
 }
 
 .weather-search-form button {

@@ -1,9 +1,11 @@
 // Imports
 import { getWeather } from "./api.js";
 import { displayWeather } from "./ui.js";
+import {formartTemperature} from "./utils.js";
 
 // Global Variables
 let currentCity = "mzuzu";
+let isFahrenheit = false;
 
 // DOM Elements
 const searchButton = document.getElementById("search-button");
@@ -15,6 +17,42 @@ const errorMessage = document.getElementById("error-message");
 // Event Listeners
 weatherForm.addEventListener("submit", handleSearch);
 currentLocationButton.addEventListener("click", getCurrentLocation);
+
+const unitsIcon = document.querySelector(".units-icon");
+if (unitsIcon) {
+    unitsIcon.addEventListener("click", toggleUnits);
+    unitsIcon.style.cursor = "pointer";
+}
+
+// TOGGLE UNITS
+function toggleUnits() {
+    isFahrenheit = !isFahrenheit;
+    const temperatureElement = document.getElementById("temperature");
+    const feelsLikeElement = document.getElementById("feels-like");
+
+    if (temperatureElement && temperatureElement.textContent !== "-") {
+        const currentTemperature = parseFloat(temperatureElement.textContent);
+        if (isFahrenheit) {
+             const fahrenheit = Math.round((currentTemperature * 9/5) + 32);
+            temperatureElement.textContent = fahrenheit;
+        } else {
+            const celsius = Math.round((currentTemperature - 32) * 5/9);
+            temperatureElement.textContent = celsius;
+        }
+        
+    }
+    const currentFeelsLike = parseFloat(feelsLikeElement.textContent);
+    if (feelsLikeElement && feelsLikeElement.textContent !== "-") {
+        if (isFahrenheit) {
+            const fahrenheit = Math.round((currentFeelsLike * 9/5) + 32);
+            feelsLikeElement.textContent = fahrenheit;
+        } else {
+            const celsius = Math.round((currentFeelsLike - 32) * 5/9);
+            feelsLikeElement.textContent = celsius;
+        }
+    }
+    unitsIcon.textContent = isFahrenheit ? "°F" : "°C";
+}
 
 // Function to initialize the app
 async function init() {
