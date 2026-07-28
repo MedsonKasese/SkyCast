@@ -1,128 +1,114 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SkyCast | Modern Weather App</title>
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#1976d2">
-    <link rel="apple-touch-icon" href="icons/icon-192.png">
-    <link rel="stylesheet" href="css/variables.css">
-    <link rel="stylesheet" href="css/base.css">
-    <link rel="stylesheet" href="css/layout.css">
-    <link rel="stylesheet" href="css/components.css">
-    <link rel="stylesheet" href="css/responsive.css">
-    </head>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>SkyCast | Modern Weather App</title>
+		<link rel="manifest" href="manifest.json" />
+		<meta name="theme-color" content="#1976d2" />
+		<link rel="apple-touch-icon" href="icons/icon-192.png" />
+		<link rel="stylesheet" href="css/variables.css" />
+		<link rel="stylesheet" href="css/base.css" />
+		<link rel="stylesheet" href="css/layout.css" />
+		<link rel="stylesheet" href="css/components.css" />
+		<link rel="stylesheet" href="css/responsive.css" />
+	</head>
 
-  <body>
-    <header class="app-header">
-      <h1>SkyCast</h1>
-      <img class="units-icon" src="../assets/icons/icon-units.svg">
-    </header>
-    <main>
-      <div class="container">
-        <h1 class="welcome-msg">How is the sky looking today?</h1>
-        
-        <!--SEARCH INPUT BOX-->
-        <form class="weather-search-form" id="search-form">
-          <div class="search-input-wrapper">
-            <img class="search-icon" src="../assets/icons/icon-search.svg">
-            <input 
-               type="search" 
-               id="search-box" 
-               name="city" 
-               autocomplete="address-level2"
-               placeholder="Search for a  place...">
+	<body>
+		<header class="app-header">
+			<h1>SkyCast</h1>
+			<img class="units-icon" src="../assets/icons/icon-units.svg" />
+		</header>
+		<main>
+			<div class="container">
+				<h1 class="welcome-msg">How is the sky looking today?</h1>
 
-          </div>
-          
-        
-          <button 
-               type="submit" 
-               id="search-button" 
-               data-originalText="Search">
-               Search
-          </button>
-          <p class="divider"></p>
-          <button 
-               type="button" 
-               id="current-location-button" 
-               class="secondary-button"
-               data-originalText="Use Current Location">
-            Use Current Location
-          </button>
+				<!--SEARCH INPUT BOX-->
+				<form class="weather-search-form" id="search-form">
+					<div class="search-input-wrapper">
+						<img class="search-icon" src="../assets/icons/icon-search.svg" />
+						<input
+							type="search"
+							id="search-box"
+							name="city"
+							autocomplete="address-level2"
+							placeholder="Search for a  place..."
+						/>
+					</div>
 
-          
-        
-        </form>
+					<button type="submit" id="search-button" data-originalText="Search">
+						Search
+					</button>
+					<p class="divid"></p>
+					<button
+						type="button"
+						id="current-location-button"
+						class="secondary-button"
+						data-originalText="Use Current Location"
+					>
+						Use Current Location
+					</button>
+				</form>
 
+				<p id="error-message"></p>
 
-        <p id="error-message"></p>
-        
-        <!--WEATHER CARD SECTION-->
+				<!--WEATHER CARD SECTION-->
 
-      <section class="weather-card">
-       <!--<img src="../assets/icons/bg-today-large.svg" alt="">-->
-        <div class="weather-info">
+				<section class="weather-card">
+					<!--<img src="../assets/icons/bg-today-large.svg" alt="">-->
+					<div class="weather-info">
+						<div class="location-info">
+							<h2 id="city-name">Mzuzu, Malawi</h2>
+							<p id="current-date"></p>
+						</div>
 
-          <div class="location-info">
-            
-              <h2 id="city-name"> Mzuzu, Malawi</h2>
-              <p id="current-date">
-              </p>
-          </div>
-            
-          <div class="temperature-info">
-            <div class="temperature-main">
-              <img class="weather-icon" id="weather-icon" src="../assets/images/icon-sunny.webp" alt="Sunny">
-              <p id="weather-condition">sunny</p>
-              <h2 class="temperature" id="temperature">-</h2>
-              
-            </div>
+						<div class="temperature-info">
+							<div class="temperature-main">
+								<img
+									class="weather-icon"
+									id="weather-icon"
+									src="../assets/images/icon-sunny.webp"
+									alt="Sunny"
+								/>
+								<p id="weather-condition">sunny</p>
+								<h2 class="temperature" id="temperature">-</h2>
+							</div>
+						</div>
+					</div>
+				</section>
 
-              
-            
-          </div>
+				<!--WEATHER DETAILS SECTION-->
+				<section class="weather-details">
+					<div class="detail-card">
+						<div class="detail-header">
+							<h3>Feels Like</h3>
+							<p class="detail-value" id="feels-like">-</p>
+						</div>
+					</div>
 
-        </div>
+					<div class="detail-card">
+						<div class="detail-header">
+							<h3>Humidity</h3>
+							<p class="detail-value" id="humidity">-</p>
+						</div>
+					</div>
 
-      </section>
-        
-        <!--WEATHER DETAILS SECTION-->
-      <section class="weather-details">
-          <div class="detail-card">
-            <div class="detail-header">
-              <h3>Feels Like</h3>
-              <p class="detail-value" id="feels-like">-</p>
-            </div>
-          </div>  
+					<div class="detail-card">
+						<div class="detail-header">
+							<h3>Wind Speed</h3>
+							<p class="detail-value" id="wind-speed">-</p>
+						</div>
+					</div>
 
-            <div class="detail-card">
-              <div class="detail-header">
-                <h3>Humidity</h3>
-                <p class="detail-value" id="humidity">-</p>
-            </div>
-            </div>
-
-              <div class="detail-card">
-                <div class="detail-header">
-                  <h3>Wind Speed</h3>
-                  <p class="detail-value" id="wind-speed">-</p>
-              </div>
-              </div>
-
-                <div class="detail-card">
-                  <div class="detail-header">
-                    <h3>Precipitation</h3>
-                    <p class="detail-value" id="precipitation">-</p>
-                </div>
-
-            
-          </div>
-        </section>
-   </div>
-
-    </main>
-    <script type="module" src="js/main.js"></script>
-  </body>
+					<div class="detail-card">
+						<div class="detail-header">
+							<h3>Precipitation</h3>
+							<p class="detail-value" id="precipitation">-</p>
+						</div>
+					</div>
+				</section>
+			</div>
+		</main>
+		<script type="module" src="js/main.js"></script>
+	</body>
 </html>
