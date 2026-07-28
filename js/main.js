@@ -7,6 +7,8 @@ let currentCity = "Mzuzu";
 let isFahrenheit = false;
 
 const STORAGE_KEY = "skycast-last-city";
+const WEATHER_CACHE_KEY = "skycast-cached-weather";
+
 // DOM Elements
 const searchButton = document.getElementById("search-button");
 const weatherForm = document.getElementById("search-form");
@@ -42,18 +44,48 @@ async function init() {
 	try {
 		await loadWeather(currentCity);
 	} catch (error) {
+		const cachedWeather = getCachedWeather();
+
+		if (cachedWeather) {
+			displayWeather(cachedWeather);
+
+			// Show message after UI update
+			requestAnimationFrame(() => {
+				showError("You're offline. Showing the last saved weather data.");
+			});
+		} else {
+			showError(
+				"Unable to load weather data. Please check your internet connection.",
+			);
+		}
+	}
+}
+/*
+async function init() {
+	const savedCity = localStorage.getItem(STORAGE_KEY);
+
+	if (savedCity) {
+		currentCity = savedCity;
+	}
+
+	try {
+		await loadWeather(currentCity);
+	} catch (error) {
 		showError(
 			"Unable to load weather data. Please check your internet connection.",
 		);
 	}
 }
-
+*/
 // =========================
 // LOAD WEATHER
 // =========================
 async function loadWeather(cityName) {
 	const weather = await getWeather(cityName);
 	displayWeather(weather);
+
+	saveWeatherToCache(weather);
+	return weather;
 }
 
 // =========================
@@ -86,10 +118,21 @@ async function handleSearch(event) {
 		localStorage.setItem(STORAGE_KEY, currentCity);
 
 		cityInput.value = "";
-		cityInput.focus();
+		cityInput.blur();
 	} catch (error) {
 		if (error.message === "NETWORK_ERROR") {
-			showError("No internet connection. Please check your network.");
+			const cachedWeather = getCachedWeather();
+
+			if (cachedWeather) {
+				displayWeather(cachedWeather);
+
+				// Show message after UI update
+				requestAnimationFrame(() => {
+					showError("You're offline. Showing the last saved weather data.");
+				});
+			} else {
+				showError("No internet connection and no cached weather available.");
+			}
 		} else {
 			showError(
 				error.message || "Place not found. Please enter a valid place name.",
@@ -132,7 +175,18 @@ async function handleCurrentPosition(position) {
 		localStorage.setItem(STORAGE_KEY, currentCity);
 	} catch (error) {
 		if (error.message === "NETWORK_ERROR") {
-			showError("No internet connection. Please check your network.");
+			const cachedWeather = getCachedWeather();
+
+			if (cachedWeather) {
+				displayWeather(cachedWeather);
+
+				// Show message after UI update
+				requestAnimationFrame(() => {
+					showError("You're offline. Showing the last saved weather data.");
+				});
+			} else {
+				showError("No internet connection and no cached weather available.");
+			}
 		} else {
 			showError("Unable to retrieve weather data for your current location.");
 		}
@@ -140,7 +194,7 @@ async function handleCurrentPosition(position) {
 		setLoadingState(currentLocationButton, false);
 	}
 }
-
+//HANDLE LOCATION ERRORS
 function handleLocationError(error) {
 	setLoadingState(currentLocationButton, false);
 
@@ -192,6 +246,18 @@ function showError(message) {
 function hideError() {
 	errorMessage.textContent = "";
 	errorMessage.style.display = "none";
+}
+
+// SAVE WEATHER TO CACHE
+function saveWeatherToCache(weather) {
+	localStorage.setItem(WEATHER_CACHE_KEY, JSON.stringify(weather));
+}
+
+// GET WEATHER FROM CACHE
+function getCachedWeather() {
+	const cached = localStorage.getItem(WEATHER_CACHE_KEY);
+
+	return cached ? JSON.parse(cached) : null;
 }
 
 // =========================
