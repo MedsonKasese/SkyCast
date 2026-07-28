@@ -2,16 +2,22 @@ const API_KEY = "7f0bcbdba3e7434da2a124045261907"; // recommended: remove the ap
 const BASE_URL = "https://api.weatherapi.com/v1/current.json";
 
 export async function getWeather(city) {
-  const response = await fetch(
-    `${BASE_URL}?key=${API_KEY}&q=${city}&aqi=no`
+	try {
+		const response = await fetch(`${BASE_URL}?key=${API_KEY}&q=${city}&aqi=no`);
 
-  );
-  
-  if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-    }
+		if (!response.ok) {
+			const data = await response.json();
 
-  const data = await response.json();
+			throw new Error(data.error?.message || `HTTP ${response.status}`);
+		}
 
-  return data;
+		return await response.json();
+	} catch (error) {
+		// Network failure (internet off, DNS failure, etc.)
+		if (error instanceof TypeError) {
+			throw new Error("NETWORK_ERROR");
+		}
+
+		throw error;
+	}
 }

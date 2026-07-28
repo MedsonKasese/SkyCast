@@ -1,226 +1,239 @@
 // Imports
 import { getWeather } from "./api.js";
 import { displayWeather } from "./ui.js";
-//import {formartTemperature} from "./utils.js";
 
 // Global Variables
-let currentCity = "mzuzu";
+let currentCity = "Mzuzu";
 let isFahrenheit = false;
 
 // DOM Elements
 const searchButton = document.getElementById("search-button");
 const weatherForm = document.getElementById("search-form");
 const cityInput = document.getElementById("search-box");
-const currentLocationButton = document.getElementById("current-location-button");
+const currentLocationButton = document.getElementById(
+	"current-location-button",
+);
 const errorMessage = document.getElementById("error-message");
+const unitsIcon = document.querySelector(".units-icon");
 
 // Event Listeners
 weatherForm.addEventListener("submit", handleSearch);
 currentLocationButton.addEventListener("click", getCurrentLocation);
 
-const unitsIcon = document.querySelector(".units-icon");
 if (unitsIcon) {
-    unitsIcon.addEventListener("click", toggleUnits);
-    unitsIcon.style.cursor = "pointer";
+	unitsIcon.addEventListener("click", toggleUnits);
+	unitsIcon.style.cursor = "pointer";
 }
 
-// TOGGLE UNITS
-function toggleUnits() {
-    isFahrenheit = !isFahrenheit;
-    const temperatureElement = document.getElementById("temperature");
-    const feelsLikeElement = document.getElementById("feels-like");
+// Initialize App
+init();
 
-    if (temperatureElement && temperatureElement.textContent !== "-") {
-        const currentTemperature = parseFloat(temperatureElement.textContent);
-        if (isFahrenheit) {
-             const fahrenheit = Math.round((currentTemperature * 9/5) + 32);
-            temperatureElement.textContent = fahrenheit;
-        } else {
-            const celsius = Math.round((currentTemperature - 32) * 5/9);
-            temperatureElement.textContent = celsius;
-        }
-        
-    }
-    const currentFeelsLike = parseFloat(feelsLikeElement.textContent);
-    if (feelsLikeElement && feelsLikeElement.textContent !== "-") {
-        if (isFahrenheit) {
-            const fahrenheit = Math.round((currentFeelsLike * 9/5) + 32);
-            feelsLikeElement.textContent = fahrenheit;
-        } else {
-            const celsius = Math.round((currentFeelsLike - 32) * 5/9);
-            feelsLikeElement.textContent = celsius;
-        }
-    }
-    unitsIcon.textContent = isFahrenheit ? "°F" : "°C";
-}
-
-// Function to initialize the app
+// =========================
+// INIT
+// =========================
 async function init() {
-
-    try {
-
-        await loadWeather(currentCity);
-
-    } catch (error) {
-
-        showError("place not found");
-
-
-    }
-
+	try {
+		await loadWeather(currentCity);
+	} catch (error) {
+		showError(
+			"Unable to load weather data. Please check your internet connection.",
+		);
+	}
 }
 
-// LOAD WEATHER DATA
+// =========================
+// LOAD WEATHER
+// =========================
 async function loadWeather(cityName) {
-
-    const weather = await getWeather(cityName);
-
-    displayWeather(weather);
-
+	const weather = await getWeather(cityName);
+	displayWeather(weather);
 }
 
-// HANDLE LOADING STATE
-function setLoadingState(button, isLoading, loadingText ) {
+// =========================
+// HANDLE SEARCH
+// =========================
+async function handleSearch(event) {
+	event.preventDefault();
 
-    if (isLoading) {
-        button.dataset.originalText = button.textContent;
-        button.textContent = loadingText;
-        button.disabled = true;
+	const cityName = cityInput.value.trim();
 
-    } else {
-        const originalText =  button.dataset.originalText; 
-        button.textContent = originalText;
-        button.disabled = false;
+	if (!cityName) {
+		showError("Please enter a place name.");
+		return;
+	}
 
-    }
+	if (cityName.toLowerCase() === currentCity.toLowerCase()) {
+		cityInput.value = "";
+		cityInput.focus();
+		return;
+	}
 
+	hideError();
+	setLoadingState(searchButton, true, "Searching...");
+
+	try {
+		await loadWeather(cityName);
+
+		currentCity = cityName;
+
+		cityInput.value = "";
+		cityInput.focus();
+	} catch (error) {
+		if (error.message === "NETWORK_ERROR") {
+			showError("No internet connection. Please check your network.");
+		} else {
+			showError(
+				error.message || "Place not found. Please enter a valid place name.",
+			);
+		}
+	} finally {
+		setLoadingState(searchButton, false);
+	}
 }
 
+// =========================
+// CURRENT LOCATION
+// =========================
+function getCurrentLocation() {
+	hideError();
 
-// HANDLE ERROR MESSAGE
+	setLoadingState(currentLocationButton, true, "Getting your location...");
+
+	navigator.geolocation.getCurrentPosition(
+		handleCurrentPosition,
+		handleLocationError,
+		{
+			enableHighAccuracy: true,
+			timeout: 10000,
+			maximumAge: 300000,
+		},
+	);
+}
+
+async function handleCurrentPosition(position) {
+	const { latitude, longitude } = position.coords;
+	const coordinates = `${latitude},${longitude}`;
+
+	try {
+		const weather = await getWeather(coordinates);
+
+		displayWeather(weather);
+
+		currentCity = weather.location.name;
+	} catch (error) {
+		if (error.message === "NETWORK_ERROR") {
+			showError("No internet connection. Please check your network.");
+		} else {
+			showError("Unable to retrieve weather data for your current location.");
+		}
+	} finally {
+		setLoadingState(currentLocationButton, false);
+	}
+}
+
+function handleLocationError(error) {
+	setLoadingState(currentLocationButton, false);
+
+	switch (error.code) {
+		case error.PERMISSION_DENIED:
+			showError(
+				"Location permission denied. Please allow location access in your browser settings.",
+			);
+			break;
+
+		case error.POSITION_UNAVAILABLE:
+			showError("Your device couldn't determine your location.");
+			break;
+
+		case error.TIMEOUT:
+			showError("Location request timed out. Please try again.");
+			break;
+
+		default:
+			showError("Unable to retrieve your location.");
+			break;
+	}
+
+	console.log(error);
+}
+
+// =========================
+// LOADING STATE
+// =========================
+function setLoadingState(button, isLoading, loadingText = "Loading...") {
+	if (isLoading) {
+		button.dataset.originalText = button.textContent;
+		button.textContent = loadingText;
+		button.disabled = true;
+	} else {
+		button.textContent = button.dataset.originalText || button.textContent;
+		button.disabled = false;
+	}
+}
+
+// =========================
+// ERROR HANDLING
+// =========================
 function showError(message) {
-    errorMessage.textContent = message;
-    errorMessage.style.display = "block";
+	errorMessage.textContent = message;
+	errorMessage.style.display = "block";
 }
 
 function hideError() {
-    errorMessage.textContent = "";
-    errorMessage.style.display = "none";
+	errorMessage.textContent = "";
+	errorMessage.style.display = "none";
 }
 
-// HANDLE SEARCH
-async function handleSearch(event) {
+// =========================
+// TOGGLE UNITS
+// =========================
+function toggleUnits() {
+	isFahrenheit = !isFahrenheit;
 
-    event.preventDefault();
+	const temperatureElement = document.getElementById("temperature");
+	const feelsLikeElement = document.getElementById("feels-like");
 
-    const cityName = cityInput.value.trim();
+	if (temperatureElement && temperatureElement.textContent !== "-") {
+		const currentTemperature = parseFloat(temperatureElement.textContent);
 
-    if (!cityName) {
+		if (isFahrenheit) {
+			temperatureElement.textContent = Math.round(
+				(currentTemperature * 9) / 5 + 32,
+			);
+		} else {
+			temperatureElement.textContent = Math.round(
+				((currentTemperature - 32) * 5) / 9,
+			);
+		}
+	}
 
-        showError("Please enter a place name.");
+	if (feelsLikeElement && feelsLikeElement.textContent !== "-") {
+		const currentFeelsLike = parseFloat(feelsLikeElement.textContent);
 
-        return;
+		if (isFahrenheit) {
+			feelsLikeElement.textContent = Math.round(
+				(currentFeelsLike * 9) / 5 + 32,
+			);
+		} else {
+			feelsLikeElement.textContent = Math.round(
+				((currentFeelsLike - 32) * 5) / 9,
+			);
+		}
+	}
 
-    }
-
-    if (cityName.toLowerCase() === currentCity.toLowerCase()) {
-
-        cityInput.value = "";
-
-        cityInput.focus();
-
-        return;
-
-    }
-
-    setLoadingState(searchButton, true , "Searching...");
-    hideError();
-
-    try {
-
-        await loadWeather(cityName);
-
-        currentCity = cityName;
-
-        cityInput.value = "";
-
-        cityInput.focus();
-
-    } catch (error) {
-
-        showError("Place not found. Please enter a valid place name.");
-
-    } finally {
-
-        setLoadingState(searchButton, false);
-
-}
+	unitsIcon.textContent = isFahrenheit ? "°F" : "°C";
 }
 
-
-//HANDLE CURRENT POSITION 
-async function handleCurretPosition(position) {
-  const latitude = position.coords.latitude;
-  const longitude = position.coords.longitude;
-  const coordinates = `${latitude},${longitude}`;
-
-  try {
-    const weather = await getWeather(coordinates);
-    displayWeather(weather);
-  } catch (error) {
-    showError("Unable to retrieve weather data for your current location. please check your location permissions or internet connection.");
-  }finally {
-    setLoadingState(currentLocationButton, false);
-  }
-
-    // console.log( "latitude: " + latitude);
-     //console.log("longitude: " + longitude);
+// =========================
+// SERVICE WORKER
+// =========================
+if ("serviceWorker" in navigator) {
+	window.addEventListener("load", () => {
+		navigator.serviceWorker
+			.register("/sw.js")
+			.then(() => {
+				console.log("Service Worker registered");
+			})
+			.catch(console.error);
+	});
 }
-
-function getCurrentLocation() {
-  hideError();
-   setLoadingState(
-    currentLocationButton,
-    true,
-    "Getting Location...");
-
-  navigator.geolocation.getCurrentPosition(
-    handleCurretPosition,
-    handleLocationError);
- 
-}
-
-function handleLocationError(error){
-  setLoadingState(currentLocationButton,false);
-  // FRIENDLY EEROR MESSEGES
-  switch (error.code) {
-    case error.PERMISSION_DENIED:
-      showError("Location permission denied. Please allow location access in your browser settings.")
-      
-      break;
-    case error.POSITION_UNAVAILABLE:
-      showError("Your device couldn't determine your location");
-      break;
-    case error.TIMEOUT:
-      showError("Location request timed out. Please try again");
-      break;
-  
-    default:
-      showError("Unable to retrieve your location.")
-      break;
-  }
- console.log(error);
-}
-if ("serviceWorker" in navigator){
-   window.addEventListener("load",()=>{
-    navigator.serviceWorker
-     .register("/sw.js")
-     .then(() => {
-      console.log("service Worker registered ");
-     })
-     .catch(console.error);
-
-   });
-}
-// Start
-init();
