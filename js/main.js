@@ -1,7 +1,7 @@
 // Imports
 import { getWeather } from "./api.js";
 import { displayWeather } from "./ui.js";
-import {formartTemperature} from "./utils.js";
+//import {formartTemperature} from "./utils.js";
 
 // Global Variables
 let currentCity = "mzuzu";
