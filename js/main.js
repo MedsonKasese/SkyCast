@@ -6,6 +6,7 @@ import { displayWeather } from "./ui.js";
 let currentCity = "Mzuzu";
 let isFahrenheit = false;
 
+const STORAGE_KEY = "skycast-last-city";
 // DOM Elements
 const searchButton = document.getElementById("search-button");
 const weatherForm = document.getElementById("search-form");
@@ -32,6 +33,12 @@ init();
 // INIT
 // =========================
 async function init() {
+	const savedCity = localStorage.getItem(STORAGE_KEY);
+
+	if (savedCity) {
+		currentCity = savedCity;
+	}
+
 	try {
 		await loadWeather(currentCity);
 	} catch (error) {
@@ -75,6 +82,8 @@ async function handleSearch(event) {
 		await loadWeather(cityName);
 
 		currentCity = cityName;
+
+		localStorage.setItem(STORAGE_KEY, currentCity);
 
 		cityInput.value = "";
 		cityInput.focus();
@@ -120,6 +129,7 @@ async function handleCurrentPosition(position) {
 		displayWeather(weather);
 
 		currentCity = weather.location.name;
+		localStorage.setItem(STORAGE_KEY, currentCity);
 	} catch (error) {
 		if (error.message === "NETWORK_ERROR") {
 			showError("No internet connection. Please check your network.");
