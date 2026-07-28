@@ -1,5 +1,5 @@
 // Utility functions for SkyCast
-
+/*
 export function debounce(func, delay) {
   let timeoutId;
   return function (...args) {
@@ -61,3 +61,4 @@ export function addOnlineListener(callback) {
 export function addOfflineListener(callback) {
   window.addEventListener('offline', callback);
 }
+*/
