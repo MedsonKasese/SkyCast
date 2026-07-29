@@ -150,7 +150,7 @@ export function displayHourlyForecast(weather) {
 	// Filter to get only future hours and limit to 24 items
 	const next24Hours = allHours
 		.filter((hour) => hour.time_epoch > currentEpoch)
-		.slice(0, 6);
+		.slice(0, 7);
 
 	next24Hours.forEach((hour) => {
 		const time = new Date(hour.time).toLocaleTimeString("en-US", {
