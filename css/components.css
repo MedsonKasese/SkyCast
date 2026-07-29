@@ -220,6 +220,11 @@ SEARCH FORM
 	opacity: 0.85;
 	margin-top: 6px;
 }
+.forecast-rain {
+  font-size: 0.8rem;
+  opacity: 0.8;
+  margin-top: 6px;
+}
 
 /* Reuse the forecast styles for the hourly section */
 
