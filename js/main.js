@@ -22,7 +22,6 @@ const unitsIcon = document.querySelector(".units-icon");
 // Event Listeners
 weatherForm.addEventListener("submit", handleSearch);
 currentLocationButton.addEventListener("click", getCurrentLocation);
-
 if (unitsIcon) {
 	unitsIcon.addEventListener("click", toggleUnits);
 	unitsIcon.style.cursor = "pointer";
@@ -61,22 +60,30 @@ async function init() {
 	}
 }
 /*
-async function init() {
-	const savedCity = localStorage.getItem(STORAGE_KEY);
-
-	if (savedCity) {
-		currentCity = savedCity;
-	}
 
 	try {
 		await loadWeather(currentCity);
 	} catch (error) {
-		showError(
-			"Unable to load weather data. Please check your internet connection.",
-		);
+		if (error.message === "NETWORK_ERROR") {
+			const cachedWeather = getCachedWeather();
+
+			if (cachedWeather) {
+				displayWeather(cachedWeather);
+				requestAnimationFrame(() => {
+					showError("You're offline. Showing the last saved weather data.");
+				});
+			} else {
+				showError("No internet connection and no cached weather available.");
+			}
+		} else {
+			showError(error.message || "Failed to refresh weather.");
+		}
+	} finally {
+		setLoadingState(refreshButton, false);
 	}
 }
 */
+
 // =========================
 // LOAD WEATHER
 // =========================
@@ -103,7 +110,7 @@ async function handleSearch(event) {
 
 	if (cityName.toLowerCase() === currentCity.toLowerCase()) {
 		cityInput.value = "";
-		cityInput.focus();
+		cityInput.blur();
 		return;
 	}
 

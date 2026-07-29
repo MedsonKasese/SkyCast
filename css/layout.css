@@ -1,21 +1,51 @@
-.app-header{
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+.app-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
 }
 
-
-main{
-display:flex;
-flex-direction: column;
-gap: var(--spacing-large);
+main {
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacing-large);
 }
 
 /*================================
 container
 ==================================*/
 
-.container{
-width: min(100%-2rem, 1100px);
-margin-inline: 1.4rem;
+.container {
+	width: min(100%-2rem, 1100px);
+	margin-inline: 1.4rem;
 }
+
+.icon-button {
+	background: transparent;
+	border: none;
+	color: inherit;
+	font-size: 1.2rem;
+	cursor: pointer;
+	padding: 8px;
+	border-radius: 10px;
+	transition:
+		background 0.2s ease,
+		transform 0.2s ease;
+}
+
+.icon-button:hover {
+	background: rgba(255, 255, 255, 0.1);
+	transform: rotate(90deg);
+}
+
+.app-header-right {
+	display: flex;
+	justify-content: space-between;
+	gap: 5px;
+	margin-right: 5px;
+}
+/*
+.app-header-right,
+.fa-rotate {
+	margin-right: 10px;
+}
+*/

@@ -221,9 +221,9 @@ SEARCH FORM
 	margin-top: 6px;
 }
 .forecast-rain {
-  font-size: 0.8rem;
-  opacity: 0.8;
-  margin-top: 6px;
+	font-size: 0.8rem;
+	opacity: 0.8;
+	margin-top: 6px;
 }
 
 /* Reuse the forecast styles for the hourly section */
