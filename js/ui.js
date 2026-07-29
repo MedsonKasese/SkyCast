@@ -92,7 +92,46 @@ function applyWeatherTheme(weather) {
 	}
 }
 
+export function displayForecast(weather) {
+  const container = document.getElementById("forecast-container");
+
+  if (!container || !weather.forecast) return;
+
+  container.innerHTML = "";
+
+  weather.forecast.forecastday.forEach((day, index) => {
+    // Skip today (index 0)
+    if (index === 0) return;
+
+    const date = new Date(day.date);
+    const dayName = date.toLocaleDateString("en-US", {
+      weekday: "short"
+    });
+
+    const card = document.createElement("div");
+    card.className = "forecast-card";
+
+    card.innerHTML = `
+      <div class="forecast-day">${dayName}</div>
+      <img
+        class="forecast-icon"
+        src="https:${day.day.condition.icon}"
+        alt="${day.day.condition.text}"
+      />
+      <div class="forecast-temp">
+        ${Math.round(day.day.maxtemp_c)}° / ${Math.round(day.day.mintemp_c)}°
+      </div>
+      <div class="forecast-condition">
+        ${day.day.condition.text}
+      </div>
+    `;
+
+    container.appendChild(card);
+  });
+}
+
 export function displayWeather(weather) {
+	displayForecast(weather);
 	applyWeatherTheme(weather);
 	displayLocation(weather);
 	displayDate(weather);

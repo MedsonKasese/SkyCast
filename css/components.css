@@ -146,10 +146,10 @@ SEARCH FORM
 	border-radius: var(--border-radius-small);
 	box-shadow: var(--shadow);
 
-  background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+	background: rgba(255, 255, 255, 0.12);
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+	border: 1px solid rgba(255, 255, 255, 0.18);
 }
 
 .detail-header {
@@ -167,4 +167,55 @@ SEARCH FORM
 .detail-value {
 	font-size: 2rem;
 	font-weight: 700;
+}
+
+.forecast-section {
+	margin-top: 24px;
+	padding: 20px;
+}
+
+.forecast-section h2 {
+	margin-bottom: 16px;
+	font-size: 1.2rem;
+}
+
+.forecast-container {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+	gap: 12px;
+}
+
+.forecast-card {
+	background: rgba(255, 255, 255, 0.08);
+	border: 1px solid rgba(255, 255, 255, 0.12);
+	border-radius: 16px;
+	padding: 16px;
+	text-align: center;
+	transition: transform 0.2s ease;
+}
+
+.forecast-card:hover {
+	transform: translateY(-4px);
+}
+
+.forecast-day {
+	font-weight: 600;
+	margin-bottom: 8px;
+}
+
+.forecast-icon {
+	width: 48px;
+	height: 48px;
+	margin: 8px auto;
+}
+
+.forecast-temp {
+	font-size: 1rem;
+	font-weight: 700;
+}
+
+.forecast-condition {
+	font-size: 0.8rem;
+	opacity: 0.85;
+	margin-top: 6px;
 }
