@@ -344,6 +344,9 @@ footer {
 .footer-bottom p {
 	margin: 0;
 }
+.footer-bottom p a {
+	text-decoration: none;
+}
 
 .footer-bottom i {
 	color: var(--accent-color);
