@@ -99,7 +99,7 @@ export function displayForecast(weather) {
 
 	container.innerHTML = "";
 
-	weather.forecast.forecastday.forEach((day, index) => {
+	weather.forecast.forecastday.forEach((day) => {
 		// Skip today (index 0)
 		//	if (index === 0) return;
 
@@ -124,6 +124,10 @@ export function displayForecast(weather) {
       <div class="forecast-condition">
         ${day.day.condition.text}
       </div>
+			
+			  <div class="forecast-rain">
+      🌧 ${day.day.daily_chance_of_rain}%
+     </div>
     `;
 
 		container.appendChild(card);
