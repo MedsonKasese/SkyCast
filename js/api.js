@@ -3,7 +3,7 @@ const BASE_URL = "https://api.weatherapi.com/v1/forecast.json";
 export async function getWeather(city) {
 	try {
 		const response = await fetch(
-			`${BASE_URL}?key=${API_KEY}&q=${city}&days=5&aqi=no&alerts=no`,
+			`${BASE_URL}?key=${API_KEY}&q=${city}&days=3&aqi=no&alerts=no`,
 		);
 
 		if (!response.ok) {

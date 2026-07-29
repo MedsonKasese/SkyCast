@@ -93,25 +93,25 @@ function applyWeatherTheme(weather) {
 }
 
 export function displayForecast(weather) {
-  const container = document.getElementById("forecast-container");
+	const container = document.getElementById("forecast-container");
 
-  if (!container || !weather.forecast) return;
+	if (!container || !weather.forecast) return;
 
-  container.innerHTML = "";
+	container.innerHTML = "";
 
-  weather.forecast.forecastday.forEach((day, index) => {
-    // Skip today (index 0)
-    if (index === 0) return;
+	weather.forecast.forecastday.forEach((day, index) => {
+		// Skip today (index 0)
+		//	if (index === 0) return;
 
-    const date = new Date(day.date);
-    const dayName = date.toLocaleDateString("en-US", {
-      weekday: "short"
-    });
+		const date = new Date(day.date);
+		const dayName = date.toLocaleDateString("en-US", {
+			weekday: "short",
+		});
 
-    const card = document.createElement("div");
-    card.className = "forecast-card";
+		const card = document.createElement("div");
+		card.className = "forecast-card";
 
-    card.innerHTML = `
+		card.innerHTML = `
       <div class="forecast-day">${dayName}</div>
       <img
         class="forecast-icon"
@@ -126,11 +126,62 @@ export function displayForecast(weather) {
       </div>
     `;
 
-    container.appendChild(card);
-  });
+		container.appendChild(card);
+	});
+}
+
+export function displayHourlyForecast(weather) {
+	const container = document.getElementById("hourly-container");
+	if (!container || !weather.forecast) return;
+
+	container.innerHTML = "";
+
+	// Get current time to filter out past hours
+	const currentEpoch = Math.floor(Date.now() / 1000);
+
+	// Combine hours from today and tomorrow to ensure we have a full 24h window
+	const allHours = [
+		...weather.forecast.forecastday[0].hour,
+		...(weather.forecast.forecastday[1]
+			? weather.forecast.forecastday[1].hour
+			: []),
+	];
+
+	// Filter to get only future hours and limit to 24 items
+	const next24Hours = allHours
+		.filter((hour) => hour.time_epoch > currentEpoch)
+		.slice(0, 6);
+
+	next24Hours.forEach((hour) => {
+		const time = new Date(hour.time).toLocaleTimeString("en-US", {
+			hour: "numeric",
+			hour12: true,
+		});
+
+		const card = document.createElement("div");
+		card.className = "forecast-card";
+
+		card.innerHTML = `
+            <div class="forecast-day">${time}</div>
+            <img
+                class="forecast-icon"
+                src="https:${hour.condition.icon}"
+                alt="${hour.condition.text}"
+            />
+            <div class="forecast-temp">
+                ${Math.round(hour.temp_c)}°
+            </div>
+            <div class="forecast-condition">
+                ${hour.condition.text}
+            </div>
+        `;
+
+		container.appendChild(card);
+	});
 }
 
 export function displayWeather(weather) {
+	displayHourlyForecast(weather);
 	displayForecast(weather);
 	applyWeatherTheme(weather);
 	displayLocation(weather);

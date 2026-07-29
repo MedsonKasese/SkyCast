@@ -220,3 +220,47 @@ SEARCH FORM
 	opacity: 0.85;
 	margin-top: 6px;
 }
+
+/* Reuse the forecast styles for the hourly section */
+
+/* Hourly Section Container */
+.hourly-section {
+	margin-top: 24px;
+	padding: 20px;
+	margin-bottom: 24px;
+}
+
+/* The Swipeable Container */
+.hourly-container {
+	display: flex; /* Align cards in a row */
+	overflow-x: auto; /* Enable horizontal scrolling */
+	overflow-y: hidden; /* Prevent vertical scrolling */
+	gap: 12px;
+	padding: 10px 4px; /* Padding for shadows/hover effects */
+
+	/* Smooth Swiping Behavior */
+	scroll-snap-type: x mandatory;
+	-webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+	scrollbar-width: thin; /* Thin scrollbar for Firefox */
+}
+
+/* Hide scrollbar for a cleaner look (optional) */
+.hourly-container::-webkit-scrollbar {
+	height: 6px;
+}
+.hourly-container::-webkit-scrollbar-thumb {
+	background: rgba(255, 255, 255, 0.2);
+	border-radius: 10px;
+}
+
+/* Hourly Cards */
+.hourly-container .forecast-card {
+	min-width: 110px; /* Fixed width so they don't squish */
+	flex: 0 0 auto; /* Prevent shrinking or growing */
+	scroll-snap-align: start; /* Snap card to the start when swiping */
+	background: rgba(255, 255, 255, 0.08);
+	border: 1px solid rgba(255, 255, 255, 0.12);
+	border-radius: 16px;
+	padding: 16px;
+	text-align: center;
+}
