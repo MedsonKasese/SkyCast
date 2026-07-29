@@ -1,79 +1,106 @@
+export function displayLocation(weather) {
+	const city = document.getElementById("city-name");
 
-export function displayLocation(weather){
-
-    const city = document.getElementById("city-name");
-
-    city.textContent =
-        `${weather.location.name}, ${weather.location.country}`;
-
+	city.textContent = `${weather.location.name}, ${weather.location.country}`;
 }
 
-export function displayDate(weather){
+export function displayDate(weather) {
+	const dateElement = document.getElementById("current-date");
 
-    const dateElement = document.getElementById("current-date");
+	const localDate = new Date(weather.location.localtime);
+	const formattedDate = localDate.toLocaleDateString("en-US", {
+		weekday: "long",
+		year: "numeric",
+		month: "long",
+		day: "numeric",
+	});
 
-    const localDate = new Date(weather.location.localtime);
-    const formattedDate = localDate.toLocaleDateString("en-US",{
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-
-    dateElement.textContent = formattedDate;
+	dateElement.textContent = formattedDate;
 }
 
-export function displayTemperature(weather){
+export function displayTemperature(weather) {
+	const temperature = document.getElementById("temperature");
 
-    const temperature = document.getElementById("temperature");
-
-    temperature.textContent = `${Math.round(weather.current.temp_c)}°C`;
-
+	temperature.textContent = `${Math.round(weather.current.temp_c)}°C`;
 }
 
-export function displayWeatherIcon(weather){
-
-    const weatherIcon = document.getElementById("weather-icon");
-    weatherIcon.src = "https:" + weather.current.condition.icon;
+export function displayWeatherIcon(weather) {
+	const weatherIcon = document.getElementById("weather-icon");
+	weatherIcon.src = "https:" + weather.current.condition.icon;
 }
 
-export function displayCondition(weather){
-
-    const condition = document.getElementById("weather-condition");
-    condition.textContent = weather.current.condition.text;
-
+export function displayCondition(weather) {
+	const condition = document.getElementById("weather-condition");
+	condition.textContent = weather.current.condition.text;
 }
 
-export function displayHumidity(weather){
-    const humidity = document.getElementById("humidity");
-    humidity.textContent = `${weather.current.humidity}%`;
+export function displayHumidity(weather) {
+	const humidity = document.getElementById("humidity");
+	humidity.textContent = `${weather.current.humidity}%`;
 }
 
-export function displayWindSpeed(weather){
-    const windSpeed = document.getElementById("wind-speed");
-    windSpeed.textContent = `${weather.current.wind_kph} km/h`;
+export function displayWindSpeed(weather) {
+	const windSpeed = document.getElementById("wind-speed");
+	windSpeed.textContent = `${weather.current.wind_kph} km/h`;
 }
 
-export function displayPrecipitation(weather){
-    const precipitation = document.getElementById("precipitation");
-    precipitation.textContent = `${weather.current.precip_mm} mm`;
+export function displayPrecipitation(weather) {
+	const precipitation = document.getElementById("precipitation");
+	precipitation.textContent = `${weather.current.precip_mm} mm`;
 }
 
-export function displayFeelsLike(weather){
-    const feelsLike = document.getElementById("feels-like");
-    feelsLike.textContent = `${Math.round(weather.current.feelslike_c)}°C`;
+export function displayFeelsLike(weather) {
+	const feelsLike = document.getElementById("feels-like");
+	feelsLike.textContent = `${Math.round(weather.current.feelslike_c)}°C`;
+}
+function applyWeatherTheme(weather) {
+	const body = document.body;
+
+	// Remove old theme classes
+	body.classList.remove(
+		"theme-sunny",
+		"theme-cloudy",
+		"theme-rainy",
+		"theme-snowy",
+		"theme-night",
+	);
+
+	// Night takes priority
+	if (weather.current.is_day === 0) {
+		body.classList.add("theme-night");
+		return;
+	}
+
+	const condition = weather.current.condition.text.toLowerCase();
+
+	if (condition.includes("sunny") || condition.includes("clear")) {
+		body.classList.add("theme-sunny");
+	} else if (
+		condition.includes("rain") ||
+		condition.includes("drizzle") ||
+		condition.includes("thunder")
+	) {
+		body.classList.add("theme-rainy");
+	} else if (
+		condition.includes("snow") ||
+		condition.includes("ice") ||
+		condition.includes("sleet")
+	) {
+		body.classList.add("theme-snowy");
+	} else {
+		body.classList.add("theme-cloudy");
+	}
 }
 
 export function displayWeather(weather) {
-
-    displayLocation(weather);
-    displayDate(weather);
-    displayTemperature(weather);
-    displayWeatherIcon(weather);
-    displayCondition(weather);
-    displayHumidity(weather);
-    displayWindSpeed(weather);
-    displayPrecipitation(weather);
-    displayFeelsLike(weather);
-
+	applyWeatherTheme(weather);
+	displayLocation(weather);
+	displayDate(weather);
+	displayTemperature(weather);
+	displayWeatherIcon(weather);
+	displayCondition(weather);
+	displayHumidity(weather);
+	displayWindSpeed(weather);
+	displayPrecipitation(weather);
+	displayFeelsLike(weather);
 }
