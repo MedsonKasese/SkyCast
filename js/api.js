@@ -5,14 +5,21 @@ export async function getWeather(city) {
 		const response = await fetch(`${BASE_URL}?q=${encodeURIComponent(city)}`);
 
 		if (!response.ok) {
-			const data = await response.json();
+			let message = "Failed to fetch weather";
 
-			throw new Error(data.error || "Failed to fetch weather");
+			try {
+				const data = await response.json();
+				message = data.error || message;
+			} catch {
+				// Response was not JSON
+				message = `Server error (${response.status})`;
+			}
+
+			throw new Error(message);
 		}
 
 		return await response.json();
 	} catch (error) {
-		// Network failure (internet off, DNS failure, etc.)
 		if (error instanceof TypeError) {
 			throw new Error("NETWORK_ERROR");
 		}
