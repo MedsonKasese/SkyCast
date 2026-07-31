@@ -1,15 +1,13 @@
-const API_KEY = "7f0bcbdba3e7434da2a124045261907"; // recommended: remove the api key to env variable
-const BASE_URL = "https://api.weatherapi.com/v1/forecast.json";
+const BASE_URL = "/api/weather";
+
 export async function getWeather(city) {
 	try {
-		const response = await fetch(
-			`${BASE_URL}?key=${API_KEY}&q=${city}&days=3&aqi=no&alerts=no`,
-		);
+		const response = await fetch(`${BASE_URL}?q=${encodeURIComponent(city)}`);
 
 		if (!response.ok) {
 			const data = await response.json();
 
-			throw new Error(data.error?.message || `HTTP ${response.status}`);
+			throw new Error(data.error || "Failed to fetch weather");
 		}
 
 		return await response.json();
