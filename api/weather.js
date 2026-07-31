@@ -16,7 +16,7 @@ export default async function handler(req, res) {
 			});
 		}
 
-		const url = `https://api.weatherapi.com/v1/current.json?key=${API_KEY}&q=${encodeURIComponent(q)}&aqi=no`;
+		const url = `https://api.weatherapi.com/v1/forecast.json?key=${API_KEY}&q=${encodeURIComponent(q)}&days=3&aqi=no&alerts=no`;
 
 		const response = await fetch(url);
 		const data = await response.json();
