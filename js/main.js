@@ -225,7 +225,7 @@ function handleLocationError(error) {
 			break;
 	}
 
-	console.log(error);
+	//console.log(error);
 }
 
 // =========================
