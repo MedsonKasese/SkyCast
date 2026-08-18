@@ -319,6 +319,8 @@ function renderFavorites() {
 
     chip.addEventListener("click", () => handleFavoriteCity(city));
 
+    chip.addEventListener("dblclick", () => removeFavoriteCity(city));
+
     favoritesList.appendChild(chip);
   });
 }
@@ -381,6 +383,20 @@ function saveCurrentCity() {
   renderFavorites();
 
   showError(`${currentCity} added to favorites.`);
+}
+
+// =========================
+// REMOVE FAVORITE CITY
+// =========================
+
+function removeFavoriteCity(city) {
+  favoriteCities = favoriteCities.filter((favorite) => favorite !== city);
+
+  localStorage.setItem(FAVORITES_KEY, JSON.stringify(favoriteCities));
+
+  renderFavorites();
+
+  showError(`${city} removed from favorites.`);
 }
 
 // =========================
