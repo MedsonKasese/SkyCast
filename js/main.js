@@ -370,7 +370,7 @@ function saveCurrentCity() {
   }
 
   if (favoriteCities.includes(currentCity)) {
-    showError("City is already in favorites.");
+    showError(`${currentCity} is already in favorites.`);
     return;
   }
 

@@ -1,174 +1,174 @@
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>SkyCast | Modern Weather App</title>
-		<link rel="manifest" href="manifest.json" />
-		<meta name="theme-color" content="#1976d2" />
-		<link rel="apple-touch-icon" href="icons/icon-192.png" />
-		<link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="shortcut icon" href="/favicon.ico" />
-		<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-		<meta name="apple-mobile-web-app-title" content="SkyCast" />
-		<link rel="manifest" href="/site.webmanifest" />
-		<link rel="stylesheet" href="css/variables.css" />
-		<link rel="stylesheet" href="css/base.css" />
-		<link rel="stylesheet" href="css/layout.css" />
-		<link rel="stylesheet" href="css/components.css" />
-		<link rel="stylesheet" href="css/responsive.css" />
-		<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-		<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-		<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
-		<link rel="manifest" href="/site.webmanifest" />
-		<link
-			rel="stylesheet"
-			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-		/>
-	</head>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SkyCast | Modern Weather App</title>
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#1976d2" />
+    <link rel="apple-touch-icon" href="icons/icon-192.png" />
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="SkyCast" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="stylesheet" href="css/variables.css" />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+  </head>
 
-	<body>
-		<header class="app-header">
-			<div class="app-header-left">
-				<img src="/favicon_io/favicon.ico" />
-				<h1>SkyCast</h1>
-			</div>
+  <body>
+    <header class="app-header">
+      <div class="app-header-left">
+        <img src="/favicon_io/favicon.ico" />
+        <h1>SkyCast</h1>
+      </div>
 
-			<div class="app-header-right">
-				<img class="units-icon" src="../assets/icons/icon-units.svg" />
-			</div>
-		</header>
-		<main>
-			<div class="container">
-				<h1 class="welcome-msg">How is the Sky looking today?</h1>
+      <div class="app-header-right">
+        <img class="units-icon" src="../assets/icons/icon-units.svg" />
+      </div>
+    </header>
+    <main>
+      <div class="container">
+        <h1 class="welcome-msg">How is the Sky looking today?</h1>
 
-				<!--SEARCH INPUT BOX-->
-				<form class="weather-search-form" id="search-form">
-					<div class="search-input-wrapper">
-						<img class="search-icon" src="../assets/icons/icon-search.svg" />
-						<input
-							type="search"
-							id="search-box"
-							name="city"
-							autocomplete="address-level2"
-							placeholder="Search for a  place..."
-						/>
-					</div>
+        <!--SEARCH INPUT BOX-->
+        <form class="weather-search-form" id="search-form">
+          <div class="search-input-wrapper">
+            <img class="search-icon" src="../assets/icons/icon-search.svg" />
+            <input
+              type="search"
+              id="search-box"
+              name="city"
+              autocomplete="address-level2"
+              placeholder="Search for a  place..."
+            />
+          </div>
 
-					<button type="submit" id="search-button" data-originalText="Search">
-						Search
-					</button>
-					<p class="divid"></p>
-					<button
-						type="button"
-						id="current-location-button"
-						class="secondary-button"
-						data-originalText="Use Current Location"
-					>
-						Use Current Location
-					</button>
-					<div class="favorites-section">
-						<div class="favorites-header">
-							<h3>Favorite Cities</h3>
-							<button type="button" id="add-favorite-btn">+ Add Current</button>
-						</div>
+          <button type="submit" id="search-button" data-originalText="Search">
+            Search
+          </button>
+          <p class="divid"></p>
+          <button
+            type="button"
+            id="current-location-button"
+            class="secondary-button"
+            data-originalText="Use Current Location"
+          >
+            Use Current Location
+          </button>
+          <div class="favorites-section">
+            <div class="favorites-header">
+              <h3>Favorite Places</h3>
+              <button type="button" id="add-favorite-btn">+ Add Current</button>
+            </div>
 
-						<div id="favorites-list" class="favorites-list"></div>
-					</div>
-				</form>
+            <div id="favorites-list" class="favorites-list"></div>
+          </div>
+        </form>
 
-				<p id="error-message"></p>
+        <p id="error-message"></p>
 
-				<!--WEATHER CARD SECTION-->
+        <!--WEATHER CARD SECTION-->
 
-				<section class="weather-card">
-					<!--<img src="../assets/icons/bg-today-large.svg" alt="">-->
-					<div class="weather-info">
-						<div class="location-info">
-							<h2 id="city-name">Mzuzu, Malawi</h2>
-							<p id="current-date"></p>
-						</div>
+        <section class="weather-card">
+          <!--<img src="../assets/icons/bg-today-large.svg" alt="">-->
+          <div class="weather-info">
+            <div class="location-info">
+              <h2 id="city-name">Mzuzu, Malawi</h2>
+              <p id="current-date"></p>
+            </div>
 
-						<div class="temperature-info">
-							<div class="temperature-main">
-								<img
-									class="weather-icon"
-									id="weather-icon"
-									src="../assets/images/icon-sunny.webp"
-									alt="Sunny"
-								/>
-								<p id="weather-condition">sunny</p>
-								<h2 class="temperature" id="temperature">-</h2>
-							</div>
-						</div>
-					</div>
-				</section>
+            <div class="temperature-info">
+              <div class="temperature-main">
+                <img
+                  class="weather-icon"
+                  id="weather-icon"
+                  src="../assets/images/icon-sunny.webp"
+                  alt="Sunny"
+                />
+                <p id="weather-condition">sunny</p>
+                <h2 class="temperature" id="temperature">-</h2>
+              </div>
+            </div>
+          </div>
+        </section>
 
-				<!--WEATHER DETAILS SECTION-->
-				<section class="weather-details">
-					<div class="detail-card">
-						<div class="detail-header">
-							<h3>Feels Like</h3>
-							<p class="detail-value" id="feels-like">-</p>
-						</div>
-					</div>
+        <!--WEATHER DETAILS SECTION-->
+        <section class="weather-details">
+          <div class="detail-card">
+            <div class="detail-header">
+              <h3>Feels Like</h3>
+              <p class="detail-value" id="feels-like">-</p>
+            </div>
+          </div>
 
-					<div class="detail-card">
-						<div class="detail-header">
-							<h3>Humidity</h3>
-							<p class="detail-value" id="humidity">-</p>
-						</div>
-					</div>
+          <div class="detail-card">
+            <div class="detail-header">
+              <h3>Humidity</h3>
+              <p class="detail-value" id="humidity">-</p>
+            </div>
+          </div>
 
-					<div class="detail-card">
-						<div class="detail-header">
-							<h3>Wind Speed</h3>
-							<p class="detail-value" id="wind-speed">-</p>
-						</div>
-					</div>
+          <div class="detail-card">
+            <div class="detail-header">
+              <h3>Wind Speed</h3>
+              <p class="detail-value" id="wind-speed">-</p>
+            </div>
+          </div>
 
-					<div class="detail-card">
-						<div class="detail-header">
-							<h3>Precipitation</h3>
-							<p class="detail-value" id="precipitation">-</p>
-						</div>
-					</div>
-				</section>
+          <div class="detail-card">
+            <div class="detail-header">
+              <h3>Precipitation</h3>
+              <p class="detail-value" id="precipitation">-</p>
+            </div>
+          </div>
+        </section>
 
-				<!-- HOURLY FORECAST SECTION -->
+        <!-- HOURLY FORECAST SECTION -->
 
-				<section class="hourly-section weather-card">
-					<h2>Hourly Forecast (Next 7 Hours)</h2>
-					<div id="hourly-container" class="hourly-container">
-						<!-- Cards will be injected here -->
-					</div>
-				</section>
+        <section class="hourly-section weather-card">
+          <h2>Hourly Forecast (Next 7 Hours)</h2>
+          <div id="hourly-container" class="hourly-container">
+            <!-- Cards will be injected here -->
+          </div>
+        </section>
 
-				<!--THREE DAYS FORECAST SECTION-->
-				<section class="forecast-section weather-card">
-					<h2>3-Day Forecast</h2>
+        <!--THREE DAYS FORECAST SECTION-->
+        <section class="forecast-section weather-card">
+          <h2>3-Day Forecast</h2>
 
-					<div id="forecast-container" class="forecast-container">
-						<!-- Forecast cards will be inserted here -->
-					</div>
-				</section>
-			</div>
+          <div id="forecast-container" class="forecast-container">
+            <!-- Forecast cards will be inserted here -->
+          </div>
+        </section>
+      </div>
 
-			<!--SOCIAL LINKS-->
+      <!--SOCIAL LINKS-->
 
-			<!-- FOOTER -->
-			<footer>
-				<div class="container">
-					<div class="footer-content">
-						<div class="footer-section">
-							<h3>Medson Kasese</h3>
-							<p>
-								Full Stack Developer crafting beautiful and functional web
-								experiences.
-							</p>
-						</div>
-						<!--
+      <!-- FOOTER -->
+      <footer>
+        <div class="container">
+          <div class="footer-content">
+            <div class="footer-section">
+              <h3>Medson Kasese</h3>
+              <p>
+                Full Stack Developer crafting beautiful and functional web
+                experiences.
+              </p>
+            </div>
+            <!--
                 <div class="footer-section">
                     <h4>Quick Links</h4>
                     <ul>
@@ -180,80 +180,80 @@
                     </ul>
                 </div>
           -->
-						<div class="footer-section">
-							<h4>Follow Me</h4>
-							<div class="footer-socials">
-								<a
-									href="https://x.com/KaseseMedson"
-									title="X/Twitter"
-									target="_blank"
-									aria-label="Follow Medson on X (Twitter)"
-									><i class="fab fa-x-twitter"></i
-								></a>
-								<a
-									href="https://linkedin.com/in/medson-kasese-3ab977301"
-									title="LinkedIn"
-									target="_blank"
-									aria-label="Connect with Medson on LinkedIn"
-								>
-									<i class="fab fa-linkedin"></i>
-								</a>
-								<a
-									href="https://t.me/medsonkasese"
-									title="Telegram"
-									target="_blank"
-									aria-label="Message Medson on Telegram"
-								>
-									<i class="fab fa-telegram"></i>
-								</a>
-								<a
-									href="https://instagram.com/medson.kasese"
-									title="Instagram"
-									target="_blank"
-									aria-label="Follow Medson on Instagram"
-								>
-									<i class="fab fa-instagram"></i>
-								</a>
-								<a
-									href="https://facebook.com/medson.kasese"
-									title="Facebook"
-									target="_blank"
-									aria-label="Follow Medson on Facebook"
-								>
-									<i class="fab fa-facebook"></i>
-								</a>
-								<a
-									href="https://github.com/MedsonKasese"
-									title="GitHub"
-									target="_blank"
-									aria-label="Visit Medson's GitHub profile"
-								>
-									<i class="fab fa-github" aria-hidden="true"></i>
-								</a>
+            <div class="footer-section">
+              <h4>Follow Me</h4>
+              <div class="footer-socials">
+                <a
+                  href="https://x.com/KaseseMedson"
+                  title="X/Twitter"
+                  target="_blank"
+                  aria-label="Follow Medson on X (Twitter)"
+                  ><i class="fab fa-x-twitter"></i
+                ></a>
+                <a
+                  href="https://linkedin.com/in/medson-kasese-3ab977301"
+                  title="LinkedIn"
+                  target="_blank"
+                  aria-label="Connect with Medson on LinkedIn"
+                >
+                  <i class="fab fa-linkedin"></i>
+                </a>
+                <a
+                  href="https://t.me/medsonkasese"
+                  title="Telegram"
+                  target="_blank"
+                  aria-label="Message Medson on Telegram"
+                >
+                  <i class="fab fa-telegram"></i>
+                </a>
+                <a
+                  href="https://instagram.com/medson.kasese"
+                  title="Instagram"
+                  target="_blank"
+                  aria-label="Follow Medson on Instagram"
+                >
+                  <i class="fab fa-instagram"></i>
+                </a>
+                <a
+                  href="https://facebook.com/medson.kasese"
+                  title="Facebook"
+                  target="_blank"
+                  aria-label="Follow Medson on Facebook"
+                >
+                  <i class="fab fa-facebook"></i>
+                </a>
+                <a
+                  href="https://github.com/MedsonKasese"
+                  title="GitHub"
+                  target="_blank"
+                  aria-label="Visit Medson's GitHub profile"
+                >
+                  <i class="fab fa-github" aria-hidden="true"></i>
+                </a>
 
-								<a
-									href="https://threads.com/medson.kasese"
-									title="Threads"
-									target="_blank"
-									aria-label="Visit Medson's Threads profile"
-								>
-									<i class="fab fa-threads" aria-hidden="true"></i>
-								</a>
-							</div>
-						</div>
-					</div>
-					<div class="footer-bottom">
-						<p>
-							&copy; 2026
-							<a href="https://medsonkasese.vercel.app/">Medson Kasese</a>. All
-							Rights Reserved.<br />
-							Built with <i class="fas fa-heart"></i> using vanilla HTML, CSS &
-							JavaScript.
-						</p>
-					</div>
-				</div>
-			</footer>
-		</main>
-		<script type="module" src="js/main.js"></script>
-	</body>
+                <a
+                  href="https://threads.com/medson.kasese"
+                  title="Threads"
+                  target="_blank"
+                  aria-label="Visit Medson's Threads profile"
+                >
+                  <i class="fab fa-threads" aria-hidden="true"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="footer-bottom">
+            <p>
+              &copy; 2026
+              <a href="https://medsonkasese.vercel.app/">Medson Kasese</a>. All
+              Rights Reserved.<br />
+              Built with <i class="fas fa-heart"></i> using vanilla HTML, CSS &
+              JavaScript.
+            </p>
+          </div>
+        </div>
+      </footer>
+    </main>
+    <script type="module" src="js/main.js"></script>
+  </body>
 </html>

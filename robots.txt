@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://skycast-mw.vercel.app/sitemap.xml
