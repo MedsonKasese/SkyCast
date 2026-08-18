@@ -30,7 +30,10 @@
 
 	<body>
 		<header class="app-header">
-			<h1>SkyCast</h1>
+			<div class="app-header-left">
+				<img src="/favicon_io/favicon.ico" />
+				<h1>SkyCast</h1>
+			</div>
 
 			<div class="app-header-right">
 				<img class="units-icon" src="../assets/icons/icon-units.svg" />
@@ -38,7 +41,7 @@
 		</header>
 		<main>
 			<div class="container">
-				<h1 class="welcome-msg">How is the sky looking today?</h1>
+				<h1 class="welcome-msg">How is the Sky looking today?</h1>
 
 				<!--SEARCH INPUT BOX-->
 				<form class="weather-search-form" id="search-form">
@@ -65,6 +68,14 @@
 					>
 						Use Current Location
 					</button>
+					<div class="favorites-section">
+						<div class="favorites-header">
+							<h3>Favorite Cities</h3>
+							<button type="button" id="add-favorite-btn">+ Add Current</button>
+						</div>
+
+						<div id="favorites-list" class="favorites-list"></div>
+					</div>
 				</form>
 
 				<p id="error-message"></p>
@@ -131,7 +142,6 @@
 					<h2>Hourly Forecast (Next 7 Hours)</h2>
 					<div id="hourly-container" class="hourly-container">
 						<!-- Cards will be injected here -->
-					
 					</div>
 				</section>
 
@@ -141,7 +151,6 @@
 
 					<div id="forecast-container" class="forecast-container">
 						<!-- Forecast cards will be inserted here -->
-						
 					</div>
 				</section>
 			</div>
