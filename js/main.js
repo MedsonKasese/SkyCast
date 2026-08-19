@@ -6,6 +6,7 @@ import { displayWeather } from "./ui.js";
 let currentCity = "Mzuzu";
 let isFahrenheit = false;
 let favoriteCities = [];
+let weatherRequestController = null;
 
 const STORAGE_KEY = "skycast-last-city";
 const WEATHER_CACHE_KEY = "skycast-cached-weather";
@@ -96,7 +97,20 @@ async function init() {
 // LOAD WEATHER
 // =========================
 async function loadWeather(cityName) {
-  const weather = await getWeather(cityName);
+  // Cancel any previous weather request
+  if (weatherRequestController) {
+    weatherRequestController.abort();
+  }
+
+  // Create a controller for this request
+  const controller = new AbortController();
+  weatherRequestController = controller;
+
+  const weather = await getWeather(cityName, controller.signal);
+  // ignore this response if another request has started
+  if (weatherRequestController !== controller) {
+    return null;
+  }
   displayWeather(weather);
 
   saveWeatherToCache(weather);
@@ -126,7 +140,10 @@ async function handleSearch(event) {
   setLoadingState(searchButton, true, "Searching...");
 
   try {
-    await loadWeather(cityName);
+    const weather = await loadWeather(cityName);
+    if (!weather) {
+      return;
+    }
 
     currentCity = cityName;
 
@@ -135,6 +152,9 @@ async function handleSearch(event) {
     cityInput.value = "";
     cityInput.blur();
   } catch (error) {
+    if (error.name === "AbortError") {
+      return;
+    }
     if (error.message === "NETWORK_ERROR") {
       const cachedWeather = getCachedWeather();
 
@@ -182,13 +202,17 @@ async function handleCurrentPosition(position) {
   const coordinates = `${latitude},${longitude}`;
 
   try {
-    const weather = await getWeather(coordinates);
-
-    displayWeather(weather);
+    const weather = await loadWeather(coordinates);
+    if (!weather) {
+      return;
+    }
 
     currentCity = weather.location.name;
     localStorage.setItem(STORAGE_KEY, currentCity);
   } catch (error) {
+    if (error.name === "AbortError") {
+      return;
+    }
     if (error.message === "NETWORK_ERROR") {
       const cachedWeather = getCachedWeather();
 
@@ -209,6 +233,7 @@ async function handleCurrentPosition(position) {
     setLoadingState(currentLocationButton, false);
   }
 }
+
 //HANDLE LOCATION ERRORS
 function handleLocationError(error) {
   setLoadingState(currentLocationButton, false);
@@ -335,14 +360,19 @@ async function handleFavoriteCity(city) {
   hideError();
 
   try {
-    await loadWeather(city);
-
+    const weather = await loadWeather(city);
+    if (!weather) {
+      return;
+    }
     currentCity = city;
 
     localStorage.setItem(STORAGE_KEY, currentCity);
 
     cityInput.value = "";
   } catch (error) {
+    if (error.name === "AbortError") {
+      return;
+    }
     console.error("Favorite city error:", error);
 
     if (error.message === "NETWORK_ERROR") {
