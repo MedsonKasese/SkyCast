@@ -420,6 +420,12 @@ function saveCurrentCity() {
 // =========================
 
 function removeFavoriteCity(city) {
+  const confirmed = confirm(
+    `Are you sure you want to remove ${city} from favorites?`,
+  );
+  if (!confirmed) {
+    return;
+  }
   favoriteCities = favoriteCities.filter((favorite) => favorite !== city);
 
   localStorage.setItem(FAVORITES_KEY, JSON.stringify(favoriteCities));
