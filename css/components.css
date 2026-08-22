@@ -251,7 +251,7 @@ SEARCH FORM
 
 /* Hide scrollbar for a cleaner look (optional) */
 .hourly-container::-webkit-scrollbar {
-  height: 6px;
+  height: 4px;
 }
 .hourly-container::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.2);
@@ -301,9 +301,11 @@ SEARCH FORM
   box-shadow: var(--shadow);
 }
 
-.sun-time-icon {
-  font-size: 1.8rem;
-  line-height: 1;
+.sun-time-icon img {
+  border-radius:50%;
+  height:40px;
+  width:40px;
+  background :transparent;
 }
 
 .sun-time-card h3 {
