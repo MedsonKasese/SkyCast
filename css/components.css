@@ -319,6 +319,68 @@ SEARCH FORM
   font-size: 1.3rem;
   font-weight: 700;
 }
+/* WEATHER ALERTS */
+.weather-alerts-section {
+  margin-bottom: var(--spacing-large);
+}
+
+.weather-alerts-section h2 {
+  margin-bottom: var(--spacing-medium);
+}
+
+.weather-alert {
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: var(--border-radius-small);
+  padding: var(--spacing-large);
+  box-shadow: var(--shadow);
+}
+
+.no-alerts {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-small);
+}
+
+.no-alerts-icon {
+  font-size: 1.5rem;
+}
+
+.no-alerts p {
+  margin: 0;
+  font-weight: 500;
+}
+.active-alert {
+  border-color: rgba(255, 107, 107, 0.5);
+}
+
+.alert-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-small);
+  margin-bottom: var(--spacing-small);
+}
+
+.alert-icon {
+  font-size: 1.5rem;
+}
+
+.alert-header h3 {
+  margin: 0;
+}
+
+.alert-description {
+  margin: 0;
+  line-height: 1.6;
+}
+
+.alert-expires {
+  margin: var(--spacing-small) 0 0;
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
 
 /* ========================================
    FOOTER
