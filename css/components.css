@@ -2,61 +2,61 @@
 SEARCH FORM
 =====================================*/
 .weather-search-form {
-	display: flex;
-	flex-direction: column;
-	gap: var(--spacing-medium);
-	margin-top: var(--spacing-large);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-medium);
+  margin-top: var(--spacing-large);
 }
 
 .search-input-wrapper {
-	display: flex;
-	align-items: center;
-	background: var(--surface-color);
-	border-radius: var(--border-radius);
-	padding-inline: var(--spacing-medium);
-	box-shadow: var(--shadow);
-	transition: var(--transition);
+  display: flex;
+  align-items: center;
+  background: var(--surface-color);
+  border-radius: var(--border-radius);
+  padding-inline: var(--spacing-medium);
+  box-shadow: var(--shadow);
+  transition: var(--transition);
 }
 
 .search-input-wrapper input {
-	flex: 1;
-	background: transparent;
-	border: none;
-	outline: none;
-	color: var(--text-color);
-	padding-block: var(--spacing-medium);
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text-color);
+  padding-block: var(--spacing-medium);
 }
 
 .search-input-wrapper input::placeholder {
-	color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .search-icon {
-	margin-right: var(--spacing-small);
+  margin-right: var(--spacing-small);
 }
 
 .search-input-wrapper:focus-within {
-	outline: 2px solid var(--secondary-color);
-	outline-offset: 2px;
+  outline: 2px solid var(--secondary-color);
+  outline-offset: 2px;
 }
 
 .weather-search-form button {
-	border: none;
-	border-radius: var(--border-radius);
-	background: var(--secondary-color);
-	color: var(--primary-color);
-	padding: var(--spacing-medium);
-	cursor: pointer;
-	transition: var(--transition);
-	font-weight: 600;
+  border: none;
+  border-radius: var(--border-radius);
+  background: var(--secondary-color);
+  color: var(--primary-color);
+  padding: var(--spacing-medium);
+  cursor: pointer;
+  transition: var(--transition);
+  font-weight: 600;
 }
 
 .weather-search-form button:hover {
-	opacity: 0.9;
+  opacity: 0.9;
 }
 
 .weather-search-form button:active {
-	transform: scale(0.98);
+  transform: scale(0.98);
 }
 /*
 .secondary-button {
@@ -79,195 +79,243 @@ SEARCH FORM
 }
 */
 #error-message {
-	display: none;
-	color: #e53935;
-	font-size: 0.9rem;
-	margin-top: 0.5rem;
+  display: none;
+  color: #e53935;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
 }
 
 .weather-card {
-	margin-top: var(--spacing-large);
-	background: var(--surface-color);
-	border-radius: var(--border-radius);
-	padding: var(--spacing-large);
-	box-shadow: var(--shadow);
-	background: rgba(255, 255, 255, 0.12);
-	backdrop-filter: blur(12px);
-	-webkit-backdrop-filter: blur(12px);
-	border: 1px solid rgba(255, 255, 255, 0.18);
+  margin-top: var(--spacing-large);
+  background: var(--surface-color);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-large);
+  box-shadow: var(--shadow);
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
 }
 
 .weather-info {
-	display: flex;
-	flex-direction: column;
-	gap: var(--spacing-large);
-	align-items: center;
-	text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-large);
+  align-items: center;
+  text-align: center;
 }
 .location-info h2 {
-	font-size: 2rem;
-	margin-bottom: 0.3rem;
+  font-size: 2rem;
+  margin-bottom: 0.3rem;
 }
 .location-info p {
-	opacity: 0.8;
-	margin-top: var(--spacing-small);
+  opacity: 0.8;
+  margin-top: var(--spacing-small);
 }
 
 .temperature-main {
-	display: flex;
-	align-items: center;
-	gap: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 .temperature-info img {
-	width: 100px;
-	height: 100px;
+  width: 100px;
+  height: 100px;
 }
 .temperature-info p {
-	font-size: 1.1rem;
-	opacity: 0.9;
+  font-size: 1.1rem;
+  opacity: 0.9;
 }
 .temperature {
-	font-size: 50px;
-	font-weight: 700;
-	line-height: 1;
+  font-size: 50px;
+  font-weight: 700;
+  line-height: 1;
 }
 
 .weather-details {
-	margin-top: var(--spacing-large);
-	display: grid;
-	grid-template-columns: repeat(2, 1fr);
-	gap: var(--spacing-medium);
-	margin-bottom: var(--spacing-large);
+  margin-top: var(--spacing-large);
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-medium);
+  margin-bottom: var(--spacing-large);
 }
 
 .detail-card {
-	background: var(--surface-color);
-	padding: var(--spacing-large);
-	border-radius: var(--border-radius-small);
-	box-shadow: var(--shadow);
+  background: var(--surface-color);
+  padding: var(--spacing-large);
+  border-radius: var(--border-radius-small);
+  box-shadow: var(--shadow);
 
-	background: rgba(255, 255, 255, 0.12);
-	backdrop-filter: blur(12px);
-	-webkit-backdrop-filter: blur(12px);
-	border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
 }
 
 .detail-header {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: var(--spacing-large);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-large);
 }
 
 .detail-header h3 {
-	font-size: 1rem;
-	font-weight: 600;
+  font-size: 1rem;
+  font-weight: 600;
 }
 
 .detail-value {
-	font-size: 2rem;
-	font-weight: 700;
+  font-size: 2rem;
+  font-weight: 700;
 }
 
 .forecast-section {
-	margin-top: 24px;
-	padding: 20px;
-	margin-bottom: 24px;
+  margin-top: 24px;
+  padding: 20px;
+  margin-bottom: 24px;
 }
 
 .forecast-section h2 {
-	margin-bottom: 16px;
-	font-size: 1.2rem;
+  margin-bottom: 16px;
+  font-size: 1.2rem;
 }
 
 .forecast-container {
-	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-	gap: 12px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
 }
 
 .forecast-card {
-	background: rgba(255, 255, 255, 0.08);
-	border: 1px solid rgba(255, 255, 255, 0.12);
-	border-radius: 16px;
-	padding: 16px;
-	text-align: center;
-	transition: transform 0.2s ease;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  padding: 16px;
+  text-align: center;
+  transition: transform 0.2s ease;
 }
 
 .forecast-card:hover {
-	transform: translateY(-4px);
+  transform: translateY(-4px);
 }
 
 .forecast-day {
-	font-weight: 600;
-	margin-bottom: 8px;
+  font-weight: 600;
+  margin-bottom: 8px;
 }
 
 .forecast-icon {
-	width: 48px;
-	height: 48px;
-	margin: 8px auto;
+  width: 48px;
+  height: 48px;
+  margin: 8px auto;
 }
 
 .forecast-temp {
-	font-size: 1rem;
-	font-weight: 700;
+  font-size: 1rem;
+  font-weight: 700;
 }
 
 .forecast-condition {
-	font-size: 0.8rem;
-	opacity: 0.85;
-	margin-top: 6px;
+  font-size: 0.8rem;
+  opacity: 0.85;
+  margin-top: 6px;
 }
 .forecast-rain {
-	font-size: 0.8rem;
-	opacity: 0.8;
-	margin-top: 6px;
+  font-size: 0.8rem;
+  opacity: 0.8;
+  margin-top: 6px;
 }
 
 /* Reuse the forecast styles for the hourly section */
 
 /* Hourly Section Container */
 .hourly-section {
-	margin-top: 24px;
-	padding: 20px;
-	margin-bottom: 24px;
+  margin-top: 24px;
+  padding: 20px;
+  margin-bottom: 24px;
 }
 
 /* The Swipeable Container */
 .hourly-container {
-	display: flex; /* Align cards in a row */
-	overflow-x: auto; /* Enable horizontal scrolling */
-	overflow-y: hidden; /* Prevent vertical scrolling */
-	gap: 12px;
-	padding: 10px 4px; /* Padding for shadows/hover effects */
+  display: flex; /* Align cards in a row */
+  overflow-x: auto; /* Enable horizontal scrolling */
+  overflow-y: hidden; /* Prevent vertical scrolling */
+  gap: 12px;
+  padding: 10px 4px; /* Padding for shadows/hover effects */
 
-	/* Smooth Swiping Behavior */
-	scroll-snap-type: x mandatory;
-	-webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-	scrollbar-width: thin; /* Thin scrollbar for Firefox */
+  /* Smooth Swiping Behavior */
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+  scrollbar-width: thin; /* Thin scrollbar for Firefox */
 }
 
 /* Hide scrollbar for a cleaner look (optional) */
 .hourly-container::-webkit-scrollbar {
-	height: 6px;
+  height: 6px;
 }
 .hourly-container::-webkit-scrollbar-thumb {
-	background: rgba(255, 255, 255, 0.2);
-	border-radius: 10px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
 }
 
 /* Hourly Cards */
 .hourly-container .forecast-card {
-	min-width: 110px; /* Fixed width so they don't squish */
-	flex: 0 0 auto; /* Prevent shrinking or growing */
-	scroll-snap-align: start; /* Snap card to the start when swiping */
-	background: rgba(255, 255, 255, 0.08);
-	border: 1px solid rgba(255, 255, 255, 0.12);
-	border-radius: 16px;
-	padding: 16px;
-	text-align: center;
+  min-width: 110px; /* Fixed width so they don't squish */
+  flex: 0 0 auto; /* Prevent shrinking or growing */
+  scroll-snap-align: start; /* Snap card to the start when swiping */
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  padding: 16px;
+  text-align: center;
+}
+
+/* SUN TIMES */
+.sun-times-section {
+  margin-bottom: var(--spacing-large);
+}
+
+.sun-times-section h2 {
+  margin-bottom: var(--spacing-medium);
+}
+
+.sun-times-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-medium);
+}
+
+.sun-time-card {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-medium);
+
+  padding: var(--spacing-medium);
+  border-radius: var(--border-radius-small);
+
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: var(--shadow);
+}
+
+.sun-time-icon {
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.sun-time-card h3 {
+  margin: 0 0 0.25rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.sun-time-card p {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 700;
 }
 
 /* ========================================
@@ -275,84 +323,98 @@ SEARCH FORM
    ======================================== */
 
 footer {
-	background-color: var(--dark-bg);
-	color: var(--white);
-	padding: 60px 0 20px;
+  background-color: var(--dark-bg);
+  color: var(--white);
+  padding: 60px 0 20px;
 }
 
 .footer-content {
-	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-	gap: 40px;
-	margin-bottom: 40px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 40px;
+  margin-bottom: 40px;
 }
 
 .footer-section h3,
 .footer-section h4 {
-	color: var(--white);
-	margin-bottom: 15px;
+  color: var(--white);
+  margin-bottom: 15px;
 }
 
 .footer-section p {
-	color: #aaaaaa;
-	margin-bottom: 0;
+  color: #aaaaaa;
+  margin-bottom: 0;
 }
 
 .footer-section ul {
-	list-style: none;
+  list-style: none;
 }
 
 .footer-section ul li {
-	margin-bottom: 10px;
+  margin-bottom: 10px;
 }
 
 .footer-section ul li a {
-	color: #aaaaaa;
-	text-decoration: none;
-	transition: var(--transition);
+  color: #aaaaaa;
+  text-decoration: none;
+  transition: var(--transition);
 }
 
 .footer-section ul li a:hover {
-	color: var(--primary-color);
+  color: var(--primary-color);
 }
 
 .footer-socials {
-	display: flex;
-	gap: 15px;
+  display: flex;
+  gap: 15px;
 }
 
 .footer-socials a {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	width: 45px;
-	height: 45px;
-	text-decoration: none;
-	background-color: var(--text-primary);
-	border-radius: 50% !important;
-	color: var(--white);
-	transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 45px;
+  height: 45px;
+  text-decoration: none;
+  background-color: var(--text-primary);
+  border-radius: 50% !important;
+  color: var(--white);
+  transition: var(--transition);
 }
 
 .footer-socials a:hover {
-	background-color: var(--primary-color);
-	transform: translateY(-3px);
+  background-color: var(--primary-color);
+  transform: translateY(-3px);
 }
 
 .footer-bottom {
-	border-top: 1px solid rgba(255, 255, 255, 0.1);
-	padding-top: 30px;
-	text-align: center;
-	color: #aaaaaa;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 30px;
+  text-align: center;
+  color: #aaaaaa;
 }
 
 .footer-bottom p {
-	margin: 0;
+  margin: 0;
 }
 .footer-bottom p a {
-	text-decoration: none;
+  text-decoration: none;
 }
 
 .footer-bottom i {
-	color: var(--accent-color);
+  color: var(--accent-color);
+}
+xt-align: center;
+  color: #aaaaaa;
+}
+
+.footer-bottom p {
+  margin: 0;
+}
+.footer-bottom p a {
+  text-decoration: none;
+}
+
+.footer-bottom i {
+  color: var(--accent-color);
 }
