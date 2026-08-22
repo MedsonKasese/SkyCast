@@ -68,6 +68,52 @@ export function displaySunTimes(weather) {
   sunrise.textContent = astro.sunrise;
   sunset.textContent = astro.sunset;
 }
+// WEATHER ALERTS LOGIC
+export function displayWeatherAlerts(weather) {
+  const container = document.getElementById("weather-alerts-container");
+
+  if (!container) {
+    return;
+  }
+
+  const alerts = weather.alerts?.alert || [];
+  const cityName = weather.location?.name || "this location";
+
+  if (alerts.length === 0) {
+    container.innerHTML = `
+      <div class="weather-alert no-alerts">
+        <span class="no-alerts-icon">🛡️</span>
+        <p>No active weather alerts for ${cityName}.</p>
+      </div>
+    `;
+
+    return;
+  }
+
+  // Active alerts will be rendered here
+  container.innerHTML = alerts
+    .map(
+      (alert) => `
+      <div class="weather-alert active-alert">
+        <div class="alert-header">
+          <span class="alert-icon">⚠️</span>
+          <h3>${alert.headline || "Weather Alert"}</h3>
+        </div>
+
+        <p class="alert-description">
+          ${alert.desc || alert.note || "Please stay alert and monitor local weather conditions."}
+        </p>
+
+        ${
+          alert.expires
+            ? `<p class="alert-expires">Expires: ${alert.expires}</p>`
+            : ""
+        }
+      </div>
+    `,
+    )
+    .join("");
+}
 
 function applyWeatherTheme(weather) {
   const body = document.body;
@@ -214,4 +260,5 @@ export function displayWeather(weather) {
   displayPrecipitation(weather);
   displayFeelsLike(weather);
   displaySunTimes(weather);
+  displayWeatherAlerts(weather);
 }
