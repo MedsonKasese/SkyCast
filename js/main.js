@@ -1,6 +1,7 @@
 // Imports
 import { getWeather } from "./api.js";
 import { displayWeather } from "./ui.js";
+import { centerRadarOnLocation } from "./radar.js";
 
 // Global Variables
 let currentCity = "Mzuzu";
@@ -23,7 +24,9 @@ const errorMessage = document.getElementById("error-message");
 const unitsIcon = document.querySelector(".units-icon");
 const favoritesList = document.getElementById("favorites-list");
 const addFavoriteButton = document.getElementById("add-favorite-btn");
-
+const radarLocationButton = document.getElementById(
+  "radar-location-button",
+);
 // Event Listeners
 weatherForm.addEventListener("submit", handleSearch);
 currentLocationButton.addEventListener("click", getCurrentLocation);
@@ -33,6 +36,9 @@ if (unitsIcon) {
 }
 if (addFavoriteButton) {
   addFavoriteButton.addEventListener("click", saveCurrentCity);
+}
+if (radarLocationButton) {
+  radarLocationButton.addEventListener("click", centerRadarOnLocation);
 }
 
 // Initialize App

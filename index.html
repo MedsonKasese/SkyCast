@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="css/layout.css" />
     <link rel="stylesheet" href="css/components.css" />
     <link rel="stylesheet" href="css/responsive.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
@@ -158,6 +159,46 @@
           </div>
         </section>
 
+        <!-- WEATHER ALERTS SECTION -->
+        <section class="weather-alerts-section">
+          <h2>Weather Alerts</h2>
+
+          <div id="weather-alerts-container">
+            <!-- Alerts will be injected here -->
+          </div>
+        </section>
+
+        <!-- WEATHER RADAR SECTION -->
+        <section class="weather-radar-section weather-card">
+          <div class="radar-header">
+            <div>
+              <h2>Weather Radar</h2>
+              <p id="radar-location">Loading radar...</p>
+            </div>
+
+            <button
+              type="button"
+              id="radar-location-button"
+              class="radar-location-button"
+              aria-label="Center radar on current location"
+              title="Center on current location"
+            >
+              <i class="fa-solid fa-location-crosshairs"></i>
+            </button>
+          </div>
+
+          <div id="weather-radar"></div>
+
+          <div class="radar-footer">
+            <span class="radar-status">
+              <span class="radar-status-dot"></span>
+              Live precipitation map
+            </span>
+
+            <span class="radar-source">Powered by RainViewer</span>
+          </div>
+        </section>
+
         <!-- HOURLY FORECAST SECTION -->
 
         <section class="hourly-section weather-card">
@@ -277,6 +318,7 @@
         </div>
       </footer>
     </main>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script type="module" src="js/main.js"></script>
   </body>
 </html>
