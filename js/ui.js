@@ -1,3 +1,4 @@
+import { initializeRadar } from "./radar.js";
 export function displayLocation(weather) {
   const city = document.getElementById("city-name");
 
@@ -114,6 +115,7 @@ export function displayWeatherAlerts(weather) {
     )
     .join("");
 }
+
 
 function applyWeatherTheme(weather) {
   const body = document.body;
@@ -261,4 +263,5 @@ export function displayWeather(weather) {
   displayFeelsLike(weather);
   displaySunTimes(weather);
   displayWeatherAlerts(weather);
+  initializeRadar(weather);
 }
