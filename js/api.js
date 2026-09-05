@@ -32,3 +32,33 @@ export async function getWeather(city, signal) {
     throw error;
   }
 }
+const SPORTS_BASE_URL = "/api/sports";
+
+export async function getSports(location) {
+  try {
+    const response = await fetch(
+      `${SPORTS_BASE_URL}?q=${encodeURIComponent(location)}`,
+    );
+
+    if (!response.ok) {
+      let message = "Failed to fetch sports events";
+
+      try {
+        const data = await response.json();
+        message = data.error || message;
+      } catch {
+        message = `Unable to fetch sports due to Server error (${response.status})`;
+      }
+
+      throw new Error(message);
+    }
+
+    return await response.json();
+  } catch (error) {
+    if (error instanceof TypeError) {
+      throw new Error("NETWORK_ERROR");
+    }
+
+    throw error;
+  }
+}
