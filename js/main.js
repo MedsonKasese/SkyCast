@@ -2,7 +2,7 @@
 import { getWeather } from "./api.js";
 import { displayWeather } from "./ui.js";
 import { centerRadarOnLocation } from "./radar.js";
-
+import { loadSports } from "./sports.js";
 // Global Variables
 let currentCity = "Mzuzu";
 let isFahrenheit = false;
@@ -118,7 +118,9 @@ async function loadWeather(cityName) {
     return null;
   }
   displayWeather(weather);
-
+if (weather.location?.name) {
+    loadSports(weather.location.name);
+  }
   saveWeatherToCache(weather);
   return weather;
 }
