@@ -42,25 +42,24 @@ const data = await getSports(location);
                 );
         }
 }
-
 function renderSports() {
         const sportsContainer = document.getElementById("sports-container");
 
         if (!sportsContainer) return;
 
-        const events = getFilteredEvents().slice(0, 3);
-;
+        const events = getFilteredEvents();
+
+        const isSportsPage =
+                window.location.pathname.endsWith("sports.html");
+
+        const visibleEvents = isSportsPage
+                ? events
+                : events.slice(0, 3);
 
         if (events.length === 0) {
                 displaySportsMessage("No upcoming sports events found.");
                 return;
         }
-
-        const isSportsPage = window.location.pathname.endsWith("sports.html");
-
-        const visibleEvents = isSportsPage
-                ? events
-                : events.slice(0, 3);
 
         sportsContainer.innerHTML = visibleEvents
                 .map((event) => createSportsCard(event))

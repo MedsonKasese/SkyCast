@@ -655,6 +655,46 @@ SEARCH FORM
     font-size: 1rem;
   }
 }
+/* ========================================
+   SKYCAST SPORTS PAGE
+   ======================================== */
+
+.sports-page-top {
+  margin-bottom: var(--spacing-medium);
+}
+
+.sports-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.sports-back-link:hover {
+  color: var(--primary-color);
+  transform: translateX(-2px);
+}
+
+.sports-page-header {
+  margin-bottom: var(--spacing-large);
+}
+
+.sports-page-header h1 {
+  margin-bottom: 0.35rem;
+}
+
+.sports-page-header p {
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+.sports-page-header + .sports-section {
+  margin-top: 0;
+}
 
 /* ========================================
    FOOTER

@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+
+    <title>SkyCast Sports</title>
+
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#1976d2" />
+
+    <link
+      rel="apple-touch-icon"
+      href="/assets/icons/icon-192.png"
+    />
+
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="/favicon_io/favicon.ico"
+    />
+
+    <link rel="stylesheet" href="css/variables.css" />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+  </head>
+
+  <body>
+    <header class="app-header">
+      <div class="app-header-left">
+        <img
+          src="/favicon_io/favicon.ico"
+          alt="SkyCast Logo"
+        />
+        <h1>SkyCast</h1>
+      </div>
+
+      <div class="app-header-right">
+        <img
+          class="notification-icon"
+          src="../assets/icons/bell-solid.png"
+          alt="Notifications"
+        />
+
+        <img
+          class="units-icon"
+          src="../assets/icons/icon-units.svg"
+          alt="Units"
+        />
+      </div>
+    </header>
+
+    <main>
+      <div class="container">
+
+        <div class="sports-page-top">
+          <a href="index.html" class="sports-back-link">
+            <i
+              class="fa-solid fa-arrow-left"
+              aria-hidden="true"
+            ></i>
+            Back to Weather
+          </a>
+        </div>
+
+        <section class="sports-page-header">
+          <h1>SkyCast Sports</h1>
+          <p>
+            Upcoming football, cricket and golf events
+          </p>
+        </section>
+
+        <section class="sports-section weather-card">
+
+          <div class="sports-header">
+            <div>
+              <h2>Sports Events</h2>
+              <p id="sports-location">
+                Events near your selected location
+              </p>
+            </div>
+          </div>
+
+          <div class="sports-filters" aria-label="Filter sports">
+            <button
+              type="button"
+              class="sports-filter active"
+              data-sport="all"
+            >
+              All
+            </button>
+
+            <button
+              type="button"
+              class="sports-filter"
+              data-sport="football"
+            >
+              Football
+            </button>
+
+            <button
+              type="button"
+              class="sports-filter"
+              data-sport="cricket"
+            >
+              Cricket
+            </button>
+
+            <button
+              type="button"
+              class="sports-filter"
+              data-sport="golf"
+            >
+              Golf
+            </button>
+          </div>
+
+          <div
+            id="sports-container"
+            class="sports-container"
+          >
+            <p class="sports-message">
+              Loading sports events...
+            </p>
+          </div>
+
+        </section>
+
+      </div>
+    </main>
+
+    <script type="module" src="js/sports-page.js"></script>
+  </body>
+</html>
