@@ -1,3 +1,5 @@
+import { evaluateWeatherNotifications } from "./notification-rules.js";
+
 const NOTIFICATIONS_STORAGE_KEY = "skycast-notifications";
 
 function getStoredNotifications() {
@@ -68,18 +70,24 @@ function normalizeWeatherAlert(alert, cityName) {
 
 export function syncWeatherNotifications(weather) {
   const cityName = weather.location?.name || "this location";
-  const alerts = weather.alerts?.alert || [];
 
   const existingNotifications = getStoredNotifications();
 
   const existingWeatherNotifications = new Map(
-    existingNotifications
-      .filter((notification) => notification.type === "weather-alert")
-      .map((notification) => [notification.id, notification]),
-  );
+  existingNotifications
+    .filter(
+      (notification) =>
+        notification.type === "weather-alert" ||
+        notification.type === "weather-condition",
+    )
+    .map((notification) => [notification.id, notification]),
+);
 
-  const weatherNotifications = alerts.map((alert) => {
+  const evaluatedAlerts = evaluateWeatherNotifications(weather);
+
+  const weatherNotifications = evaluatedAlerts.map((alert) => {
     const notification = normalizeWeatherAlert(alert, cityName);
+
     const existing = existingWeatherNotifications.get(notification.id);
 
     if (existing) {
@@ -93,8 +101,10 @@ export function syncWeatherNotifications(weather) {
   });
 
   const otherNotifications = existingNotifications.filter(
-    (notification) => notification.type !== "weather-alert",
-  );
+  (notification) =>
+    notification.type !== "weather-alert" &&
+    notification.type !== "weather-condition",
+);
 
   const notifications = [
     ...weatherNotifications,
