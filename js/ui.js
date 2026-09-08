@@ -1,4 +1,6 @@
 import { initializeRadar } from "./radar.js";
+import { syncWeatherNotifications } from "./notifications.js";
+
 export function displayLocation(weather) {
   const city = document.getElementById("city-name");
 
@@ -71,6 +73,7 @@ export function displaySunTimes(weather) {
 }
 // WEATHER ALERTS LOGIC
 export function displayWeatherAlerts(weather) {
+	syncWeatherNotifications(weather);
   const container = document.getElementById("weather-alerts-container");
 
   if (!container) {
