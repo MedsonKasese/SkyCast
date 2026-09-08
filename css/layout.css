@@ -1,7 +1,14 @@
 .app-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  background: #0F1419;
+  z-index: 1100;
+  height:80px;
 }
 .app-header-left {
   display: flex;
@@ -18,11 +25,12 @@
 display:flex;
 justify-content:space-between;
 margin-right:15px;
+gap:10px;
+align-items: center;
 }
 .app-header-right img {
 height:20px;
 width:20px;
-gap:10px;
 }
 
 .app-header-right .notification-icon {
@@ -31,10 +39,64 @@ width:25px;
 margin-right:12px;
 }
 
+.notification-button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  border-radius: 50%;
+}
+
+.notification-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.notification-badge {
+  position: absolute;
+  top: 4px;
+  right:2px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: #ff4d4d;
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 16px;
+  text-align: center;
+  display: none;
+}
+
+.notifications-panel {
+  position:fixed;
+  top: 85px;
+  right: 15px;
+  width: min(360px, calc(100vw - 30px));
+  max-height: 70vh;
+  overflow-y: auto;
+  background: var(--dark-bg);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  display: none;
+}
+
+.notifications-panel.is-open {
+  display: block;
+}
+
 main {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-large);
+  padding-top:100px;
 }
 
 /*================================
@@ -62,13 +124,6 @@ container
 .icon-button:hover {
   background: rgba(255, 255, 255, 0.1);
   transform: rotate(90deg);
-}
-
-.app-header-right {
-  display: flex;
-  justify-content: space-between;
-  gap: 5px;
-  margin-right: 5px;
 }
 
 /*FAVORITE PLACE STYLES*/

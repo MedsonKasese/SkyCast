@@ -29,10 +29,54 @@
       </div>
 
       <div class="app-header-right">
-        <img class="notification-icon" src="../assets/icons/bell-solid.png" />
+        <button
+          type="button"
+          class="notification-button"
+          id="notification-button"
+          aria-label="Open notifications"
+          title="Notifications"
+        >
+          <img
+            class="notification-icon"
+            src="../assets/icons/bell-solid.png"
+            alt=""
+          />
+          <span
+            class="notification-badge"
+            id="notification-badge"
+            aria-hidden="true"
+          ></span>
+        </button>
         <img class="units-icon" src="../assets/icons/icon-units.svg" />
       </div>
     </header>
+
+    <!-- NOTIFICATIONS CENTER -->
+     <div
+           class="notifications-panel"
+           id="notifications-panel"
+           aria-hidden="true">
+  <div class="notifications-header">
+       <h2>Notifications</h2>
+
+        <button
+        type="button"
+        class="mark-all-read-button"
+        id="mark-all-read-button">
+        Mark all as read
+    </button>
+  </div>
+
+  <div
+       class="notifications-list"
+       id="notifications-list">
+    <div class="notifications-empty">
+      <span class="notifications-empty-icon">🔔</span>
+      <p>No notifications yet.</p>
+    </div>
+  </div>
+</div>
+
     <main>
       <div class="container">
         <h1 class="welcome-msg">How is the Sky looking today?</h1>
@@ -156,15 +200,6 @@
                 <p id="sunset">-</p>
               </div>
             </div>
-          </div>
-        </section>
-
-        <!-- WEATHER ALERTS SECTION -->
-        <section class="weather-alerts-section">
-          <h2>Weather Alerts</h2>
-
-          <div id="weather-alerts-container">
-            <!-- Alerts will be injected here -->
           </div>
         </section>
 

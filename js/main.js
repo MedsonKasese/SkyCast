@@ -3,6 +3,13 @@ import { getWeather } from "./api.js";
 import { displayWeather } from "./ui.js";
 import { centerRadarOnLocation } from "./radar.js";
 import { loadSports } from "./sports.js";
+import {
+  getNotifications,
+  getUnreadNotificationCount,
+  markNotificationAsRead,
+  markAllNotificationsAsRead,
+} from "./notifications.js";
+
 // Global Variables
 let currentCity = "Mzuzu";
 let isFahrenheit = false;
@@ -27,9 +34,53 @@ const addFavoriteButton = document.getElementById("add-favorite-btn");
 const radarLocationButton = document.getElementById(
   "radar-location-button",
 );
+const notificationButton = document.getElementById(
+  "notification-button",
+);
+const notificationBadge = document.getElementById(
+  "notification-badge",
+);
+const notificationsPanel = document.getElementById(
+  "notifications-panel",
+);
+const notificationsList = document.getElementById(
+  "notifications-list",
+);
+const markAllReadButton = document.getElementById(
+  "mark-all-read-button",
+);
+
 // Event Listeners
 weatherForm.addEventListener("submit", handleSearch);
 currentLocationButton.addEventListener("click", getCurrentLocation);
+if (notificationButton) {
+  notificationButton.addEventListener(
+    "click",
+    toggleNotificationsPanel,
+  );
+}
+
+if (markAllReadButton) {
+  markAllReadButton.addEventListener(
+    "click",
+    handleMarkAllNotificationsAsRead,
+  );
+}
+
+if (notificationsPanel) {
+  notificationsPanel.addEventListener(
+    "click",
+    handleNotificationClick,
+  );
+}
+
+document.addEventListener("click", handleOutsideNotificationClick);
+
+document.addEventListener(
+  "keydown",
+  handleNotificationEscape,
+);
+
 if (unitsIcon) {
   unitsIcon.addEventListener("click", toggleUnits);
   unitsIcon.style.cursor = "pointer";
@@ -117,7 +168,9 @@ async function loadWeather(cityName) {
   if (weatherRequestController !== controller) {
     return null;
   }
+
   displayWeather(weather);
+  updateNotificationBadge();
 if (weather.location?.name) {
     loadSports(weather.location.name);
   }
@@ -168,6 +221,7 @@ async function handleSearch(event) {
 
       if (cachedWeather) {
         displayWeather(cachedWeather);
+        updateNotificationBadge();
 
         // Show message after UI update
         requestAnimationFrame(() => {
@@ -481,6 +535,167 @@ function toggleUnits() {
   }
 
   unitsIcon.textContent = isFahrenheit ? "°F" : "°C";
+}
+// =========================
+// NOTIFICATIONS CENTER
+// =========================
+
+function toggleNotificationsPanel(event) {
+  event.stopPropagation();
+
+  if (!notificationsPanel) {
+    return;
+  }
+
+  const isOpen = notificationsPanel.classList.toggle("is-open");
+
+  notificationsPanel.setAttribute(
+    "aria-hidden",
+    isOpen ? "false" : "true",
+  );
+
+  if (isOpen) {
+    renderNotifications();
+  }
+}
+
+function closeNotificationsPanel() {
+  if (!notificationsPanel) {
+    return;
+  }
+
+  notificationsPanel.classList.remove("is-open");
+  notificationsPanel.setAttribute("aria-hidden", "true");
+}
+
+function handleMarkAllNotificationsAsRead(event) {
+  event.stopPropagation();
+
+  markAllNotificationsAsRead();
+  renderNotifications();
+}
+
+function handleNotificationClick(event) {
+  const notificationItem = event.target.closest(
+    ".notification-item",
+  );
+
+  if (!notificationItem) {
+    return;
+  }
+
+  const notificationId =
+    notificationItem.dataset.notificationId;
+
+  if (!notificationId) {
+    return;
+  }
+
+  markNotificationAsRead(notificationId);
+  renderNotifications();
+}
+
+function handleOutsideNotificationClick(event) {
+  if (!notificationsPanel || !notificationButton) {
+    return;
+  }
+
+  const clickedInsidePanel =
+    notificationsPanel.contains(event.target);
+
+  const clickedBell =
+    notificationButton.contains(event.target);
+
+  if (!clickedInsidePanel && !clickedBell) {
+    closeNotificationsPanel();
+  }
+}
+
+function handleNotificationEscape(event) {
+  if (event.key !== "Escape") {
+    return;
+  }
+
+  closeNotificationsPanel();
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function renderNotifications() {
+  if (!notificationsList) {
+    return;
+  }
+
+  const notifications = getNotifications();
+
+  if (notifications.length === 0) {
+    notificationsList.innerHTML = `
+      <div class="notifications-empty">
+        <span class="notifications-empty-icon">🔔</span>
+        <p>No notifications yet.</p>
+      </div>
+    `;
+
+    updateNotificationBadge();
+    return;
+  }
+
+  notificationsList.innerHTML = notifications
+    .map(
+      (notification) => `
+        <div
+          class="notification-item ${notification.read ? "read" : "unread"}"
+          data-notification-id="${notification.id}"
+        >
+          <div class="notification-item-header">
+            <span class="notification-item-icon">
+              ${notification.type === "weather-alert" ? "⚠️" : "🔔"}
+            </span>
+
+            <h3 class="notification-item-title">
+              ${escapeHtml(notification.title)}
+            </h3>
+          </div>
+
+          <p class="notification-item-message">
+            ${escapeHtml(notification.message)}
+          </p>
+
+          <div class="notification-item-meta">
+            ${escapeHtml(notification.event || "Notification")}
+          </div>
+        </div>
+      `,
+    )
+    .join("");
+
+  updateNotificationBadge();
+}
+
+function updateNotificationBadge() {
+  if (!notificationBadge) {
+    return;
+  }
+
+  const unreadCount = getUnreadNotificationCount();
+
+  notificationBadge.textContent =
+    unreadCount > 99 ? "99+" : unreadCount;
+
+  notificationBadge.style.display =
+    unreadCount > 0 ? "block" : "none";
+
+  notificationBadge.setAttribute(
+    "aria-hidden",
+    unreadCount > 0 ? "false" : "true",
+  );
 }
 
 // =========================

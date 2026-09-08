@@ -695,6 +695,116 @@ SEARCH FORM
 .sports-page-header + .sports-section {
   margin-top: 0;
 }
+/* NOTIFICATIONS CENTER */
+
+.notifications-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-small);
+  margin-bottom: var(--spacing-medium);
+}
+
+.notifications-header h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.mark-all-read-button {
+  background: transparent;
+  border: none;
+  color: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 6px 8px;
+  border-radius: 8px;
+}
+
+.mark-all-read-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.notifications-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-small);
+}
+
+.notifications-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-small);
+  padding: var(--spacing-large) var(--spacing-medium);
+  text-align: center;
+  opacity: 0.75;
+}
+
+.notifications-empty-icon {
+  font-size: 2rem;
+}
+
+.notifications-empty p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.notification-item {
+  position: relative;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--border-radius-small);
+  padding: var(--spacing-medium);
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.notification-item:hover {
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateY(-1px);
+}
+
+.notification-item.unread {
+  border-left: 3px solid var(--accent-color);
+}
+
+.notification-item.read {
+  opacity: 0.7;
+}
+
+.notification-item-header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-small);
+  margin-bottom: 6px;
+}
+
+.notification-item-icon {
+  flex-shrink: 0;
+  font-size: 1.2rem;
+}
+
+.notification-item-title {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.notification-item-message {
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.notification-item-meta {
+  margin-top: 8px;
+  font-size: 0.75rem;
+  opacity: 0.65;
+}
 
 /* ========================================
    FOOTER
