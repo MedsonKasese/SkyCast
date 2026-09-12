@@ -71,23 +71,38 @@ function normalizeWeatherAlert(alert, cityName) {
 export function syncWeatherNotifications(weather) {
   const cityName = weather.location?.name || "this location";
 
+  const evaluatedNotifications = evaluateWeatherNotifications(weather);
+
+  // Remove duplicate notifications generated from duplicate API records.
+  const uniqueEvaluatedNotifications = new Map();
+
+  evaluatedNotifications.forEach((notification) => {
+  const normalizedNotification = normalizeWeatherAlert(
+    notification,
+    cityName,
+  );
+
+  uniqueEvaluatedNotifications.set(
+    normalizedNotification.id,
+    normalizedNotification,
+  );
+});
+
   const existingNotifications = getStoredNotifications();
 
   const existingWeatherNotifications = new Map(
-  existingNotifications
-    .filter(
-      (notification) =>
-        notification.type === "weather-alert" ||
-        notification.type === "weather-condition",
-    )
-    .map((notification) => [notification.id, notification]),
-);
+    existingNotifications
+      .filter(
+        (notification) =>
+          notification.type === "weather-alert" ||
+          notification.type === "weather-condition",
+      )
+      .map((notification) => [notification.id, notification]),
+  );
 
-  const evaluatedAlerts = evaluateWeatherNotifications(weather);
-
-  const weatherNotifications = evaluatedAlerts.map((alert) => {
-    const notification = normalizeWeatherAlert(alert, cityName);
-
+  const weatherNotifications = [
+    ...uniqueEvaluatedNotifications.values(),
+  ].map((notification) => {
     const existing = existingWeatherNotifications.get(notification.id);
 
     if (existing) {
@@ -97,19 +112,29 @@ export function syncWeatherNotifications(weather) {
       };
     }
 
-    return notification;
+    return {
+      ...notification,
+      read: false,
+    };
   });
 
   const otherNotifications = existingNotifications.filter(
-  (notification) =>
-    notification.type !== "weather-alert" &&
-    notification.type !== "weather-condition",
-);
+    (notification) =>
+      notification.type !== "weather-alert" &&
+      notification.type !== "weather-condition",
+  );
 
-  const notifications = [
-    ...weatherNotifications,
-    ...otherNotifications,
-  ];
+  // Final safety net: make sure no duplicate notification IDs
+  // can ever be stored.
+  const uniqueNotifications = new Map();
+
+  [...weatherNotifications, ...otherNotifications].forEach(
+    (notification) => {
+      uniqueNotifications.set(notification.id, notification);
+    },
+  );
+
+  const notifications = [...uniqueNotifications.values()];
 
   saveNotifications(notifications);
 
