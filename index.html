@@ -38,7 +38,7 @@
         >
           <img
             class="notification-icon"
-            src="../assets/icons/bell-solid.png"
+            src="/assets/icons/bell-solid.png"
             alt=""
           />
           <span
@@ -47,7 +47,14 @@
             aria-hidden="true"
           ></span>
         </button>
-        <img class="units-icon" src="../assets/icons/icon-units.svg" />
+        <button
+          type="button"
+          class="units-icon"
+          id="units-toggle"
+          aria-label="Switch temperature units"
+        >
+          °C
+        </button>
       </div>
     </header>
 
@@ -84,7 +91,7 @@
         <!--SEARCH INPUT BOX-->
         <form class="weather-search-form" id="search-form">
           <div class="search-input-wrapper">
-            <img class="search-icon" src="../assets/icons/icon-search.svg" />
+            <img class="search-icon" src="/assets/icons/icon-search.svg" alt="" />
             <input
               type="search"
               id="search-box"
@@ -121,7 +128,7 @@
         <!--WEATHER CARD SECTION-->
 
         <section class="weather-card">
-          <!--<img src="../assets/icons/bg-today-large.svg" alt="">-->
+          <!--<img src="/assets/icons/bg-today-large.svg" alt="">-->
           <div class="weather-info">
             <div class="location-info">
               <h2 id="city-name">Mzuzu, Malawi</h2>
@@ -133,7 +140,7 @@
                 <img
                   class="weather-icon"
                   id="weather-icon"
-                  src="../assets/images/icon-sunny.webp"
+                  src="/assets/images/icon-sunny.webp"
                   alt="Sunny"
                 />
                 <p id="weather-condition">sunny</p>
@@ -191,8 +198,8 @@
             <div class="sun-time-card">
               <div>
                 <span class="sun-time-icon">
-                <img src="/assets/images/sunset.png" alt="sunset icon"
-              </span>
+                  <img src="/assets/images/sunset.png" alt="sunset icon" />
+                </span>
               </div>
 
               <div>
@@ -234,7 +241,7 @@
           </div>
         </section>
 <!-- SKYCAST SPORTS SECTION -->
-</section class="sports-section weather-card">
+<section class="sports-section weather-card">
   <div class="sports-header">
     <div>
       <h2>SkyCast Sports</h2>
