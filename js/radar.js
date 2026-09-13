@@ -5,6 +5,12 @@ let currentCoordinates = null;
 const DEFAULT_ZOOM = 7;
 const RADAR_ZOOM = 8;
 
+// RainViewer only publishes new radar frames roughly every 10 minutes,
+// so there's no need to re-fetch the frame list on every weather search.
+const RADAR_FRAMES_TTL_MS = 5 * 60 * 1000;
+let cachedRadarFrames = null;
+let cachedRadarFramesAt = 0;
+
 export function initializeRadar(weather) {
   const mapElement = document.getElementById("weather-radar");
   const locationElement = document.getElementById("radar-location");
@@ -48,17 +54,28 @@ export function initializeRadar(weather) {
 
 async function loadRadarLayer() {
   try {
-    const response = await fetch(
-      "https://api.rainviewer.com/public/weather-maps.json",
-    );
+    const isCacheFresh =
+      cachedRadarFrames && Date.now() - cachedRadarFramesAt < RADAR_FRAMES_TTL_MS;
 
-    if (!response.ok) {
-      throw new Error("Unable to load radar data");
+    let radarFrames;
+
+    if (isCacheFresh) {
+      radarFrames = cachedRadarFrames;
+    } else {
+      const response = await fetch(
+        "https://api.rainviewer.com/public/weather-maps.json",
+      );
+
+      if (!response.ok) {
+        throw new Error("Unable to load radar data");
+      }
+
+      const data = await response.json();
+
+      radarFrames = data.radar?.past || [];
+      cachedRadarFrames = radarFrames;
+      cachedRadarFramesAt = Date.now();
     }
-
-    const data = await response.json();
-
-    const radarFrames = data.radar?.past || [];
 
     if (radarFrames.length === 0) {
       return;
