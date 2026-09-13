@@ -53,7 +53,7 @@ function createWeatherAlertId(alert, cityName) {
 function normalizeWeatherAlert(alert, cityName) {
   return {
     id: createWeatherAlertId(alert, cityName),
-    type: "weather-alert",
+    type: alert.type || "weather-alert",
     title: alert.headline || alert.event || "Weather Alert",
     message:
       alert.desc ||

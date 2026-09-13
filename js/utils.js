@@ -1,70 +1,11 @@
-// Utility functions for SkyCast
-/*
-export function debounce(func, delay) {
-	let timeoutId;
-	return function (...args) {
-		clearTimeout(timeoutId);
-		timeoutId = setTimeout(() => func(...args), delay);
-	};
+// Shared utility functions for SkyCast
+
+// Escapes text before it is inserted via innerHTML, so data coming from
+// APIs or user input can never be interpreted as markup.
+export function escapeHtml(value) {
+  const element = document.createElement("div");
+
+  element.textContent = value ?? "";
+
+  return element.innerHTML;
 }
-
-export function throttle(func, limit) {
-	let inThrottle;
-	return function (...args) {
-		if (!inThrottle) {
-			func(...args);
-			inThrottle = true;
-			setTimeout(() => (inThrottle = false), limit);
-		}
-	};
-}
-
-export function formatTemperature(celsius, isFahrenheit = false) {
-	if (isFahrenheit) {
-		return Math.round((celsius * 9) / 5 + 32);
-	}
-	return Math.round(celsius);
-}
-
-export function getWeatherIcon(condition) {
-	const conditionLower = condition.toLowerCase();
-
-	if (conditionLower.includes("sunny") || conditionLower.includes("clear")) {
-		return "assets/images/icon-sunny.webp";
-	} else if (conditionLower.includes("cloud")) {
-		return "assets/images/icon-overcast.webp";
-	} else if (conditionLower.includes("rain")) {
-		return "assets/images/icon-rain.webp";
-	} else if (conditionLower.includes("snow")) {
-		return "assets/images/icon-snow.webp";
-	} else if (conditionLower.includes("drizzle")) {
-		return "assets/images/icon-drizzle.webp";
-	} else if (
-		conditionLower.includes("fog") ||
-		conditionLower.includes("mist")
-	) {
-		return "assets/images/icon-fog.webp";
-	} else if (
-		conditionLower.includes("storm") ||
-		conditionLower.includes("thunder")
-	) {
-		return "assets/images/icon-storm.webp";
-	} else if (conditionLower.includes("partly")) {
-		return "assets/images/icon-partly-cloudy.webp";
-	}
-
-	return "assets/images/icon-sunny.webp";
-}
-
-export function isOnline() {
-	return navigator.onLine;
-}
-
-export function addOnlineListener(callback) {
-	window.addEventListener("online", callback);
-}
-
-export function addOfflineListener(callback) {
-	window.addEventListener("offline", callback);
-}
-*/
