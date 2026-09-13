@@ -1,4 +1,6 @@
 import { getSports } from "./api.js";
+import { escapeHtml } from "./utils.js";
+
 let sportsData = {
         football: [],
         cricket: [],
@@ -7,7 +9,9 @@ let sportsData = {
 
 let activeSport = "all";
 let sportsFiltersInitialized = false;
+let currentSportsRequestId = 0;
 export async function loadSports(location) {
+        const requestId = ++currentSportsRequestId;
         const sportsContainer = document.getElementById("sports-container");
 
         if (!sportsContainer) return;
@@ -20,7 +24,11 @@ export async function loadSports(location) {
         displaySportsMessage("Loading sports events...");
 
         try {
-const data = await getSports(location);
+                const data = await getSports(location);
+
+                // Ignore this response if a newer request has since started
+                // (e.g. the user switched cities before this one resolved).
+                if (requestId !== currentSportsRequestId) return;
 
                 sportsData = {
                         football: data.football || [],
@@ -35,6 +43,8 @@ const data = await getSports(location);
                 renderSports();
 
         } catch (error) {
+                if (requestId !== currentSportsRequestId) return;
+
                 console.error("Sports error:", error);
 
                 displaySportsMessage(
@@ -67,8 +77,10 @@ function renderSports() {
 }
 
 function getFilteredEvents() {
+        let events;
+
         if (activeSport === "all") {
-                return [
+                events = [
                         ...sportsData.football.map((event) => ({
                                 ...event,
                                 sport: "football",
@@ -82,8 +94,7 @@ function getFilteredEvents() {
                                 sport: "golf",
                         })),
                 ];
-        }
-else {
+        } else {
                 events = (sportsData[activeSport] || []).map((event) => ({
                         ...event,
                         sport: activeSport,
@@ -216,10 +227,4 @@ function formatEventDate(dateTime) {
         };
 }
 
-function escapeHtml(value) {
-        const element = document.createElement("div");
 
-        element.textContent = value ?? "";
-
-        return element.innerHTML;
-}
