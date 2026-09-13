@@ -9,6 +9,7 @@
   background: #0F1419;
   z-index: 1100;
   height:80px;
+  border-bottom: 2px solid gray;
 }
 .app-header-left {
   display: flex;
