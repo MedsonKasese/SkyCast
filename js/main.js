@@ -9,16 +9,19 @@ import {
   markNotificationAsRead,
   markAllNotificationsAsRead,
 } from "./notifications.js";
+import { escapeHtml } from "./utils.js";
 
 // Global Variables
 let currentCity = "Mzuzu";
-let isFahrenheit = false;
-let favoriteCities = [];
-let weatherRequestController = null;
-
 const STORAGE_KEY = "skycast-last-city";
 const WEATHER_CACHE_KEY = "skycast-cached-weather";
 const FAVORITES_KEY = "favoriteCities";
+const UNITS_KEY = "skycast-units";
+
+let isFahrenheit = localStorage.getItem(UNITS_KEY) === "f";
+let favoriteCities = [];
+let weatherRequestController = null;
+let currentWeatherData = null;
 
 // DOM Elements
 const searchButton = document.getElementById("search-button");
@@ -28,7 +31,7 @@ const currentLocationButton = document.getElementById(
   "current-location-button",
 );
 const errorMessage = document.getElementById("error-message");
-const unitsIcon = document.querySelector(".units-icon");
+const unitsToggle = document.getElementById("units-toggle");
 const favoritesList = document.getElementById("favorites-list");
 const addFavoriteButton = document.getElementById("add-favorite-btn");
 const radarLocationButton = document.getElementById(
@@ -81,9 +84,9 @@ document.addEventListener(
   handleNotificationEscape,
 );
 
-if (unitsIcon) {
-  unitsIcon.addEventListener("click", toggleUnits);
-  unitsIcon.style.cursor = "pointer";
+if (unitsToggle) {
+  unitsToggle.addEventListener("click", toggleUnits);
+  unitsToggle.textContent = isFahrenheit ? "°F" : "°C";
 }
 if (addFavoriteButton) {
   addFavoriteButton.addEventListener("click", saveCurrentCity);
@@ -112,7 +115,8 @@ async function init() {
     const cachedWeather = getCachedWeather();
 
     if (cachedWeather) {
-      displayWeather(cachedWeather);
+      currentWeatherData = cachedWeather;
+      displayWeather(cachedWeather, isFahrenheit);
 
       // Show message after UI update
       requestAnimationFrame(() => {
@@ -169,7 +173,8 @@ async function loadWeather(cityName) {
     return null;
   }
 
-  displayWeather(weather);
+  currentWeatherData = weather;
+  displayWeather(weather, isFahrenheit);
   updateNotificationBadge();
 if (weather.location?.name) {
     loadSports(weather.location.name);
@@ -220,7 +225,8 @@ async function handleSearch(event) {
       const cachedWeather = getCachedWeather();
 
       if (cachedWeather) {
-        displayWeather(cachedWeather);
+        currentWeatherData = cachedWeather;
+        displayWeather(cachedWeather, isFahrenheit);
         updateNotificationBadge();
 
         // Show message after UI update
@@ -279,7 +285,8 @@ async function handleCurrentPosition(position) {
       const cachedWeather = getCachedWeather();
 
       if (cachedWeather) {
-        displayWeather(cachedWeather);
+        currentWeatherData = cachedWeather;
+        displayWeather(cachedWeather, isFahrenheit);
 
         // Show message after UI update
         requestAnimationFrame(() => {
@@ -441,7 +448,8 @@ async function handleFavoriteCity(city) {
       const cachedWeather = getCachedWeather();
 
       if (cachedWeather) {
-        displayWeather(cachedWeather);
+        currentWeatherData = cachedWeather;
+        displayWeather(cachedWeather, isFahrenheit);
 
         showError("You're offline. Showing the last saved weather data.");
       } else {
@@ -617,15 +625,6 @@ function handleNotificationEscape(event) {
   }
 
   closeNotificationsPanel();
-}
-
-function escapeHtml(value) {
-  return String(value)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
 }
 
 function renderNotifications() {

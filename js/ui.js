@@ -1,5 +1,6 @@
 import { initializeRadar } from "./radar.js";
 import { syncWeatherNotifications } from "./notifications.js";
+import { escapeHtml } from "./utils.js";
 
 export function displayLocation(weather) {
   const city = document.getElementById("city-name");
@@ -21,10 +22,11 @@ export function displayDate(weather) {
   dateElement.textContent = formattedDate;
 }
 
-export function displayTemperature(weather) {
+export function displayTemperature(weather, isFahrenheit = false) {
   const temperature = document.getElementById("temperature");
+  const value = isFahrenheit ? weather.current.temp_f : weather.current.temp_c;
 
-  temperature.textContent = `${Math.round(weather.current.temp_c)}°C`;
+  temperature.textContent = `${Math.round(value)}°${isFahrenheit ? "F" : "C"}`;
 }
 
 export function displayWeatherIcon(weather) {
@@ -42,9 +44,11 @@ export function displayHumidity(weather) {
   humidity.textContent = `${weather.current.humidity}%`;
 }
 
-export function displayWindSpeed(weather) {
+export function displayWindSpeed(weather, isFahrenheit = false) {
   const windSpeed = document.getElementById("wind-speed");
-  windSpeed.textContent = `${weather.current.wind_kph} km/h`;
+  const value = isFahrenheit ? weather.current.wind_mph : weather.current.wind_kph;
+
+  windSpeed.textContent = `${Math.round(value)} ${isFahrenheit ? "mph" : "km/h"}`;
 }
 
 export function displayPrecipitation(weather) {
@@ -52,9 +56,13 @@ export function displayPrecipitation(weather) {
   precipitation.textContent = `${weather.current.precip_mm} mm`;
 }
 
-export function displayFeelsLike(weather) {
+export function displayFeelsLike(weather, isFahrenheit = false) {
   const feelsLike = document.getElementById("feels-like");
-  feelsLike.textContent = `${Math.round(weather.current.feelslike_c)}°C`;
+  const value = isFahrenheit
+    ? weather.current.feelslike_f
+    : weather.current.feelslike_c;
+
+  feelsLike.textContent = `${Math.round(value)}°${isFahrenheit ? "F" : "C"}`;
 }
 
 // SUN TIMES LOGIC
@@ -101,16 +109,16 @@ export function displayWeatherAlerts(weather) {
       <div class="weather-alert active-alert">
         <div class="alert-header">
           <span class="alert-icon">⚠️</span>
-          <h3>${alert.headline || "Weather Alert"}</h3>
+          <h3>${escapeHtml(alert.headline || "Weather Alert")}</h3>
         </div>
 
         <p class="alert-description">
-          ${alert.desc || alert.note || "Please stay alert and monitor local weather conditions."}
+          ${escapeHtml(alert.desc || alert.note || "Please stay alert and monitor local weather conditions.")}
         </p>
 
         ${
           alert.expires
-            ? `<p class="alert-expires">Expires: ${alert.expires}</p>`
+            ? `<p class="alert-expires">Expires: ${escapeHtml(alert.expires)}</p>`
             : ""
         }
       </div>
@@ -159,7 +167,7 @@ function applyWeatherTheme(weather) {
   }
 }
 
-export function displayForecast(weather) {
+export function displayForecast(weather, isFahrenheit = false) {
   const container = document.getElementById("forecast-container");
 
   if (!container || !weather.forecast) return;
@@ -175,6 +183,9 @@ export function displayForecast(weather) {
       weekday: "short",
     });
 
+    const maxTemp = isFahrenheit ? day.day.maxtemp_f : day.day.maxtemp_c;
+    const minTemp = isFahrenheit ? day.day.mintemp_f : day.day.mintemp_c;
+
     const card = document.createElement("div");
     card.className = "forecast-card";
 
@@ -183,13 +194,13 @@ export function displayForecast(weather) {
       <img
         class="forecast-icon"
         src="https:${day.day.condition.icon}"
-        alt="${day.day.condition.text}"
+        alt="${escapeHtml(day.day.condition.text)}"
       />
       <div class="forecast-temp">
-        ${Math.round(day.day.maxtemp_c)}° / ${Math.round(day.day.mintemp_c)}°
+        ${Math.round(maxTemp)}° / ${Math.round(minTemp)}°
       </div>
       <div class="forecast-condition">
-        ${day.day.condition.text}
+        ${escapeHtml(day.day.condition.text)}
       </div>
 			
 			  <div class="forecast-rain">
@@ -201,7 +212,7 @@ export function displayForecast(weather) {
   });
 }
 
-export function displayHourlyForecast(weather) {
+export function displayHourlyForecast(weather, isFahrenheit = false) {
   const container = document.getElementById("hourly-container");
   if (!container || !weather.forecast) return;
 
@@ -229,6 +240,8 @@ export function displayHourlyForecast(weather) {
       hour12: true,
     });
 
+    const temp = isFahrenheit ? hour.temp_f : hour.temp_c;
+
     const card = document.createElement("div");
     card.className = "forecast-card";
 
@@ -237,13 +250,13 @@ export function displayHourlyForecast(weather) {
             <img
                 class="forecast-icon"
                 src="https:${hour.condition.icon}"
-                alt="${hour.condition.text}"
+                alt="${escapeHtml(hour.condition.text)}"
             />
             <div class="forecast-temp">
-                ${Math.round(hour.temp_c)}°
+                ${Math.round(temp)}°
             </div>
             <div class="forecast-condition">
-                ${hour.condition.text}
+                ${escapeHtml(hour.condition.text)}
             </div>
         `;
 
@@ -251,19 +264,19 @@ export function displayHourlyForecast(weather) {
   });
 }
 
-export function displayWeather(weather) {
-  displayHourlyForecast(weather);
-  displayForecast(weather);
+export function displayWeather(weather, isFahrenheit = false) {
+  displayHourlyForecast(weather, isFahrenheit);
+  displayForecast(weather, isFahrenheit);
   applyWeatherTheme(weather);
   displayLocation(weather);
   displayDate(weather);
-  displayTemperature(weather);
+  displayTemperature(weather, isFahrenheit);
   displayWeatherIcon(weather);
   displayCondition(weather);
   displayHumidity(weather);
-  displayWindSpeed(weather);
+  displayWindSpeed(weather, isFahrenheit);
   displayPrecipitation(weather);
-  displayFeelsLike(weather);
+  displayFeelsLike(weather, isFahrenheit);
   displaySunTimes(weather);
   displayWeatherAlerts(weather);
   initializeRadar(weather);
