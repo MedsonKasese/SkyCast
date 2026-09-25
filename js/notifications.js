@@ -1,4 +1,5 @@
 import { evaluateWeatherNotifications } from "./notification-rules.js";
+import { evaluateSportsNotifications } from "./sports-notification-rules.js";
 
 const NOTIFICATIONS_STORAGE_KEY = "skycast-notifications";
 
@@ -135,6 +136,69 @@ export function syncWeatherNotifications(weather) {
   );
 
   const notifications = [...uniqueNotifications.values()];
+
+  saveNotifications(notifications);
+
+  return notifications;
+}
+
+export function syncSportsNotifications(sportsData) {
+  const evaluatedNotifications =
+    evaluateSportsNotifications(sportsData);
+
+  const existingNotifications = getStoredNotifications();
+
+  const existingSportsNotifications = new Map(
+    existingNotifications
+      .filter(
+        (notification) =>
+          notification.type === "sports-event",
+      )
+      .map((notification) => [
+        notification.id,
+        notification,
+      ]),
+  );
+
+  const sportsNotifications = evaluatedNotifications.map(
+    (notification) => {
+      const existing =
+        existingSportsNotifications.get(notification.id);
+
+      if (existing) {
+        return {
+          ...notification,
+          read: existing.read,
+        };
+      }
+
+      return {
+        ...notification,
+        read: false,
+      };
+    },
+  );
+
+  const otherNotifications = existingNotifications.filter(
+    (notification) =>
+      notification.type !== "sports-event",
+  );
+
+  const uniqueNotifications = new Map();
+
+  [
+    ...otherNotifications,
+    ...sportsNotifications,
+  ].forEach((notification) => {
+    uniqueNotifications.set(
+      notification.id,
+      notification,
+    );
+  });
+
+  const notifications = [
+    ...uniqueNotifications.values(),
+  ];
 
   saveNotifications(notifications);
 
