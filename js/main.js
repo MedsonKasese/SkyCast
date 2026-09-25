@@ -175,10 +175,13 @@ async function loadWeather(cityName) {
 
   currentWeatherData = weather;
   displayWeather(weather, isFahrenheit);
-  updateNotificationBadge();
-if (weather.location?.name) {
-    loadSports(weather.location.name);
+
+  if (weather.location?.name) {
+    await loadSports(weather.location.name);
   }
+
+  updateNotificationBadge();
+
   saveWeatherToCache(weather);
   return weather;
 }

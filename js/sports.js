@@ -1,5 +1,6 @@
 import { getSports } from "./api.js";
 import { escapeHtml } from "./utils.js";
+import { syncSportsNotifications } from "./notifications.js";
 
 let sportsData = {
         football: [],
@@ -35,6 +36,9 @@ export async function loadSports(location) {
                         cricket: data.cricket || [],
                         golf: data.golf || [],
                 };
+
+                syncSportsNotifications(sportsData);
+
                 if (!sportsFiltersInitialized) {
                         setupSportsFilters();
                         sportsFiltersInitialized = true;
