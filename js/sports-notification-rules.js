@@ -5,8 +5,6 @@ const SPORT_ICONS = {
     golf: "⛳",
 };
 
-const sportIcon = SPORT_ICONS[event.sport] || "🏅";
-
 function createSportsNotificationId(sport, event) {
   const eventKey = `${sport}-${event.match}-${event.start}`
     .toLowerCase()
@@ -28,6 +26,7 @@ function getSportEvents(sportsData) {
 }
 
 function createSportsNotification(event) {
+  const sportIcon = SPORT_ICONS[event.sport] || "🏅";
   const sportName =
     event.sport.charAt(0).toUpperCase() +
     event.sport.slice(1);
