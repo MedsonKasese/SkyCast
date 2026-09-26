@@ -1,4 +1,4 @@
-const CACHE = "skycast-v2";
+const CACHE = "skycast-v3";
 
 const FILES = [
   "/",
@@ -18,6 +18,7 @@ const FILES = [
   "/js/sports-page.js",
   "/js/notifications.js",
   "/js/notification-rules.js",
+  "/js/sports-notification-rules.js",
   "/js/utils.js",
 
   "/manifest.json",
