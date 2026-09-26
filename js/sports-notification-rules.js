@@ -1,4 +1,11 @@
 const SPORTS_NOTIFICATION_WINDOW = 24 * 60 * 60 * 1000;
+const SPORT_ICONS = {
+    football: "⚽",
+    cricket: "🏏",
+    golf: "⛳",
+};
+
+const sportIcon = SPORT_ICONS[event.sport] || "🏅";
 
 function createSportsNotificationId(sport, event) {
   const eventKey = `${sport}-${event.match}-${event.start}`
@@ -28,7 +35,7 @@ function createSportsNotification(event) {
   return {
     id: createSportsNotificationId(event.sport, event),
     type: "sports-event",
-    title: `${sportName} event coming up`,
+    title: `${sportIcon} ${sportName} event coming up`,
     message: `${event.match} starts soon.`,
     event: event.tournament || sportName,
     read: false,
