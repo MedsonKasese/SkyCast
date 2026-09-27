@@ -123,8 +123,8 @@ container
 ==================================*/
 
 .container {
-  width: min(100%-2rem, 1100px);
-  margin-inline: 1.4rem;
+  width: min(calc(100% - 2.8rem), 1100px);
+  margin-inline: auto;
 }
 
 .icon-button {
@@ -147,7 +147,8 @@ container
 
 /*FAVORITE PLACE STYLES*/
 .favorites-section {
-  margin: 20px 0;
+  width: 100%;
+  margin: var(--spacing-small) 0 0;
 }
 
 .favorites-header {
@@ -177,6 +178,13 @@ container
   gap: 10px;
   overflow-x: auto;
   padding-bottom: 4px;
+}
+
+@media (max-width: 480px) {
+  .favorites-header {
+    align-items: flex-start;
+    gap: var(--spacing-small);
+  }
 }
 
 .favorite-chip {

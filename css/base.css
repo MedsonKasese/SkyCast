@@ -59,3 +59,10 @@ input {
 	text-align: center;
 	overflow-wrap: break-word;
 }
+
+button:focus-visible,
+input:focus-visible,
+a:focus-visible {
+	outline: 2px solid var(--accent-color);
+	outline-offset: 3px;
+}

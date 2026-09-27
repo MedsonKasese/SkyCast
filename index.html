@@ -10,11 +10,10 @@
     <link rel="icon" type="image/x-icon" href="/favicon_io/favicon.ico" />
     <meta name="apple-mobile-web-app-title" content="SkyCast" />
     <!-- PRELOADS-->
-    <link rel="preload" href="favicon_io/favicon_io.ico" as="image" fethpriority="high">
-    <link rel="preload" href="assets/icons/bell-solid.png" as="image" fethpriority="high">
-    <link rel="preload" href="assets/images/sunrise.png" as="image">
-    <link rel="preload" href="assets/images/sunrise.png" as="image">
-    <link rel="preload" href="assets/images/sunset.png" as="image">
+    <link rel="preload" href="/favicon_io/favicon.ico" as="image" fetchpriority="high">
+    <link rel="preload" href="/assets/icons/bell-solid.png" as="image" fetchpriority="high">
+    <link rel="preload" href="/assets/images/sunrise.png" as="image">
+    <link rel="preload" href="/assets/images/sunset.png" as="image">
     <!--STYLESHEETS-->
     <link rel="stylesheet" href="css/variables.css" />
     <link rel="stylesheet" href="css/base.css" />
@@ -104,14 +103,14 @@
               id="search-box"
               name="city"
               autocomplete="address-level2"
-              placeholder="Search for a  place..."
+              placeholder="Search for a place..."
+              aria-label="Search for a city or place"
             />
           </div>
 
           <button type="submit" id="search-button" data-originalText="Search">
             Search
           </button>
-          <p class="divid"></p>
           <button
             type="button"
             id="current-location-button"
@@ -315,6 +314,7 @@
                   href="https://x.com/KaseseMedson"
                   title="X/Twitter"
                   target="_blank"
+                  rel="noopener noreferrer"
                   aria-label="Follow Medson on X (Twitter)"
                   ><i class="fab fa-x-twitter"></i
                 ></a>
@@ -323,6 +323,7 @@
                   href="https://linkedin.com/in/medson-kasese-3ab977301"
                   title="LinkedIn"
                   target="_blank"
+                  rel="noopener noreferrer"
                   aria-label="Connect with Medson on LinkedIn"
                 >
                   <i class="fab fa-linkedin"></i>
@@ -331,6 +332,7 @@
                   href="https://t.me/medsonkasese"
                   title="Telegram"
                   target="_blank"
+                  rel="noopener noreferrer"
                   aria-label="Message Medson on Telegram"
                 >
                   <i class="fab fa-telegram"></i>
@@ -339,6 +341,7 @@
                   href="https://instagram.com/medson.kasese"
                   title="Instagram"
                   target="_blank"
+                  rel="noopener noreferrer"
                   aria-label="Follow Medson on Instagram"
                 >
                   <i class="fab fa-instagram"></i>
@@ -347,6 +350,7 @@
                   href="https://facebook.com/medson.kasese"
                   title="Facebook"
                   target="_blank"
+                  rel="noopener noreferrer"
                   aria-label="Follow Medson on Facebook"
                 >
                   <i class="fab fa-facebook"></i>
@@ -355,6 +359,7 @@
                   href="https://github.com/MedsonKasese"
                   title="GitHub"
                   target="_blank"
+                  rel="noopener noreferrer"
                   aria-label="Visit Medson's GitHub profile"
                 >
                   <i class="fab fa-github" aria-hidden="true"></i>
@@ -364,6 +369,7 @@
                   href="https://threads.com/medson.kasese"
                   title="Threads"
                   target="_blank"
+                  rel="noopener noreferrer"
                   aria-label="Visit Medson's Threads profile"
                 >
                   <i class="fab fa-threads" aria-hidden="true"></i>
