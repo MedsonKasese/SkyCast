@@ -1,9 +1,15 @@
 @media (min-width:768px){
   .weather-search-form{
-    flex-direction:row;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    align-items: center;
   }
   .search-input-wrapper{
-    flex: 1;
+    min-width: 0;
+  }
+
+  .favorites-section {
+    grid-column: 1 / -1;
   }
 
 }
