@@ -47,7 +47,7 @@ export async function getSports(location) {
         const data = await response.json();
         message = data.error || message;
       } catch {
-        message = `Unable to fetch sports due to Server error (${response.status})`;
+        message = `Unable to fetch sports data due to Server error (${response.status})`;
       }
 
       throw new Error(message);

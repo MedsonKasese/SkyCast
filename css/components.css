@@ -667,7 +667,7 @@ SEARCH FORM
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  color: var(--text-primary);
+  color: white;
   font-size: 0.9rem;
   font-weight: 600;
   text-decoration: none;
@@ -675,7 +675,7 @@ SEARCH FORM
 }
 
 .sports-back-link:hover {
-  color: var(--primary-color);
+  opacity: 0.85;
   transform: translateX(-2px);
 }
 
