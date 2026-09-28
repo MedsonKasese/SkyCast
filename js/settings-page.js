@@ -1,4 +1,5 @@
 import { applyTheme, getSettings, saveSettings } from "./settings.js";
+import { removeDisabledSportsNotifications } from "./notifications.js";
 
 const form = document.getElementById("settings-form");
 const status = document.getElementById("settings-status");
@@ -17,9 +18,25 @@ form.elements.theme.addEventListener("change", (event) => {
 
 form.addEventListener("submit", (event) => {
   event.preventDefault();
+
   const formData = new FormData(form);
   const sportsUpdates = formData.getAll("sportsUpdates");
+  const nextSettings = {
+    theme: formData.get("theme"),
+    sportsUpdates,
+  };
 
-  saveSettings({ theme: formData.get("theme"), sportsUpdates });
-  status.textContent = "Settings saved. Your sports feed and alerts now match your choices.";
+  const saved = saveSettings(nextSettings);
+
+  if (!saved) {
+    status.textContent = "Unable to save settings. Please try again.";
+    return;
+  }
+
+  const notificationsUpdated =
+    removeDisabledSportsNotifications(sportsUpdates);
+
+  status.textContent = notificationsUpdated
+    ? "Settings saved. Your sports feed and alerts now match your choices."
+    : "Settings saved, but existing alerts could not be updated.";
 });
