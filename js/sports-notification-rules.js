@@ -1,12 +1,12 @@
 const SPORTS_NOTIFICATION_WINDOW = 24 * 60 * 60 * 1000;
 const SPORT_ICONS = {
-    football: "⚽",
-    cricket: "🏏",
-    golf: "⛳",
-    basketball: "🏀",
-    "american-football": "🏈",
-    baseball: "⚾",
-    "ice-hockey": "🏒",
+  football: "⚽",
+  cricket: "🏏",
+  golf: "⛳",
+  basketball: "🏀",
+  "american-football": "🏈",
+  baseball: "⚾",
+  "ice-hockey": "🏒",
 };
 
 function createSportsNotificationId(sport, event) {
@@ -69,7 +69,7 @@ export function evaluateSportsNotifications(sportsData) {
         return false;
       }
 
-      const startTime = new Date(event.start.replace(" ", "T")).getTime();
+      const startTime = new Date(event.start).getTime();
 
       if (Number.isNaN(startTime)) {
         return false;
