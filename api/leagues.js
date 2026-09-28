@@ -7,15 +7,20 @@ const LEAGUES = {
 
 /**
  * Convert a TheSportsDB event into the event shape used by the sports feed.
+ * The provider's strTime value is UTC, so keep the timestamp explicitly UTC.
  * @param {Object} event - Raw provider event, with optional schedule and venue fields.
  * @param {{label: string, sport: string}} league - League display name and sport key.
  * @returns {Object} Normalized event with fallback team and venue labels.
  */
 function normalizeEvent(event, league) {
+  const date = event.dateEvent || "";
+  const time = event.strTime || "";
+  const start = date && time ? `${date}T${time}Z` : "";
+
   return {
     match: `${event.strHomeTeam || "TBD"} vs ${event.strAwayTeam || "TBD"}`,
     tournament: league.label,
-    start: `${event.dateEvent || ""} ${event.strTime || ""}`.trim(),
+    start,
     stadium: event.strVenue || "Venue to be confirmed",
     country: event.strCountry || "",
     sport: league.sport,
@@ -26,16 +31,18 @@ function normalizeEvent(event, league) {
  * Fetch upcoming events for a supported league and send a JSON response.
  * Unsupported leagues return 400; upstream HTTP errors retain their status;
  * fetch or parsing failures return 502.
- * @param {Object} req - Request with a sport key in `query.league`.
- * @param {Object} res - Serverless response exposing `status()` and `json()`.
- * @returns {Promise<Object>} The response returned by `res.json()`.
+ * @param {Object} req - Request with a sport key in query.league.
+ * @param {Object} res - Serverless response exposing status() and json().
+ * @returns {Promise<Object>} The response returned by res.json().
  */
 export default async function handler(req, res) {
-  const league = LEAGUES[req.query.league];
+  const leagueKey = req.query.league;
 
-  if (!league) {
+  if (!Object.hasOwn(LEAGUES, leagueKey)) {
     return res.status(400).json({ error: "Unsupported league" });
   }
+
+  const league = LEAGUES[leagueKey];
 
   try {
     // TheSportsDB's public test key supports these popular league schedules.
