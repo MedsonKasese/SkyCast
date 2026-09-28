@@ -11,6 +11,15 @@
   height:80px;
   border-bottom: 2px solid gray;
 }
+
+:root[data-theme="light"] .app-header {
+  background: #ffffff;
+  border-bottom-color: #cbd5e1;
+}
+
+:root[data-theme="light"] .app-header h1 {
+  color: var(--text-primary);
+}
 .app-header-left {
   display: flex;
   flex-direction: row;
@@ -72,6 +81,21 @@ margin-right:12px;
 
 .units-icon:hover {
   background: rgba(255, 255, 255, 0.1);
+}
+
+.header-settings-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+:root[data-theme="light"] .header-settings-link,
+:root[data-theme="light"] .units-icon {
+  color: var(--text-primary);
 }
 
 .notification-badge {

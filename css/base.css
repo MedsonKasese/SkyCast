@@ -24,6 +24,13 @@ body {
 }
 
 /* Weather Themes */
+/* App theme takes priority over weather-condition background themes. */
+:root[data-theme="light"] body,
+:root[data-theme="dark"] body {
+  background: var(--background-color);
+  color: var(--text-color);
+}
+
 .theme-sunny {
 	background: linear-gradient(135deg, #ffd54f, #ff8a65);
 }

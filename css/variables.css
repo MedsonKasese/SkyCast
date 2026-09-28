@@ -21,3 +21,16 @@
 	--border-color: #e0e0e0;
 	--white: #ffffff;
 }
+
+:root[data-theme="light"] {
+	--primary-color: #4338ca;
+	--secondary-color: #4338ca;
+	--background-color: #eef2ff;
+	--surface-color: #ffffff;
+	--text-color: #172554;
+	--dark-bg: #ffffff;
+	--light-bg: #eef2ff;
+	--text-primary: #172554;
+	--text-secondary: #475569;
+	--border-color: #cbd5e1;
+}

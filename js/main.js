@@ -10,18 +10,19 @@ import {
   markAllNotificationsAsRead,
 } from "./notifications.js";
 import { escapeHtml } from "./utils.js";
+import { applyTheme, getSettings } from "./settings.js";
 
 // Global Variables
 let currentCity = "Mzuzu";
 const STORAGE_KEY = "skycast-last-city";
 const WEATHER_CACHE_KEY = "skycast-cached-weather";
 const FAVORITES_KEY = "favoriteCities";
-const UNITS_KEY = "skycast-units";
-
-let isFahrenheit = localStorage.getItem(UNITS_KEY) === "f";
+let isFahrenheit = getSettings().units === "f";
 let favoriteCities = [];
 let weatherRequestController = null;
 let currentWeatherData = null;
+
+applyTheme();
 
 // DOM Elements
 const searchButton = document.getElementById("search-button");
@@ -31,7 +32,6 @@ const currentLocationButton = document.getElementById(
   "current-location-button",
 );
 const errorMessage = document.getElementById("error-message");
-const unitsToggle = document.getElementById("units-toggle");
 const favoritesList = document.getElementById("favorites-list");
 const addFavoriteButton = document.getElementById("add-favorite-btn");
 const radarLocationButton = document.getElementById(
@@ -84,10 +84,6 @@ document.addEventListener(
   handleNotificationEscape,
 );
 
-if (unitsToggle) {
-  unitsToggle.addEventListener("click", toggleUnits);
-  unitsToggle.textContent = isFahrenheit ? "°F" : "°C";
-}
 if (addFavoriteButton) {
   addFavoriteButton.addEventListener("click", saveCurrentCity);
 }
@@ -508,45 +504,6 @@ function removeFavoriteCity(city) {
   showError(`${city} removed from favorites.`);
 }
 
-// =========================
-// TOGGLE UNITS
-// =========================
-function toggleUnits() {
-  isFahrenheit = !isFahrenheit;
-
-  const temperatureElement = document.getElementById("temperature");
-  const feelsLikeElement = document.getElementById("feels-like");
-
-  if (temperatureElement && temperatureElement.textContent !== "-") {
-    const currentTemperature = parseFloat(temperatureElement.textContent);
-
-    if (isFahrenheit) {
-      temperatureElement.textContent = Math.round(
-        (currentTemperature * 9) / 5 + 32,
-      );
-    } else {
-      temperatureElement.textContent = Math.round(
-        ((currentTemperature - 32) * 5) / 9,
-      );
-    }
-  }
-
-  if (feelsLikeElement && feelsLikeElement.textContent !== "-") {
-    const currentFeelsLike = parseFloat(feelsLikeElement.textContent);
-
-    if (isFahrenheit) {
-      feelsLikeElement.textContent = Math.round(
-        (currentFeelsLike * 9) / 5 + 32,
-      );
-    } else {
-      feelsLikeElement.textContent = Math.round(
-        ((currentFeelsLike - 32) * 5) / 9,
-      );
-    }
-  }
-
-  unitsIcon.textContent = isFahrenheit ? "°F" : "°C";
-}
 // =========================
 // NOTIFICATIONS CENTER
 // =========================

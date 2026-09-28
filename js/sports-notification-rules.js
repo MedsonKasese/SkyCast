@@ -1,8 +1,12 @@
 const SPORTS_NOTIFICATION_WINDOW = 24 * 60 * 60 * 1000;
 const SPORT_ICONS = {
-    football: "⚽",
-    cricket: "🏏",
-    golf: "⛳",
+  football: "⚽",
+  cricket: "🏏",
+  golf: "⛳",
+  basketball: "🏀",
+  "american-football": "🏈",
+  baseball: "⚾",
+  "ice-hockey": "🏒",
 };
 
 function createSportsNotificationId(sport, event) {
@@ -14,8 +18,13 @@ function createSportsNotificationId(sport, event) {
   return `sports-${eventKey}`;
 }
 
+/**
+ * Flatten sport event groups, tagging each event with its group's sport key.
+ * @param {Object<string, Object[]>} [sportsData] - Events grouped by sport key.
+ * @returns {Object[]} Copied events with a sport field, or an empty list if absent.
+ */
 function getSportEvents(sportsData) {
-  const sports = ["football", "cricket", "golf"];
+  const sports = Object.keys(sportsData || {});
 
   return sports.flatMap((sport) =>
     (sportsData?.[sport] || []).map((event) => ({
@@ -51,6 +60,13 @@ function createSportsNotification(event) {
   };
 }
 
+/**
+ * Create unread alerts for events starting after now and within 24 hours,
+ * including events exactly 24 hours away. Skip missing or invalid start dates.
+ * @param {Object<string, Object[]>} [sportsData] - Events grouped by sport key.
+ * @returns {Object[]} Alerts with event details and creation times in epoch
+ * milliseconds; an empty list when no events qualify. Does not persist alerts.
+ */
 export function evaluateSportsNotifications(sportsData) {
   const now = Date.now();
 
@@ -60,7 +76,7 @@ export function evaluateSportsNotifications(sportsData) {
         return false;
       }
 
-      const startTime = new Date(event.start.replace(" ", "T")).getTime();
+      const startTime = new Date(event.start).getTime();
 
       if (Number.isNaN(startTime)) {
         return false;

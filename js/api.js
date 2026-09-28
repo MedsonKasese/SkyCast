@@ -62,3 +62,20 @@ export async function getSports(location) {
     throw error;
   }
 }
+
+/**
+ * Request an upcoming league schedule from the local API proxy.
+ * @param {string} league - Sport key: basketball, american-football, baseball, or ice-hockey.
+ * @returns {Promise<{league: string, events: Object[]}>} League label and normalized events.
+ * @throws {Error} If the request fails or the response cannot be parsed as JSON.
+ */
+export async function getLeagueEvents(league) {
+  const response = await fetch(`/api/leagues?league=${encodeURIComponent(league)}`);
+
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}));
+    throw new Error(data.error || "Unable to fetch league schedule");
+  }
+
+  return response.json();
+}
