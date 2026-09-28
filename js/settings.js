@@ -35,14 +35,20 @@ export function getSettings() {
 }
 
 /**
- * Replace the stored preferences and immediately apply the selected theme.
+ * Replace the stored preferences and apply the selected theme only after
+ * persistence succeeds.
  * @param {{theme: string, sportsUpdates: string[]}} settings - Preferences to persist.
- * @returns {void}
- * @throws {Error} If serialization or writing to local storage fails.
+ * @returns {boolean} True when settings were persisted, false otherwise.
  */
 export function saveSettings(settings) {
-  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-  applyTheme(settings.theme);
+  try {
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+    applyTheme(settings.theme);
+    return true;
+  } catch (error) {
+    console.error("Failed to save settings:", error);
+    return false;
+  }
 }
 
 /**
