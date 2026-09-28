@@ -32,7 +32,6 @@ const currentLocationButton = document.getElementById(
   "current-location-button",
 );
 const errorMessage = document.getElementById("error-message");
-const unitsToggle = document.getElementById("units-toggle");
 const favoritesList = document.getElementById("favorites-list");
 const addFavoriteButton = document.getElementById("add-favorite-btn");
 const radarLocationButton = document.getElementById(
