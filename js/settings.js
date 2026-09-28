@@ -37,8 +37,9 @@ export function getSettings() {
 /**
  * Replace the stored preferences and apply the selected theme only after
  * persistence succeeds.
+ * A theme application failure returns false without undoing the stored settings.
  * @param {{theme: string, sportsUpdates: string[]}} settings - Preferences to persist.
- * @returns {boolean} True when settings were persisted, false otherwise.
+ * @returns {boolean} True when persistence and theme application both succeed.
  */
 export function saveSettings(settings) {
   try {

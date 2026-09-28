@@ -13,8 +13,11 @@ const leagueRequestIds = new Map();
 /**
  * Load local events, initialize filters, sync alerts, and render the sports feed.
  * League data is kept when the location-dependent local feed is refreshed.
+ * Ignore superseded local responses; load missing leagues when All is active.
+ * Local request failures display an error while retaining cached events.
  * @param {string} location - Location query passed to the sports API.
  * @returns {Promise<void>} Resolves after loading or displaying an error.
+ * @throws {Error} If theme/filter setup or notification/render recovery fails.
  */
 export async function loadSports(location) {
   const requestId = ++currentSportsRequestId;
@@ -64,6 +67,9 @@ export async function loadSports(location) {
 /**
  * Fetch and cache an unloaded league schedule.
  * Ignore a response if a newer request for the same league has started.
+ * Cache empty schedules too, sync alerts, and render for the active feed.
+ * Request failures are caught and shown only for the latest request when
+ * this sport is selected; failed requests remain eligible for retry.
  * @param {string} sport - Supported league sport key.
  * @returns {Promise<void>} Resolves after the schedule is handled.
  */
@@ -101,6 +107,7 @@ async function loadLeagueSchedule(sport) {
  * Load every supported league that is not already cached.
  * A failed league does not prevent other leagues from rendering.
  * @returns {Promise<void>} Resolves after all league requests settle.
+ * @throws {Error} If notification synchronization or rendering fails afterward.
  */
 async function loadAllLeagueSchedules() {
   const missingLeagues = LEAGUE_SPORTS.filter(
@@ -144,8 +151,10 @@ function renderSports() {
 }
 
 /**
- * Select cached events for the active sport and sort by normalized start time.
- * @returns {Object[]} Copied events tagged with their sport, in ascending order.
+ * Select cached events for the active sport, or every sport when All is active.
+ * Sort by parsed start time, treating missing starts as the Unix epoch;
+ * invalid dates have no guaranteed chronological position.
+ * @returns {Object[]} Copied events tagged with their sport, sorted by start time.
  */
 function getFilteredEvents() {
   const events = activeSport === "all"
@@ -181,7 +190,7 @@ function createSportsCard(event) {
 
 /**
  * Attach filter handlers independently of the local sports API.
- * Selecting All loads missing league data before rendering the combined feed.
+ * Selecting All renders cached events immediately, then loads missing leagues.
  * @returns {void}
  */
 function setupSportsFilters() {
@@ -239,6 +248,7 @@ function formatSportName(sport) {
 
 /**
  * Format an ISO timestamp in the user's local timezone.
+ * Missing or invalid timestamps return Date unavailable and Time unavailable.
  * @param {string} dateTime - ISO timestamp, preferably with an explicit timezone.
  * @returns {{date: string, time: string}} Localized display date and time.
  */

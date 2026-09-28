@@ -60,6 +60,13 @@ function createSportsNotification(event) {
   };
 }
 
+/**
+ * Create unread alerts for events starting after now and within 24 hours,
+ * including events exactly 24 hours away. Skip missing or invalid start dates.
+ * @param {Object<string, Object[]>} [sportsData] - Events grouped by sport key.
+ * @returns {Object[]} Alerts with event details and creation times in epoch
+ * milliseconds; an empty list when no events qualify. Does not persist alerts.
+ */
 export function evaluateSportsNotifications(sportsData) {
   const now = Date.now();
 

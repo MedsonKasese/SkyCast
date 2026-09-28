@@ -21,6 +21,11 @@ function getStoredNotifications() {
   }
 }
 
+/**
+ * Replace the notifications in local storage.
+ * @param {Object[]} notifications - Complete notification list to persist.
+ * @returns {boolean} False if serialization or storage fails; true otherwise.
+ */
 function saveNotifications(notifications) {
   try {
     localStorage.setItem(
@@ -143,9 +148,10 @@ export function syncWeatherNotifications(weather) {
 /**
  * Refresh stored sports alerts using the enabled sports preferences.
  * Preserve matching alerts' read state and all non-sports notifications,
- * deduplicate by ID, and persist the merged list.
+ * deduplicate by ID, and attempt to persist the merged list. Sports alerts
+ * outside the next 24 hours or for disabled sports are removed.
  * @param {Object<string, Object[]>} sportsData - Events grouped by sport key.
- * @returns {Object[]} The merged notification list.
+ * @returns {Object[]} The merged notification list, even if persistence fails.
  */
 export function syncSportsNotifications(sportsData) {
   const enabledSports = getSettings().sportsUpdates;
@@ -253,6 +259,10 @@ export function markAllNotificationsAsRead() {
   return notifications;
 }
 
+/**
+ * Remove all stored notifications, suppressing storage errors.
+ * @returns {void}
+ */
 export function clearNotifications() {
   try {
     localStorage.removeItem(NOTIFICATIONS_STORAGE_KEY);
