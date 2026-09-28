@@ -18,6 +18,11 @@ function createSportsNotificationId(sport, event) {
   return `sports-${eventKey}`;
 }
 
+/**
+ * Flatten sport event groups, tagging each event with its group's sport key.
+ * @param {Object<string, Object[]>} [sportsData] - Events grouped by sport key.
+ * @returns {Object[]} Copied events with a sport field, or an empty list if absent.
+ */
 function getSportEvents(sportsData) {
   const sports = Object.keys(sportsData || {});
 

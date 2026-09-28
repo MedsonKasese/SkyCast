@@ -9,6 +9,12 @@ let activeSport = "all";
 let sportsFiltersInitialized = false;
 let currentSportsRequestId = 0;
 
+/**
+ * Load local events, sync alerts, initialize filters, and render the sports feed.
+ * Ignore superseded requests and show loading or error messages in the container.
+ * @param {string} location - Location query passed to the sports API.
+ * @returns {Promise<void>} Resolves after loading or displaying an error.
+ */
 export async function loadSports(location) {
   const requestId = ++currentSportsRequestId;
   if (!document.getElementById("sports-container")) return;
@@ -37,6 +43,12 @@ export async function loadSports(location) {
   }
 }
 
+/**
+ * Fetch and cache an unloaded league schedule, then sync alerts and render it.
+ * Cached schedules return immediately; request failures display a message.
+ * @param {string} sport - Supported league sport key.
+ * @returns {Promise<void>} Resolves after the schedule is handled.
+ */
 async function loadLeagueSchedule(sport) {
   if (sportsData[sport]) return;
   displaySportsMessage(`Loading ${formatSportName(sport)} schedule...`);
@@ -51,6 +63,11 @@ async function loadLeagueSchedule(sport) {
   }
 }
 
+/**
+ * Render filtered events into the sports container, or show an empty-state message.
+ * Show all events on sports.html and at most three on other pages.
+ * @returns {void}
+ */
 function renderSports() {
   const sportsContainer = document.getElementById("sports-container");
   const events = getFilteredEvents();
@@ -60,6 +77,10 @@ function renderSports() {
   sportsContainer.innerHTML = visibleEvents.map(createSportsCard).join("");
 }
 
+/**
+ * Select cached events for the active sport and sort by their start strings.
+ * @returns {Object[]} Copied events tagged with their sport, in ascending order.
+ */
 function getFilteredEvents() {
   const events = activeSport === "all"
     ? Object.entries(sportsData).flatMap(([sport, items]) => items.map((event) => ({ ...event, sport })))
@@ -67,6 +88,11 @@ function getFilteredEvents() {
   return events.sort((a, b) => (a.start || "").localeCompare(b.start || ""));
 }
 
+/**
+ * Build a sports card with escaped event details and labels for missing fields.
+ * @param {Object} event - Event containing sport, start, match, and venue details.
+ * @returns {string} HTML markup for one sports card.
+ */
 function createSportsCard(event) {
   const { date, time } = formatEventDate(event.start);
   return `<article class="sports-card">
@@ -78,6 +104,11 @@ function createSportsCard(event) {
   </article>`;
 }
 
+/**
+ * Attach click handlers that select a sport, update filter accessibility state,
+ * and load a league schedule or render cached local events.
+ * @returns {void}
+ */
 function setupSportsFilters() {
   document.querySelectorAll(".sports-filter").forEach((filter) => {
     filter.addEventListener("click", async () => {
@@ -93,15 +124,32 @@ function setupSportsFilters() {
   });
 }
 
+/**
+ * Replace the sports container contents with an escaped status message, if present.
+ * @param {string} message - Loading, empty-state, or error text to display.
+ * @returns {void}
+ */
 function displaySportsMessage(message) {
   const sportsContainer = document.getElementById("sports-container");
   if (sportsContainer) sportsContainer.innerHTML = `<p class="sports-message">${escapeHtml(message)}</p>`;
 }
 
+/**
+ * Get the display name or league abbreviation for a sport key.
+ * @param {string} sport - Internal sport key.
+ * @returns {string} The display label, or Sports for an unknown key.
+ */
 function formatSportName(sport) {
   return { football: "Football", cricket: "Cricket", golf: "Golf", basketball: "NBA", "american-football": "NFL", baseball: "MLB", "ice-hockey": "NHL" }[sport] || "Sports";
 }
 
+/**
+ * Format the date portion of a space-separated schedule timestamp in local locale.
+ * Keep the supplied time unchanged; missing input gets unavailable labels,
+ * while input without both parts is returned as the date with an empty time.
+ * @param {string} dateTime - Schedule value in YYYY-MM-DD HH:mm:ss form.
+ * @returns {{date: string, time: string}} Display date and time strings.
+ */
 function formatEventDate(dateTime) {
   if (!dateTime) return { date: "Date unavailable", time: "Time unavailable" };
   const [date, time] = dateTime.split(" ");

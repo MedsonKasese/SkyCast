@@ -5,6 +5,12 @@ const LEAGUES = {
   "ice-hockey": { id: "4380", label: "NHL", sport: "ice-hockey" },
 };
 
+/**
+ * Convert a TheSportsDB event into the event shape used by the sports feed.
+ * @param {Object} event - Raw provider event, with optional schedule and venue fields.
+ * @param {{label: string, sport: string}} league - League display name and sport key.
+ * @returns {Object} Normalized event with fallback team and venue labels.
+ */
 function normalizeEvent(event, league) {
   return {
     match: `${event.strHomeTeam || "TBD"} vs ${event.strAwayTeam || "TBD"}`,
@@ -16,6 +22,14 @@ function normalizeEvent(event, league) {
   };
 }
 
+/**
+ * Fetch upcoming events for a supported league and send a JSON response.
+ * Unsupported leagues return 400; upstream HTTP errors retain their status;
+ * fetch or parsing failures return 502.
+ * @param {Object} req - Request with a sport key in `query.league`.
+ * @param {Object} res - Serverless response exposing `status()` and `json()`.
+ * @returns {Promise<Object>} The response returned by `res.json()`.
+ */
 export default async function handler(req, res) {
   const league = LEAGUES[req.query.league];
 

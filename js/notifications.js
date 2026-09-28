@@ -143,6 +143,13 @@ export function syncWeatherNotifications(weather) {
   return notifications;
 }
 
+/**
+ * Refresh stored sports alerts using the enabled sports preferences.
+ * Preserve matching alerts' read state and all non-sports notifications,
+ * deduplicate by ID, and attempt to persist the merged list.
+ * @param {Object<string, Object[]>} sportsData - Events grouped by sport key.
+ * @returns {Object[]} The merged notification list.
+ */
 export function syncSportsNotifications(sportsData) {
   const enabledSports = getSettings().sportsUpdates;
   const evaluatedNotifications = evaluateSportsNotifications(sportsData)
