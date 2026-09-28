@@ -8,6 +8,8 @@ applyTheme();
 
 const settings = getSettings();
 form.elements.theme.value = settings.theme;
+form.elements.units.value = settings.units;
+
 form.querySelectorAll("input[name='sportsUpdates']").forEach((input) => {
   input.checked = settings.sportsUpdates.includes(input.value);
 });
@@ -23,6 +25,7 @@ form.addEventListener("submit", (event) => {
   const sportsUpdates = formData.getAll("sportsUpdates");
   const nextSettings = {
     theme: formData.get("theme"),
+    units: formData.get("units"),
     sportsUpdates,
   };
 
@@ -37,6 +40,6 @@ form.addEventListener("submit", (event) => {
     removeDisabledSportsNotifications(sportsUpdates);
 
   status.textContent = notificationsUpdated
-    ? "Settings saved. Your sports feed and alerts now match your choices."
+    ? "Settings saved. Your preferences and sports alerts are updated."
     : "Settings saved, but existing alerts could not be updated.";
 });
