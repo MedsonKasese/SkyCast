@@ -62,3 +62,14 @@ export async function getSports(location) {
     throw error;
   }
 }
+
+export async function getLeagueEvents(league) {
+  const response = await fetch(`/api/leagues?league=${encodeURIComponent(league)}`);
+
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}));
+    throw new Error(data.error || "Unable to fetch league schedule");
+  }
+
+  return response.json();
+}

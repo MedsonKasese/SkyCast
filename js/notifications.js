@@ -1,5 +1,6 @@
 import { evaluateWeatherNotifications } from "./notification-rules.js";
 import { evaluateSportsNotifications } from "./sports-notification-rules.js";
+import { getSettings } from "./settings.js";
 
 const NOTIFICATIONS_STORAGE_KEY = "skycast-notifications";
 
@@ -143,8 +144,11 @@ export function syncWeatherNotifications(weather) {
 }
 
 export function syncSportsNotifications(sportsData) {
-  const evaluatedNotifications =
-    evaluateSportsNotifications(sportsData);
+  const enabledSports = getSettings().sportsUpdates;
+  const evaluatedNotifications = evaluateSportsNotifications(sportsData)
+    .filter((notification) =>
+      enabledSports.includes(notification.sportsEvent.sport),
+    );
 
   const existingNotifications = getStoredNotifications();
 

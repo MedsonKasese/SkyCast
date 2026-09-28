@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SkyCast Settings</title>
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="icon" type="image/x-icon" href="/favicon_io/favicon.ico" />
+    <link rel="stylesheet" href="css/variables.css" />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="app-header-left"><img src="/favicon_io/favicon.ico" alt="SkyCast Logo" /><h1>SkyCast</h1></div>
+      <a class="header-settings-link" href="index.html"><i class="fa-solid fa-cloud-sun" aria-hidden="true"></i> Weather</a>
+    </header>
+    <main><div class="container">
+      <div class="sports-page-top"><a href="index.html" class="sports-back-link"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Back to Weather</a></div>
+      <section class="sports-page-header"><h1>App settings</h1><p>Set the appearance and the sports updates you want to receive.</p></section>
+      <form id="settings-form" class="settings-card weather-card">
+        <fieldset><legend>App theme</legend>
+          <label class="settings-choice"><input type="radio" name="theme" value="system" /> Use device setting</label>
+          <label class="settings-choice"><input type="radio" name="theme" value="dark" /> Dark</label>
+          <label class="settings-choice"><input type="radio" name="theme" value="light" /> Light</label>
+        </fieldset>
+        <fieldset><legend>Sports updates</legend><p class="settings-help">Choose the event types that can appear in your upcoming-event alerts.</p>
+          <div class="settings-grid">
+            <label class="settings-choice"><input type="checkbox" name="sportsUpdates" value="football" /> Football</label>
+            <label class="settings-choice"><input type="checkbox" name="sportsUpdates" value="cricket" /> Cricket</label>
+            <label class="settings-choice"><input type="checkbox" name="sportsUpdates" value="golf" /> Golf</label>
+            <label class="settings-choice"><input type="checkbox" name="sportsUpdates" value="basketball" /> Basketball / NBA</label>
+            <label class="settings-choice"><input type="checkbox" name="sportsUpdates" value="american-football" /> American football / NFL</label>
+            <label class="settings-choice"><input type="checkbox" name="sportsUpdates" value="baseball" /> Baseball / MLB</label>
+            <label class="settings-choice"><input type="checkbox" name="sportsUpdates" value="ice-hockey" /> Ice hockey / NHL</label>
+          </div>
+        </fieldset>
+        <button class="settings-save" type="submit">Save settings</button>
+        <p id="settings-status" class="settings-status" role="status"></p>
+      </form>
+    </div></main>
+    <script type="module" src="js/settings-page.js"></script>
+  </body>
+</html>

@@ -10,6 +10,7 @@ import {
   markAllNotificationsAsRead,
 } from "./notifications.js";
 import { escapeHtml } from "./utils.js";
+import { applyTheme } from "./settings.js";
 
 // Global Variables
 let currentCity = "Mzuzu";
@@ -22,6 +23,8 @@ let isFahrenheit = localStorage.getItem(UNITS_KEY) === "f";
 let favoriteCities = [];
 let weatherRequestController = null;
 let currentWeatherData = null;
+
+applyTheme();
 
 // DOM Elements
 const searchButton = document.getElementById("search-button");

@@ -3,6 +3,10 @@ const SPORT_ICONS = {
     football: "⚽",
     cricket: "🏏",
     golf: "⛳",
+    basketball: "🏀",
+    "american-football": "🏈",
+    baseball: "⚾",
+    "ice-hockey": "🏒",
 };
 
 function createSportsNotificationId(sport, event) {
@@ -15,7 +19,7 @@ function createSportsNotificationId(sport, event) {
 }
 
 function getSportEvents(sportsData) {
-  const sports = ["football", "cricket", "golf"];
+  const sports = Object.keys(sportsData || {});
 
   return sports.flatMap((sport) =>
     (sportsData?.[sport] || []).map((event) => ({
