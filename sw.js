@@ -1,9 +1,10 @@
-const CACHE = "skycast-v3";
+const CACHE = "skycast-v4";
 
 const FILES = [
   "/",
   "/index.html",
   "/sports.html",
+  "/settings.html",
   "/css/base.css",
   "/css/layout.css",
   "/css/variables.css",
@@ -16,6 +17,8 @@ const FILES = [
   "/js/radar.js",
   "/js/sports.js",
   "/js/sports-page.js",
+  "/js/settings.js",
+  "/js/settings-page.js",
   "/js/notifications.js",
   "/js/notification-rules.js",
   "/js/sports-notification-rules.js",
@@ -51,8 +54,7 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   event.respondWith(
     caches.match(event.request)
-     .then((response) => response || 
-     fetch(event.request))
-     .catch(()=> caches.match("/index.html"))
+      .then((response) => response || fetch(event.request))
+      .catch(() => caches.match("/index.html"))
   );
 });
