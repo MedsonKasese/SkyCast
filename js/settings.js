@@ -18,7 +18,9 @@ let systemThemeListenerAttached = false;
 
 /**
  * Read saved preferences, filling missing fields from the defaults.
- * Invalid or unsupported values are replaced with their defaults.
+ * Unsupported themes and units, and non-array sportsUpdates, use defaults;
+ * entries in a saved sportsUpdates array are not validated.
+ * Storage or JSON parsing failures return the defaults.
  * @returns {{theme: string, units: string, sportsUpdates: string[]}}
  */
 export function getSettings() {
@@ -45,8 +47,10 @@ export function getSettings() {
 
 /**
  * Persist the complete settings object and apply the selected theme.
+ * Serialization, storage, and theme application errors return false.
+ * A theme application failure does not undo the saved preferences.
  * @param {{theme: string, units: string, sportsUpdates: string[]}} settings
- * @returns {boolean} True when the settings were persisted successfully.
+ * @returns {boolean} True when both persistence and theme application succeed.
  */
 export function saveSettings(settings) {
   try {
@@ -60,8 +64,9 @@ export function saveSettings(settings) {
 }
 
 /**
- * Apply the selected application theme. System mode also listens for future
- * OS theme changes so the app follows the device automatically.
+ * Apply the selected application theme without saving the preference.
+ * System mode resolves the current OS theme; future OS theme changes are
+ * applied only while the saved theme preference is system.
  * @param {"system"|"light"|"dark"} [theme=getSettings().theme]
  * @returns {void}
  */
