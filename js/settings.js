@@ -2,6 +2,7 @@ export const SETTINGS_KEY = "skycast-settings";
 
 const defaultSettings = {
   theme: "system",
+  units: "c",
   sportsUpdates: [
     "football",
     "cricket",
@@ -13,33 +14,39 @@ const defaultSettings = {
   ],
 };
 
+let systemThemeListenerAttached = false;
+
 /**
  * Read saved preferences, filling missing fields from the defaults.
- * Unreadable storage or invalid JSON falls back to the default settings.
- * @returns {{theme: string, sportsUpdates: string[]}} Theme and enabled sport keys.
+ * Invalid or unsupported values are replaced with their defaults.
+ * @returns {{theme: string, units: string, sportsUpdates: string[]}}
  */
 export function getSettings() {
   try {
-    const stored = JSON.parse(localStorage.getItem(SETTINGS_KEY));
+    const stored = JSON.parse(localStorage.getItem(SETTINGS_KEY)) || {};
 
     return {
       ...defaultSettings,
-      ...(stored || {}),
-      sportsUpdates: Array.isArray(stored?.sportsUpdates)
+      ...stored,
+      theme: ["system", "light", "dark"].includes(stored.theme)
+        ? stored.theme
+        : defaultSettings.theme,
+      units: ["c", "f"].includes(stored.units)
+        ? stored.units
+        : defaultSettings.units,
+      sportsUpdates: Array.isArray(stored.sportsUpdates)
         ? stored.sportsUpdates
         : defaultSettings.sportsUpdates,
     };
   } catch {
-    return defaultSettings;
+    return { ...defaultSettings };
   }
 }
 
 /**
- * Replace the stored preferences and apply the selected theme only after
- * persistence succeeds.
- * A theme application failure returns false without undoing the stored settings.
- * @param {{theme: string, sportsUpdates: string[]}} settings - Preferences to persist.
- * @returns {boolean} True when persistence and theme application both succeed.
+ * Persist the complete settings object and apply the selected theme.
+ * @param {{theme: string, units: string, sportsUpdates: string[]}} settings
+ * @returns {boolean} True when the settings were persisted successfully.
  */
 export function saveSettings(settings) {
   try {
@@ -53,18 +60,35 @@ export function saveSettings(settings) {
 }
 
 /**
- * Set the document theme and color scheme, resolving system preference once.
- * @param {string} [theme=getSettings().theme] - light, dark, or system; defaults to the saved theme.
+ * Apply the selected application theme. System mode also listens for future
+ * OS theme changes so the app follows the device automatically.
+ * @param {"system"|"light"|"dark"} [theme=getSettings().theme]
  * @returns {void}
  */
 export function applyTheme(theme = getSettings().theme) {
   const root = document.documentElement;
-  const resolvedTheme = theme === "system"
-    ? window.matchMedia("(prefers-color-scheme: light)").matches
-      ? "light"
-      : "dark"
-    : theme;
+  const mediaQuery = window.matchMedia("(prefers-color-scheme: light)");
 
-  root.dataset.theme = resolvedTheme;
-  root.style.colorScheme = resolvedTheme;
+  const updateTheme = () => {
+    const resolvedTheme =
+      theme === "system"
+        ? mediaQuery.matches
+          ? "light"
+          : "dark"
+        : theme;
+
+    root.dataset.theme = resolvedTheme;
+    root.style.colorScheme = resolvedTheme;
+  };
+
+  updateTheme();
+
+  if (!systemThemeListenerAttached) {
+    mediaQuery.addEventListener?.("change", () => {
+      if (getSettings().theme === "system") {
+        applyTheme("system");
+      }
+    });
+    systemThemeListenerAttached = true;
+  }
 }
