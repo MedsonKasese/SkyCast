@@ -12,6 +12,7 @@ const defaultSettings = {
     "baseball",
     "ice-hockey",
   ],
+  favoriteTeams: [],
 };
 
 let systemThemeListenerAttached = false;
@@ -19,7 +20,7 @@ let systemThemeListenerAttached = false;
 /**
  * Read saved preferences, filling missing fields from the defaults.
  * Invalid or unsupported values are replaced with their defaults.
- * @returns {{theme: string, units: string, sportsUpdates: string[]}}
+ * @returns {{theme: string, units: string, sportsUpdates: string[], favoriteTeams: string[]}}
  */
 export function getSettings() {
   try {
@@ -37,6 +38,9 @@ export function getSettings() {
       sportsUpdates: Array.isArray(stored.sportsUpdates)
         ? stored.sportsUpdates
         : defaultSettings.sportsUpdates,
+      favoriteTeams: Array.isArray(stored.favoriteTeams)
+        ? stored.favoriteTeams.filter((team) => typeof team === "string")
+        : defaultSettings.favoriteTeams,
     };
   } catch {
     return { ...defaultSettings };
@@ -45,7 +49,7 @@ export function getSettings() {
 
 /**
  * Persist the complete settings object and apply the selected theme.
- * @param {{theme: string, units: string, sportsUpdates: string[]}} settings
+ * @param {{theme: string, units: string, sportsUpdates: string[], favoriteTeams?: string[]}} settings
  * @returns {boolean} True when the settings were persisted successfully.
  */
 export function saveSettings(settings) {
