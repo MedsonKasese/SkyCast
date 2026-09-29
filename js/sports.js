@@ -236,9 +236,11 @@ function displaySportsMessage(message) {
 }
 
 /**
- * Get the display name or league abbreviation for a sport key.
- * @param {string} sport - Internal sport key.
- * @returns {string} The display label, or Sports for an unknown key.
+ * Check whether an event name contains one of the user's favorite team names.
+ * Matching is case-insensitive. An empty favorites list matches no badges.
+ * @param {string} match - Event or match name.
+ * @param {string[]} favoriteTeams - Saved team names.
+ * @returns {boolean} Whether the event includes a favorite team.
  */
 function matchesFavoriteTeam(match, favoriteTeams = []) {
   if (!favoriteTeams.length) return false;
