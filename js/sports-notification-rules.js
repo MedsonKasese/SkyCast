@@ -9,6 +9,16 @@ const SPORT_ICONS = {
   "ice-hockey": "🏒",
 };
 
+const SPORT_NAMES = {
+  football: "Football",
+  cricket: "Cricket",
+  golf: "Golf",
+  basketball: "NBA",
+  "american-football": "NFL",
+  baseball: "MLB",
+  "ice-hockey": "NHL",
+};
+
 function createSportsNotificationId(sport, event) {
   const eventKey = `${sport}-${event.match}-${event.start}`
     .toLowerCase()
@@ -36,16 +46,16 @@ function getSportEvents(sportsData) {
 
 function createSportsNotification(event) {
   const sportIcon = SPORT_ICONS[event.sport] || "🏅";
-  const sportName =
-    event.sport.charAt(0).toUpperCase() +
-    event.sport.slice(1);
+  const sportName = SPORT_NAMES[event.sport] || "Sports";
+  const matchName = event.match || "Upcoming event";
+  const tournamentName = event.tournament || "Scheduled event";
 
   return {
     id: createSportsNotificationId(event.sport, event),
     type: "sports-event",
-    title: `${sportIcon} ${sportName} event coming up`,
-    message: `${event.match} starts soon.`,
-    event: event.tournament || sportName,
+    title: `${sportIcon} ${sportName}: ${matchName}`,
+    message: `${matchName} starts soon.`,
+    event: `${sportName} · ${tournamentName}`,
     read: false,
     createdAt: Date.now(),
     sportsEvent: {
