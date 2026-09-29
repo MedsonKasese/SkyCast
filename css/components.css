@@ -28,7 +28,8 @@ SEARCH FORM
 }
 
 .search-input-wrapper input::placeholder {
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--text-secondary);
+  opacity: 0.8;
 }
 
 .search-icon {
@@ -44,7 +45,7 @@ SEARCH FORM
   border: none;
   border-radius: var(--border-radius);
   background: var(--secondary-color);
-  color: var(--primary-color);
+  color: var(--white);
   padding: var(--spacing-medium);
   cursor: pointer;
   transition: var(--transition);
@@ -949,4 +950,61 @@ footer {
 }
 .footer-bottom p a {
   text-decoration: none;
+}
+
+
+/* Keep controls and supporting text readable in the light theme. */
+:root[data-theme="light"] .search-input-wrapper input::placeholder {
+  color: var(--text-secondary);
+  opacity: 1;
+}
+
+:root[data-theme="light"] .sports-back-link {
+  color: var(--text-primary);
+}
+
+:root[data-theme="light"] .sports-see-all {
+  border-color: var(--border-color);
+}
+
+:root[data-theme="light"] .settings-card,
+:root[data-theme="light"] .notifications-panel {
+  color: var(--text-primary);
+}
+
+:root[data-theme="light"] .mark-all-read-button {
+  color: var(--text-primary);
+}
+
+:root[data-theme="light"] .notification-item {
+  background: var(--surface-color);
+  border-color: var(--border-color);
+}
+
+:root[data-theme="light"] .notification-item:hover {
+  background: var(--light-bg);
+}
+
+:root[data-theme="light"] footer {
+  color: var(--text-primary);
+}
+
+:root[data-theme="light"] .footer-section h3,
+:root[data-theme="light"] .footer-section h4 {
+  color: var(--text-primary);
+}
+
+:root[data-theme="light"] .footer-section p,
+:root[data-theme="light"] .footer-section ul li a,
+:root[data-theme="light"] .footer-bottom {
+  color: var(--text-secondary);
+}
+
+:root[data-theme="light"] .footer-socials a {
+  background-color: var(--secondary-color);
+  color: var(--white);
+}
+
+:root[data-theme="light"] .footer-bottom {
+  border-top-color: var(--border-color);
 }
