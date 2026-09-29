@@ -14,8 +14,14 @@ form.querySelectorAll("input[name='sportsUpdates']").forEach((input) => {
   input.checked = settings.sportsUpdates.includes(input.value);
 });
 
-form.elements.theme.addEventListener("change", (event) => {
-  applyTheme(event.target.value);
+// A radio group is a RadioNodeList, not an individual input. Attach the
+// change listener to each radio so initialization continues and the Save
+// settings submit handler is registered.
+form.querySelectorAll("input[name='theme']").forEach((input) => {
+  input.addEventListener("change", (event) => {
+    applyTheme(event.target.value);
+    status.textContent = "Theme preview updated. Save settings to keep this choice.";
+  });
 });
 
 form.addEventListener("submit", (event) => {
