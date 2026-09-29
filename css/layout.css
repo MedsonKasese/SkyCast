@@ -220,3 +220,24 @@ container
   white-space: nowrap;
   cursor: pointer;
 }
+
+
+/* Theme-aware favorites styles: avoid white-on-light text in light mode. */
+:root[data-theme="light"] .favorites-header h3 {
+  color: var(--text-primary);
+}
+
+:root[data-theme="light"] .favorite-chip {
+  background: var(--surface-color);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+:root[data-theme="light"] #add-favorite-btn {
+  color: var(--white);
+  border-color: transparent;
+}
+
+:root[data-theme="light"] .notifications-panel {
+  border-color: var(--border-color);
+}
