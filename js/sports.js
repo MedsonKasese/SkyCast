@@ -1,7 +1,7 @@
 import { getLeagueEvents, getSports } from "./api.js";
 import { escapeHtml } from "./utils.js";
 import { syncSportsNotifications } from "./notifications.js";
-import { applyTheme } from "./settings.js";
+import { applyTheme, getSettings } from "./settings.js";
 
 const LEAGUE_SPORTS = ["basketball", "american-football", "baseball", "ice-hockey"];
 let sportsData = { football: [], cricket: [], golf: [] };
@@ -178,9 +178,15 @@ function getFilteredEvents() {
  */
 function createSportsCard(event) {
   const { date, time } = formatEventDate(event.start);
+  const favoriteTeams = getSettings().favoriteTeams || [];
+  const isFavoriteMatch = matchesFavoriteTeam(event.match, favoriteTeams);
+  const favoriteBadge = isFavoriteMatch && favoriteTeams.length
+    ? '<span class="sports-favorite-badge"><i class="fa-solid fa-star" aria-hidden="true"></i> Favorite team</span>'
+    : "";
 
-  return `<article class="sports-card">
+  return `<article class="sports-card ${favoriteBadge ? "sports-card-favorite" : ""}">
     <div class="sports-card-header"><span class="sports-type">${formatSportName(event.sport)}</span><span class="sports-tournament">${escapeHtml(event.tournament || "League event")}</span></div>
+    ${favoriteBadge}
     <h3 class="sports-match">${escapeHtml(event.match || "Match to be confirmed")}</h3>
     <div class="sports-meta"><span><i class="fa-regular fa-calendar-days" aria-hidden="true"></i>${date}</span><span><i class="fa-regular fa-clock" aria-hidden="true"></i>${time}</span></div>
     <div class="sports-location"><span aria-hidden="true">📍</span><span>${escapeHtml(event.stadium || "Venue to be confirmed")}</span></div>
@@ -234,6 +240,14 @@ function displaySportsMessage(message) {
  * @param {string} sport - Internal sport key.
  * @returns {string} The display label, or Sports for an unknown key.
  */
+function matchesFavoriteTeam(match, favoriteTeams = []) {
+  if (!favoriteTeams.length) return false;
+  const normalizedMatch = String(match || "").toLocaleLowerCase();
+  return favoriteTeams.some((team) =>
+    normalizedMatch.includes(String(team).toLocaleLowerCase()),
+  );
+}
+
 function formatSportName(sport) {
   return {
     football: "Football",
