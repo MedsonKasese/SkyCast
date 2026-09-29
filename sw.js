@@ -1,4 +1,4 @@
-const CACHE = "skycast-v5";
+const CACHE = "skycast-v6";
 
 const FILES = [
   "/",
