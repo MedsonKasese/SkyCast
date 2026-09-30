@@ -1,4 +1,4 @@
-const CACHE = "skycast-v7";
+const CACHE = "skycast-v8";
 
 const FILES = [
   "/",
@@ -52,9 +52,41 @@ self.addEventListener("activate", (event) => {
 });
 
 self.addEventListener("fetch", (event) => {
-  event.respondWith(
-    caches.match(event.request)
-      .then((response) => response || fetch(event.request))
-      .catch(() => caches.match("/index.html"))
-  );
+  const request = event.request;
+  const url = new URL(request.url);
+
+  // API responses must stay network-only: never substitute the app shell for JSON.
+  if (url.origin === self.location.origin && url.pathname.startsWith("/api/")) {
+    event.respondWith(fetch(request));
+    return;
+  }
+
+  // Navigation is network-first, with a cached page as the offline fallback.
+  if (request.mode === "navigate") {
+    event.respondWith(
+      fetch(request)
+        .then((response) => {
+          if (response.ok) {
+            const copy = response.clone();
+            caches.open(CACHE).then((cache) => cache.put(request, copy));
+          }
+          return response;
+        })
+        .catch(async () => (await caches.match(request)) || (await caches.match("/index.html")),
+    );
+    return;
+  }
+
+  // For static same-origin assets, prefer the versioned cache and fetch on a miss.
+  if (url.origin === self.location.origin && request.method === "GET") {
+    event.respondWith(
+      caches.match(request).then((cached) => cached || fetch(request).then((response) => {
+        if (response.ok) {
+          const copy = response.clone();
+          caches.open(CACHE).then((cache) => cache.put(request, copy));
+        }
+        return response;
+      })),
+    );
+  }
 });
