@@ -155,9 +155,13 @@ export function syncWeatherNotifications(weather) {
  */
 export function syncSportsNotifications(sportsData) {
   const enabledSports = getSettings().sportsUpdates;
+  const favoriteTeams = getSettings().favoriteTeams || [];
   const evaluatedNotifications = evaluateSportsNotifications(sportsData)
     .filter((notification) =>
       enabledSports.includes(notification.sportsEvent.sport),
+    )
+    .filter((notification) =>
+      matchesFavoriteTeam(notification.sportsEvent?.match, favoriteTeams),
     );
 
   const existingNotifications = getStoredNotifications();
@@ -208,17 +212,26 @@ export function syncSportsNotifications(sportsData) {
  * This is called immediately after settings are saved so disabled sports
  * disappear from the notification center without waiting for a sports refresh.
  * @param {string[]} enabledSports - Sport keys currently enabled in settings.
+ * @param {string[]} [favoriteTeams=[]] - Optional team names to keep alerts for.
  * @returns {boolean} True when the filtered list was persisted successfully.
  */
-export function removeDisabledSportsNotifications(enabledSports) {
+export function removeDisabledSportsNotifications(enabledSports, favoriteTeams = []) {
   const enabled = new Set(enabledSports);
-  const notifications = getStoredNotifications().filter(
-    (notification) =>
-      notification.type !== "sports-event" ||
-      enabled.has(notification.sportsEvent?.sport),
-  );
+  const notifications = getStoredNotifications().filter((notification) => {
+    if (notification.type !== "sports-event") return true;
+    if (!enabled.has(notification.sportsEvent?.sport)) return false;
+    return matchesFavoriteTeam(notification.sportsEvent?.match, favoriteTeams);
+  });
 
   return saveNotifications(notifications);
+}
+
+function matchesFavoriteTeam(match, favoriteTeams = []) {
+  if (!favoriteTeams.length) return true;
+  const normalizedMatch = String(match || "").toLocaleLowerCase();
+  return favoriteTeams.some((team) =>
+    normalizedMatch.includes(String(team).toLocaleLowerCase()),
+  );
 }
 
 export function getNotifications() {

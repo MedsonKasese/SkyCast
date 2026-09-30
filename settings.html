@@ -36,6 +36,14 @@
           </div>
         </fieldset>
 
+        <fieldset>
+          <legend>Favorite teams</legend>
+          <p class="settings-help">Enter team names separated by commas, for example: Arsenal, Manchester United. When you add favorites, sports alerts are limited to upcoming matches whose names include one of your teams. Leave this empty to receive alerts for all enabled sports.</p>
+          <label class="settings-choice" for="favorite-teams">Teams to follow</label>
+          <textarea id="favorite-teams" name="favoriteTeams" rows="3" placeholder="Arsenal, Manchester United" aria-describedby="favorite-teams-help"></textarea>
+          <p id="favorite-teams-help" class="settings-help">Team names are matched against the event names supplied by the sports schedule.</p>
+        </fieldset>
+
         <fieldset><legend>Sports updates</legend><p class="settings-help">Choose the event types that can appear in your upcoming-event alerts.</p>
           <div class="settings-grid">
             <label class="settings-choice"><input type="checkbox" name="sportsUpdates" value="football" /> Football</label>

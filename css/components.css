@@ -1008,3 +1008,47 @@ footer {
 :root[data-theme="light"] .footer-bottom {
   border-top-color: var(--border-color);
 }
+
+
+/* Favorite team settings and sports feed indicators. */
+#favorite-teams {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin-top: 0.35rem;
+  padding: 0.8rem 0.9rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-small);
+  background: var(--surface-color);
+  color: var(--text-primary);
+  font: inherit;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+#favorite-teams:focus-visible {
+  outline: 2px solid var(--secondary-color);
+  outline-offset: 2px;
+}
+
+.sports-favorite-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0 0 var(--spacing-small);
+  padding: 0.25rem 0.55rem;
+  border-radius: 999px;
+  background: rgba(245, 158, 11, 0.14);
+  color: #b77900;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+:root[data-theme="dark"] .sports-favorite-badge {
+  color: #fbbf24;
+}
+
+.sports-card-favorite {
+  border-color: rgba(245, 158, 11, 0.65);
+}
