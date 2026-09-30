@@ -77,7 +77,7 @@ function createSportsNotification(event) {
  * @returns {Object[]} Alerts with event details and creation times in epoch
  * milliseconds; an empty list when no events qualify. Does not persist alerts.
  */
-export function evaluateSportsNotifications(sportsData) {
+export function evaluateSportsNotifications(sportsData, windowMs = SPORTS_NOTIFICATION_WINDOW) {
   const now = Date.now();
 
   return getSportEvents(sportsData)
@@ -96,7 +96,7 @@ export function evaluateSportsNotifications(sportsData) {
 
       return (
         timeUntilStart > 0 &&
-        timeUntilStart <= SPORTS_NOTIFICATION_WINDOW
+        timeUntilStart <= windowMs
       );
     })
     .map((event) => createSportsNotification(event));
