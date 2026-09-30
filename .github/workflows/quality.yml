@@ -1,0 +1,35 @@
+name: SkyCast quality checks
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - "feat/**"
+      - "fix/**"
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Automated tests and syntax checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check JavaScript syntax
+        run: |
+          node --experimental-default-type=module --check js/main.js
+          node --experimental-default-type=module --check js/settings.js
+          node --experimental-default-type=module --check js/settings-page.js
+          node --experimental-default-type=module --check js/notifications.js
+          node --experimental-default-type=module --check js/sports-notification-rules.js
+      - name: Run automated regression tests
+        run: node --experimental-default-type=module --test tests/*.test.mjs

@@ -154,9 +154,13 @@ export function syncWeatherNotifications(weather) {
  * @returns {Object[]} The merged notification list, even if persistence fails.
  */
 export function syncSportsNotifications(sportsData) {
-  const enabledSports = getSettings().sportsUpdates;
-  const favoriteTeams = getSettings().favoriteTeams || [];
-  const evaluatedNotifications = evaluateSportsNotifications(sportsData)
+  const settings = getSettings();
+  const enabledSports = settings.sportsUpdates;
+  const favoriteTeams = settings.favoriteTeams || [];
+  const evaluatedNotifications = evaluateSportsNotifications(
+    sportsData,
+    getAlertWindowMs(settings.alertTiming),
+  )
     .filter((notification) =>
       enabledSports.includes(notification.sportsEvent.sport),
     )
@@ -215,15 +219,24 @@ export function syncSportsNotifications(sportsData) {
  * @param {string[]} [favoriteTeams=[]] - Optional team names to keep alerts for.
  * @returns {boolean} True when the filtered list was persisted successfully.
  */
-export function removeDisabledSportsNotifications(enabledSports, favoriteTeams = []) {
+export function removeDisabledSportsNotifications(enabledSports, favoriteTeams = [], alertTiming = "24h") {
   const enabled = new Set(enabledSports);
+  const maxTimeUntilStart = getAlertWindowMs(alertTiming);
   const notifications = getStoredNotifications().filter((notification) => {
     if (notification.type !== "sports-event") return true;
     if (!enabled.has(notification.sportsEvent?.sport)) return false;
-    return matchesFavoriteTeam(notification.sportsEvent?.match, favoriteTeams);
+    if (!matchesFavoriteTeam(notification.sportsEvent?.match, favoriteTeams)) return false;
+    const startsAt = new Date(notification.sportsEvent?.start).getTime();
+    const timeUntilStart = startsAt - Date.now();
+    return Number.isFinite(startsAt) && timeUntilStart > 0 && timeUntilStart <= maxTimeUntilStart;
   });
 
   return saveNotifications(notifications);
+}
+
+function getAlertWindowMs(alertTiming) {
+  const windows = { "15m": 15 * 60 * 1000, "1h": 60 * 60 * 1000, "6h": 6 * 60 * 60 * 1000, "24h": 24 * 60 * 60 * 1000 };
+  return windows[alertTiming] || windows["24h"];
 }
 
 function matchesFavoriteTeam(match, favoriteTeams = []) {

@@ -3,6 +3,7 @@ export const SETTINGS_KEY = "skycast-settings";
 const defaultSettings = {
   theme: "system",
   units: "c",
+  alertTiming: "24h",
   sportsUpdates: [
     "football",
     "cricket",
@@ -20,7 +21,7 @@ let systemThemeListenerAttached = false;
 /**
  * Read saved preferences, filling missing fields from the defaults.
  * Invalid or unsupported values are replaced with their defaults.
- * @returns {{theme: string, units: string, sportsUpdates: string[], favoriteTeams: string[]}}
+ * @returns {{theme: string, units: string, alertTiming: string, sportsUpdates: string[], favoriteTeams: string[]}}
  */
 export function getSettings() {
   try {
@@ -35,6 +36,9 @@ export function getSettings() {
       units: ["c", "f"].includes(stored.units)
         ? stored.units
         : defaultSettings.units,
+      alertTiming: ["15m", "1h", "6h", "24h"].includes(stored.alertTiming)
+        ? stored.alertTiming
+        : defaultSettings.alertTiming,
       sportsUpdates: Array.isArray(stored.sportsUpdates)
         ? stored.sportsUpdates
         : defaultSettings.sportsUpdates,
@@ -49,7 +53,7 @@ export function getSettings() {
 
 /**
  * Persist the complete settings object and apply the selected theme.
- * @param {{theme: string, units: string, sportsUpdates: string[], favoriteTeams?: string[]}} settings
+ * @param {{theme: string, units: string, alertTiming?: string, sportsUpdates: string[], favoriteTeams?: string[]}} settings
  * @returns {boolean} True when the settings were persisted successfully.
  */
 export function saveSettings(settings) {

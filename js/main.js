@@ -16,6 +16,7 @@ import { applyTheme, getSettings } from "./settings.js";
 let currentCity = "Mzuzu";
 const STORAGE_KEY = "skycast-last-city";
 const WEATHER_CACHE_KEY = "skycast-cached-weather";
+const WEATHER_CACHE_TIME_KEY = "skycast-weather-cache-time";
 const FAVORITES_KEY = "favoriteCities";
 let isFahrenheit = getSettings().units === "f";
 let favoriteCities = [];
@@ -32,6 +33,7 @@ const currentLocationButton = document.getElementById(
   "current-location-button",
 );
 const errorMessage = document.getElementById("error-message");
+const connectionStatus = document.getElementById("connection-status");
 const favoritesList = document.getElementById("favorites-list");
 const addFavoriteButton = document.getElementById("add-favorite-btn");
 const radarLocationButton = document.getElementById(
@@ -91,6 +93,11 @@ if (radarLocationButton) {
   radarLocationButton.addEventListener("click", centerRadarOnLocation);
 }
 
+// Keep connectivity state visible without hiding the last usable forecast.
+window.addEventListener("online", updateConnectionStatus);
+window.addEventListener("offline", updateConnectionStatus);
+updateConnectionStatus();
+
 // Initialize App
 init();
 
@@ -114,9 +121,9 @@ async function init() {
       currentWeatherData = cachedWeather;
       displayWeather(cachedWeather, isFahrenheit);
 
-      // Show message after UI update
+      // Keep the forecast visible and explain when its cached data was saved.
       requestAnimationFrame(() => {
-        showError("You're offline. Showing the last saved weather data.");
+        showOfflineWeatherMessage();
       });
     } else {
       showError(
@@ -230,7 +237,7 @@ async function handleSearch(event) {
 
         // Show message after UI update
         requestAnimationFrame(() => {
-          showError("You're offline. Showing the last saved weather data.");
+          showOfflineWeatherMessage();
         });
       } else {
         showError("No internet connection and no cached weather available.");
@@ -358,7 +365,38 @@ function hideError() {
 
 // SAVE WEATHER TO CACHE
 function saveWeatherToCache(weather) {
-  localStorage.setItem(WEATHER_CACHE_KEY, JSON.stringify(weather));
+  try {
+    localStorage.setItem(WEATHER_CACHE_KEY, JSON.stringify(weather));
+    localStorage.setItem(WEATHER_CACHE_TIME_KEY, String(Date.now()));
+  } catch (error) {
+    console.warn("Weather cache could not be saved:", error);
+  }
+}
+
+function updateConnectionStatus() {
+  if (!connectionStatus) return;
+  if (!navigator.onLine) {
+    connectionStatus.hidden = false;
+    connectionStatus.textContent = "You're offline. SkyCast will show saved weather when available.";
+    connectionStatus.dataset.state = "offline";
+    return;
+  }
+  connectionStatus.hidden = false;
+  connectionStatus.textContent = "You're back online. Refresh weather to get the latest conditions.";
+  connectionStatus.dataset.state = "online";
+  window.setTimeout(() => {
+    if (navigator.onLine && connectionStatus.dataset.state === "online") {
+      connectionStatus.hidden = true;
+    }
+  }, 5000);
+}
+
+function showOfflineWeatherMessage() {
+  const cachedAt = Number(localStorage.getItem(WEATHER_CACHE_TIME_KEY));
+  const lastUpdated = cachedAt
+    ? new Date(cachedAt).toLocaleString()
+    : "an unknown time";
+  showError(`You're offline. Showing saved weather from ${lastUpdated}. This may be out of date.`);
 }
 
 // GET WEATHER FROM CACHE

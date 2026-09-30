@@ -37,6 +37,18 @@
         </fieldset>
 
         <fieldset>
+          <legend>Sports alert timing</legend>
+          <p class="settings-help">Choose how far ahead of an event SkyCast should create a sports notification.</p>
+          <label class="settings-choice" for="alert-timing">Notify me</label>
+          <select id="alert-timing" name="alertTiming">
+            <option value="15m">15 minutes before</option>
+            <option value="1h">1 hour before</option>
+            <option value="6h">6 hours before</option>
+            <option value="24h">24 hours before</option>
+          </select>
+        </fieldset>
+
+        <fieldset>
           <legend>Favorite teams</legend>
           <p class="settings-help">Enter team names separated by commas, for example: Arsenal, Manchester United. When you add favorites, sports alerts are limited to upcoming matches whose names include one of your teams. Leave this empty to receive alerts for all enabled sports.</p>
           <label class="settings-choice" for="favorite-teams">Teams to follow</label>

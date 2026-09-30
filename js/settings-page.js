@@ -9,6 +9,7 @@ applyTheme();
 const settings = getSettings();
 form.elements.theme.value = settings.theme;
 form.elements.units.value = settings.units;
+form.elements.alertTiming.value = settings.alertTiming;
 form.elements.favoriteTeams.value = settings.favoriteTeams.join(", ");
 
 form.querySelectorAll("input[name='sportsUpdates']").forEach((input) => {
@@ -42,6 +43,7 @@ form.addEventListener("submit", (event) => {
   const nextSettings = {
     theme: formData.get("theme"),
     units: formData.get("units"),
+    alertTiming: formData.get("alertTiming"),
     sportsUpdates,
     favoriteTeams,
   };
@@ -54,7 +56,7 @@ form.addEventListener("submit", (event) => {
   }
 
   const notificationsUpdated =
-    removeDisabledSportsNotifications(sportsUpdates, favoriteTeams);
+    removeDisabledSportsNotifications(sportsUpdates, favoriteTeams, nextSettings.alertTiming);
 
   status.textContent = notificationsUpdated
     ? "Settings saved. Your preferences and sports alerts are updated."
