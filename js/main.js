@@ -1,6 +1,7 @@
 // Imports
 import { getWeather } from "./api.js";
 import { displayWeather } from "./ui.js";
+import { setWeatherSkeletons } from "./skeletons.js";
 import { centerRadarOnLocation } from "./radar.js";
 import { loadSports } from "./sports.js";
 import {
@@ -163,7 +164,14 @@ async function loadWeather(cityName) {
   const controller = new AbortController();
   weatherRequestController = controller;
 
-  const weather = await getWeather(cityName, controller.signal);
+  setWeatherSkeletons(true);
+  let weather;
+  try {
+    weather = await getWeather(cityName, controller.signal);
+  } catch (error) {
+    if (weatherRequestController === controller) setWeatherSkeletons(false);
+    throw error;
+  }
   // ignore this response if another request has started
   if (weatherRequestController !== controller) {
     return null;
@@ -171,6 +179,7 @@ async function loadWeather(cityName) {
 
   currentWeatherData = weather;
   displayWeather(weather, isFahrenheit);
+  setWeatherSkeletons(false);
 
   if (weather.location?.name) {
     await loadSports(weather.location.name);

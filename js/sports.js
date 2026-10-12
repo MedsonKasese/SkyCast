@@ -1,4 +1,5 @@
 import { getLeagueEvents, getSports } from "./api.js";
+import { showSportsSkeleton } from "./skeletons.js";
 import { escapeHtml } from "./utils.js";
 import { syncSportsNotifications } from "./notifications.js";
 import { applyTheme, getSettings } from "./settings.js";
@@ -34,7 +35,7 @@ export async function loadSports(location) {
     return displaySportsMessage("Unable to load sports without a location.");
   }
 
-  displaySportsMessage("Loading sports events...");
+  showSportsSkeleton();
 
   try {
     const data = await getSports(location);
@@ -81,7 +82,7 @@ async function loadLeagueSchedule(sport) {
 
   const requestId = (leagueRequestIds.get(sport) || 0) + 1;
   leagueRequestIds.set(sport, requestId);
-  displaySportsMessage(`Loading ${formatSportName(sport)} schedule...`);
+  showSportsSkeleton();
 
   try {
     const data = await getLeagueEvents(sport);
@@ -147,6 +148,7 @@ function renderSports() {
     return displaySportsMessage("No upcoming sports events found.");
   }
 
+  sportsContainer.setAttribute("aria-busy", "false");
   sportsContainer.innerHTML = visibleEvents.map(createSportsCard).join("");
 }
 
@@ -230,6 +232,7 @@ function setupSportsFilters() {
 function displaySportsMessage(message) {
   const sportsContainer = document.getElementById("sports-container");
   if (sportsContainer) {
+    sportsContainer.setAttribute("aria-busy", "false");
     sportsContainer.innerHTML =
       `<p class="sports-message">${escapeHtml(message)}</p>`;
   }

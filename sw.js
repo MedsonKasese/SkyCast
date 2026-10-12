@@ -1,4 +1,4 @@
-const CACHE = "skycast-v7";
+const CACHE = "skycast-v8";
 
 const FILES = [
   "/",
@@ -13,6 +13,7 @@ const FILES = [
 
   "/js/main.js",
   "/js/ui.js",
+  "/js/skeletons.js",
   "/js/api.js",
   "/js/radar.js",
   "/js/sports.js",
