@@ -1052,3 +1052,15 @@ footer {
 .sports-card-favorite {
   border-color: rgba(245, 158, 11, 0.65);
 }
+
+/* API loading skeletons: theme-friendly, layout-stable and motion accessible. */
+.sky-skeleton { display:block; background:rgba(128,128,128,.22); border-radius:8px; animation:sky-pulse 1.35s ease-in-out infinite; }
+.sky-skeleton-line { height:1em; margin: .65em 0; }
+.sky-skeleton-icon { width:52px; height:52px; margin:12px auto; border-radius:50%; }
+.sky-skeleton-card { min-height:145px; }
+.sky-is-loading .weather-info > *, .sky-is-loading .detail-value, .sky-is-loading .sun-times-grid p { visibility:hidden; }
+.sky-is-loading .weather-info, .sky-is-loading .detail-card, .sky-is-loading .sun-time-card { position:relative; }
+.sky-is-loading .weather-info::after, .sky-is-loading .detail-card::after, .sky-is-loading .sun-time-card::after { content:""; position:absolute; inset:18% 12%; border-radius:9px; background:linear-gradient(90deg,rgba(128,128,128,.13),rgba(128,128,128,.28),rgba(128,128,128,.13)); background-size:200% 100%; animation:sky-shimmer 1.5s linear infinite; pointer-events:none; }
+@keyframes sky-pulse { 50% { opacity:.45; } }
+@keyframes sky-shimmer { to { background-position-x:-200%; } }
+@media (prefers-reduced-motion:reduce) { .sky-skeleton, .sky-is-loading .weather-info::after, .sky-is-loading .detail-card::after, .sky-is-loading .sun-time-card::after { animation:none; } }
