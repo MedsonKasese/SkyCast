@@ -1,11 +1,14 @@
-// Shared utility functions for SkyCast
-
-// Escapes text before it is inserted via innerHTML, so data coming from
-// APIs or user input can never be interpreted as markup.
+// Safe in text nodes AND quoted HTML attributes.
 export function escapeHtml(value) {
-  const element = document.createElement("div");
-
-  element.textContent = value ?? "";
-
-  return element.innerHTML;
+  return String(value ?? "").replace(
+    /[&<>"']/g,
+    (character) =>
+      ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;",
+      })[character],
+  );
 }

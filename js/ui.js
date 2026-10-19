@@ -11,7 +11,7 @@ export function displayLocation(weather) {
 export function displayDate(weather) {
   const dateElement = document.getElementById("current-date");
 
-  const localDate = new Date(weather.location.localtime);
+  const localDate = new Date(weather.location.localtime.replace(" ", "T"));
   const formattedDate = localDate.toLocaleDateString("en-US", {
     weekday: "long",
     year: "numeric",
@@ -32,6 +32,8 @@ export function displayTemperature(weather, isFahrenheit = false) {
 export function displayWeatherIcon(weather) {
   const weatherIcon = document.getElementById("weather-icon");
   weatherIcon.src = "https:" + weather.current.condition.icon;
+  weatherIcon.alt = "";
+  weatherIcon.hidden = false;
 }
 
 export function displayCondition(weather) {
@@ -46,7 +48,9 @@ export function displayHumidity(weather) {
 
 export function displayWindSpeed(weather, isFahrenheit = false) {
   const windSpeed = document.getElementById("wind-speed");
-  const value = isFahrenheit ? weather.current.wind_mph : weather.current.wind_kph;
+  const value = isFahrenheit
+    ? weather.current.wind_mph
+    : weather.current.wind_kph;
 
   windSpeed.textContent = `${Math.round(value)} ${isFahrenheit ? "mph" : "km/h"}`;
 }
@@ -72,16 +76,13 @@ export function displaySunTimes(weather) {
 
   const astro = weather.forecast?.forecastday?.[0]?.astro;
 
-  if (!sunrise || !sunset || !astro) {
-    return;
-  }
-
-  sunrise.textContent = astro.sunrise;
-  sunset.textContent = astro.sunset;
+  if (!sunrise || !sunset) return;
+  sunrise.textContent = astro?.sunrise || "Unavailable";
+  sunset.textContent = astro?.sunset || "Unavailable";
 }
 // WEATHER ALERTS LOGIC
 export function displayWeatherAlerts(weather) {
-	syncWeatherNotifications(weather);
+  syncWeatherNotifications(weather);
   const container = document.getElementById("weather-alerts-container");
 
   if (!container) {
@@ -95,7 +96,7 @@ export function displayWeatherAlerts(weather) {
     container.innerHTML = `
       <div class="weather-alert no-alerts">
         <span class="no-alerts-icon">🛡️</span>
-        <p>No active weather alerts for ${cityName}.</p>
+        <p>No active weather alerts for ${escapeHtml(cityName)}.</p>
       </div>
     `;
 
@@ -126,7 +127,6 @@ export function displayWeatherAlerts(weather) {
     )
     .join("");
 }
-
 
 function applyWeatherTheme(weather) {
   const body = document.body;
@@ -178,7 +178,7 @@ export function displayForecast(weather, isFahrenheit = false) {
     // Skip today (index 0)
     //	if (index === 0) return;
 
-    const date = new Date(day.date);
+    const date = new Date(`${day.date}T12:00:00`);
     const dayName = date.toLocaleDateString("en-US", {
       weekday: "short",
     });
@@ -193,7 +193,7 @@ export function displayForecast(weather, isFahrenheit = false) {
       <div class="forecast-day">${dayName}</div>
       <img
         class="forecast-icon"
-        src="https:${day.day.condition.icon}"
+        src="https:${escapeHtml(day.day.condition.icon)}"
         alt="${escapeHtml(day.day.condition.text)}"
       />
       <div class="forecast-temp">
@@ -204,7 +204,7 @@ export function displayForecast(weather, isFahrenheit = false) {
       </div>
 			
 			  <div class="forecast-rain">
-      🌧 ${day.day.daily_chance_of_rain}%
+      🌧 ${escapeHtml(day.day.daily_chance_of_rain)}%
      </div>
     `;
 
@@ -235,10 +235,13 @@ export function displayHourlyForecast(weather, isFahrenheit = false) {
     .slice(0, 7);
 
   next24Hours.forEach((hour) => {
-    const time = new Date(hour.time).toLocaleTimeString("en-US", {
-      hour: "numeric",
-      hour12: true,
-    });
+    const time = new Date(hour.time.replace(" ", "T")).toLocaleTimeString(
+      "en-US",
+      {
+        hour: "numeric",
+        hour12: true,
+      },
+    );
 
     const temp = isFahrenheit ? hour.temp_f : hour.temp_c;
 
@@ -249,7 +252,7 @@ export function displayHourlyForecast(weather, isFahrenheit = false) {
             <div class="forecast-day">${time}</div>
             <img
                 class="forecast-icon"
-                src="https:${hour.condition.icon}"
+                src="https:${escapeHtml(hour.condition.icon)}"
                 alt="${escapeHtml(hour.condition.text)}"
             />
             <div class="forecast-temp">
@@ -279,5 +282,15 @@ export function displayWeather(weather, isFahrenheit = false) {
   displayFeelsLike(weather, isFahrenheit);
   displaySunTimes(weather);
   displayWeatherAlerts(weather);
-  initializeRadar(weather);
+  try {
+    initializeRadar(weather);
+  } catch (error) {
+    console.error("Radar initialization failed:", error);
+    const radarLocation = document.getElementById("radar-location");
+    if (radarLocation)
+      radarLocation.textContent =
+        "Radar unavailable. Weather data is still up to date.";
+    const radarStatus = document.querySelector(".radar-status");
+    if (radarStatus) radarStatus.textContent = "Radar unavailable";
+  }
 }

@@ -1,38 +1,42 @@
 export default async function handler(req, res) {
-	try {
-		const { q } = req.query;
+  try {
+    if (req.method !== "GET") {
+      return res.status(405).json({ error: "Method not allowed" });
+    }
 
-		if (!q) {
-			return res.status(400).json({
-				error: "Missing query parameter q",
-			});
-		}
+    const q = req.query?.q;
 
-		const API_KEY = process.env.WEATHER_API_KEY;
+    if (q === undefined || q === null || q === "") {
+      return res.status(400).json({
+        error: "Missing query parameter q",
+      });
+    }
+    if (typeof q !== "string" || !q.trim() || q.trim().length > 200) {
+      return res.status(400).json({ error: "Invalid query parameter q" });
+    }
+    const location = q.trim();
 
-		if (!API_KEY) {
-			return res.status(500).json({
-				error: "WEATHER_API_KEY is not configured",
-			});
-		}
+    const API_KEY = process.env.WEATHER_API_KEY;
 
-		const url = `https://api.weatherapi.com/v1/forecast.json?key=${API_KEY}&q=${encodeURIComponent(q)}&days=3&aqi=no&alerts=yes`;
+    if (!API_KEY) {
+      return res.status(500).json({
+        error: "WEATHER_API_KEY is not configured",
+      });
+    }
 
-		const response = await fetch(url);
-		const data = await response.json();
+    const url = `https://api.weatherapi.com/v1/forecast.json?key=${API_KEY}&q=${encodeURIComponent(location)}&days=3&aqi=no&alerts=yes`;
 
-		if (!response.ok) {
-			return res.status(response.status).json({
-				error: data.error?.message || "Weather API error",
-			});
-		}
+    const response = await fetch(url, { signal: AbortSignal.timeout(10000) });
+    const data = await response.json();
 
-		return res.status(200).json(data);
-	} catch (error) {
-		console.error("Function crashed:", error);
+    if (!response.ok) {
+      return res.status(502).json({ error: "Weather service unavailable" });
+    }
 
-		return res.status(500).json({
-			error: error.message || "Internal server error",
-		});
-	}
+    return res.status(200).json(data);
+  } catch {
+    return res.status(502).json({
+      error: "Weather service unavailable",
+    });
+  }
 }

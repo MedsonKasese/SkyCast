@@ -1,15 +1,35 @@
 import { getLeagueEvents, getSports } from "./api.js";
-import { showSportsSkeleton } from "./skeletons.js";
+import { showSportsSkeleton, setSportsLoading } from "./skeletons.js";
 import { escapeHtml } from "./utils.js";
 import { syncSportsNotifications } from "./notifications.js";
 import { applyTheme, getSettings } from "./settings.js";
 
-const LEAGUE_SPORTS = ["basketball", "american-football", "baseball", "ice-hockey"];
+const LEAGUE_SPORTS = [
+  "basketball",
+  "american-football",
+  "baseball",
+  "ice-hockey",
+];
 let sportsData = { football: [], cricket: [], golf: [] };
 let activeSport = "all";
 let sportsFiltersInitialized = false;
 let currentSportsRequestId = 0;
-const leagueRequestIds = new Map();
+const leagueRequests = new Map();
+let localSportsPending = false;
+let weatherPending = false;
+const feedErrors = new Map();
+export function invalidateSportsRequest(waitingForWeather = true) {
+  weatherPending = waitingForWeather;
+  currentSportsRequestId++;
+  localSportsPending = false;
+}
+function updateSportsLoading() {
+  const leaguePending =
+    activeSport === "all"
+      ? leagueRequests.size > 0
+      : leagueRequests.has(activeSport);
+  setSportsLoading(weatherPending || localSportsPending || leaguePending);
+}
 
 /**
  * Load local events, initialize filters, sync alerts, and render the sports feed.
@@ -22,6 +42,7 @@ const leagueRequestIds = new Map();
  */
 export async function loadSports(location) {
   const requestId = ++currentSportsRequestId;
+  weatherPending = false;
   if (!document.getElementById("sports-container")) return;
 
   applyTheme();
@@ -35,6 +56,7 @@ export async function loadSports(location) {
     return displaySportsMessage("Unable to load sports without a location.");
   }
 
+  localSportsPending = true;
   showSportsSkeleton();
 
   try {
@@ -43,12 +65,13 @@ export async function loadSports(location) {
 
     sportsData = {
       ...sportsData,
-      football: data.football || [],
-      cricket: data.cricket || [],
-      golf: data.golf || [],
+      football: Array.isArray(data.football) ? data.football : [],
+      cricket: Array.isArray(data.cricket) ? data.cricket : [],
+      golf: Array.isArray(data.golf) ? data.golf : [],
     };
 
-    syncSportsNotifications(sportsData);
+    feedErrors.delete("local");
+    syncSportsNotifications(sportsData, ["football", "cricket", "golf"]);
     renderSports();
 
     if (activeSport === "all") {
@@ -56,11 +79,18 @@ export async function loadSports(location) {
     }
   } catch (error) {
     if (requestId === currentSportsRequestId) {
-      syncSportsNotifications(sportsData);
-      renderSports();
-      displaySportsMessage(
-        error.message || "Unable to load sports events.",
+      feedErrors.set(
+        "local",
+        error.message || "Local sports events are unavailable.",
       );
+      renderSports();
+      // Local provider failure must not block independent league schedules.
+      if (activeSport === "all") await loadAllLeagueSchedules();
+    }
+  } finally {
+    if (requestId === currentSportsRequestId) {
+      localSportsPending = false;
+      updateSportsLoading();
     }
   }
 }
@@ -79,29 +109,25 @@ async function loadLeagueSchedule(sport) {
     renderSports();
     return;
   }
-
-  const requestId = (leagueRequestIds.get(sport) || 0) + 1;
-  leagueRequestIds.set(sport, requestId);
-  showSportsSkeleton();
-
-  try {
-    const data = await getLeagueEvents(sport);
-
-    if (requestId !== leagueRequestIds.get(sport)) return;
-
-    sportsData[sport] = data.events || [];
-    syncSportsNotifications(sportsData);
-
-    if (activeSport === sport || activeSport === "all") {
-      renderSports();
+  if (leagueRequests.has(sport)) return leagueRequests.get(sport);
+  const request = (async () => {
+    try {
+      const data = await getLeagueEvents(sport);
+      sportsData[sport] = Array.isArray(data.events) ? data.events : [];
+      feedErrors.delete(sport);
+      syncSportsNotifications(sportsData, [sport]);
+      if (activeSport === sport || activeSport === "all") renderSports();
+    } catch (error) {
+      feedErrors.set(sport, error.message || "League schedule is unavailable.");
+      if (activeSport === sport || activeSport === "all") renderSports();
+    } finally {
+      leagueRequests.delete(sport);
+      updateSportsLoading();
     }
-  } catch (error) {
-    if (requestId === leagueRequestIds.get(sport) && activeSport === sport) {
-      displaySportsMessage(
-        error.message || "Unable to load league schedule.",
-      );
-    }
-  }
+  })();
+  leagueRequests.set(sport, request);
+  updateSportsLoading();
+  return request;
 }
 
 /**
@@ -111,9 +137,7 @@ async function loadLeagueSchedule(sport) {
  * @throws {Error} If notification synchronization or rendering fails afterward.
  */
 async function loadAllLeagueSchedules() {
-  const missingLeagues = LEAGUE_SPORTS.filter(
-    (sport) => !sportsData[sport],
-  );
+  const missingLeagues = LEAGUE_SPORTS.filter((sport) => !sportsData[sport]);
 
   if (!missingLeagues.length) {
     return;
@@ -122,8 +146,6 @@ async function loadAllLeagueSchedules() {
   await Promise.allSettled(
     missingLeagues.map((sport) => loadLeagueSchedule(sport)),
   );
-
-  syncSportsNotifications(sportsData);
 
   if (activeSport === "all") {
     renderSports();
@@ -144,12 +166,22 @@ function renderSports() {
     ? events
     : events.slice(0, 3);
 
-  if (!events.length) {
-    return displaySportsMessage("No upcoming sports events found.");
-  }
-
-  sportsContainer.setAttribute("aria-busy", "false");
-  sportsContainer.innerHTML = visibleEvents.map(createSportsCard).join("");
+  const warnings = [...feedErrors]
+    .filter(
+      ([feed]) =>
+        activeSport === "all" ||
+        feed === activeSport ||
+        (feed === "local" && !LEAGUE_SPORTS.includes(activeSport)),
+    )
+    .map(([, message]) => message);
+  updateSportsLoading();
+  sportsContainer.innerHTML =
+    (warnings.length
+      ? `<p class="sports-message" role="status">Some events could not be updated: ${escapeHtml([...new Set(warnings)].join(" "))}</p>`
+      : "") +
+    (events.length
+      ? visibleEvents.map(createSportsCard).join("")
+      : '<p class="sports-message">No upcoming sports events found.</p>');
 }
 
 /**
@@ -159,17 +191,25 @@ function renderSports() {
  * @returns {Object[]} Copied events tagged with their sport, sorted by start time.
  */
 function getFilteredEvents() {
-  const events = activeSport === "all"
-    ? Object.entries(sportsData).flatMap(([sport, items]) =>
-        items.map((event) => ({ ...event, sport })),
-      )
-    : (sportsData[activeSport] || []).map((event) => ({
-        ...event,
-        sport: activeSport,
-      }));
+  const events =
+    activeSport === "all"
+      ? Object.entries(sportsData).flatMap(([sport, items]) =>
+          items.map((event) => ({ ...event, sport })),
+        )
+      : (sportsData[activeSport] || []).map((event) => ({
+          ...event,
+          sport: activeSport,
+        }));
 
-  return events.sort(
-    (a, b) => new Date(a.start || 0).getTime() - new Date(b.start || 0).getTime(),
+  const upcoming = events.filter(
+    (event) =>
+      !event.start ||
+      Number.isNaN(Date.parse(event.start)) ||
+      Date.parse(event.start) >= Date.now(),
+  );
+  return upcoming.sort(
+    (a, b) =>
+      (Date.parse(a.start) || Infinity) - (Date.parse(b.start) || Infinity),
   );
 }
 
@@ -182,9 +222,10 @@ function createSportsCard(event) {
   const { date, time } = formatEventDate(event.start);
   const favoriteTeams = getSettings().favoriteTeams || [];
   const isFavoriteMatch = matchesFavoriteTeam(event.match, favoriteTeams);
-  const favoriteBadge = isFavoriteMatch && favoriteTeams.length
-    ? '<span class="sports-favorite-badge"><i class="fa-solid fa-star" aria-hidden="true"></i> Favorite team</span>'
-    : "";
+  const favoriteBadge =
+    isFavoriteMatch && favoriteTeams.length
+      ? '<span class="sports-favorite-badge"><i class="fa-solid fa-star" aria-hidden="true"></i> Favorite team</span>'
+      : "";
 
   return `<article class="sports-card ${favoriteBadge ? "sports-card-favorite" : ""}">
     <div class="sports-card-header"><span class="sports-type">${formatSportName(event.sport)}</span><span class="sports-tournament">${escapeHtml(event.tournament || "League event")}</span></div>
@@ -205,6 +246,7 @@ function setupSportsFilters() {
   document.querySelectorAll(".sports-filter").forEach((filter) => {
     filter.addEventListener("click", async () => {
       activeSport = filter.dataset.sport;
+      updateSportsLoading();
 
       document.querySelectorAll(".sports-filter").forEach((button) => {
         const isActive = button === filter;
@@ -229,12 +271,16 @@ function setupSportsFilters() {
  * @param {string} message - Loading, empty-state, or error text to display.
  * @returns {void}
  */
-function displaySportsMessage(message) {
+function displaySportsMessage(message, preserveEvents = false) {
   const sportsContainer = document.getElementById("sports-container");
   if (sportsContainer) {
-    sportsContainer.setAttribute("aria-busy", "false");
-    sportsContainer.innerHTML =
-      `<p class="sports-message">${escapeHtml(message)}</p>`;
+    updateSportsLoading();
+    const markup = `<p class="sports-message">${escapeHtml(message)}</p>`;
+    if (preserveEvents && sportsContainer.querySelector(".sports-card")) {
+      sportsContainer.insertAdjacentHTML("afterbegin", markup);
+    } else {
+      sportsContainer.innerHTML = markup;
+    }
   }
 }
 
@@ -254,15 +300,17 @@ function matchesFavoriteTeam(match, favoriteTeams = []) {
 }
 
 function formatSportName(sport) {
-  return {
-    football: "Football",
-    cricket: "Cricket",
-    golf: "Golf",
-    basketball: "NBA",
-    "american-football": "NFL",
-    baseball: "MLB",
-    "ice-hockey": "NHL",
-  }[sport] || "Sports";
+  return (
+    {
+      football: "Football",
+      cricket: "Cricket",
+      golf: "Golf",
+      basketball: "NBA",
+      "american-football": "NFL",
+      baseball: "MLB",
+      "ice-hockey": "NHL",
+    }[sport] || "Sports"
+  );
 }
 
 /**

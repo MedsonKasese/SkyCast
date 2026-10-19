@@ -1,9 +1,9 @@
 // Imports
-import { getWeather } from "./api.js";
+import { getWeather, isWeatherData } from "./api.js";
 import { displayWeather } from "./ui.js";
-import { setWeatherSkeletons } from "./skeletons.js";
+import { setWeatherSkeletons, setSportsLoading } from "./skeletons.js";
 import { centerRadarOnLocation } from "./radar.js";
-import { loadSports } from "./sports.js";
+import { loadSports, invalidateSportsRequest } from "./sports.js";
 import {
   getNotifications,
   getUnreadNotificationCount,
@@ -13,6 +13,7 @@ import {
 import { escapeHtml } from "./utils.js";
 import { applyTheme, getSettings } from "./settings.js";
 
+import { readStorage, writeStorage, removeStorage } from "./storage.js";
 // Global Variables
 let currentCity = "Mzuzu";
 const STORAGE_KEY = "skycast-last-city";
@@ -22,6 +23,7 @@ let isFahrenheit = getSettings().units === "f";
 let favoriteCities = [];
 let weatherRequestController = null;
 let currentWeatherData = null;
+let searchActionId = 0;
 
 applyTheme();
 
@@ -35,55 +37,31 @@ const currentLocationButton = document.getElementById(
 const errorMessage = document.getElementById("error-message");
 const favoritesList = document.getElementById("favorites-list");
 const addFavoriteButton = document.getElementById("add-favorite-btn");
-const radarLocationButton = document.getElementById(
-  "radar-location-button",
-);
-const notificationButton = document.getElementById(
-  "notification-button",
-);
-const notificationBadge = document.getElementById(
-  "notification-badge",
-);
-const notificationsPanel = document.getElementById(
-  "notifications-panel",
-);
-const notificationsList = document.getElementById(
-  "notifications-list",
-);
-const markAllReadButton = document.getElementById(
-  "mark-all-read-button",
-);
+const radarLocationButton = document.getElementById("radar-location-button");
+const notificationButton = document.getElementById("notification-button");
+const notificationBadge = document.getElementById("notification-badge");
+const notificationsPanel = document.getElementById("notifications-panel");
+const notificationsList = document.getElementById("notifications-list");
+const markAllReadButton = document.getElementById("mark-all-read-button");
 
 // Event Listeners
 weatherForm.addEventListener("submit", handleSearch);
 currentLocationButton.addEventListener("click", getCurrentLocation);
 if (notificationButton) {
-  notificationButton.addEventListener(
-    "click",
-    toggleNotificationsPanel,
-  );
+  notificationButton.addEventListener("click", toggleNotificationsPanel);
 }
 
 if (markAllReadButton) {
-  markAllReadButton.addEventListener(
-    "click",
-    handleMarkAllNotificationsAsRead,
-  );
+  markAllReadButton.addEventListener("click", handleMarkAllNotificationsAsRead);
 }
 
 if (notificationsPanel) {
-  notificationsPanel.addEventListener(
-    "click",
-    handleNotificationClick,
-  );
+  notificationsPanel.addEventListener("click", handleNotificationClick);
 }
 
 document.addEventListener("click", handleOutsideNotificationClick);
 
-document.addEventListener(
-  "keydown",
-  handleNotificationEscape,
-);
+document.addEventListener("keydown", handleNotificationEscape);
 
 if (addFavoriteButton) {
   addFavoriteButton.addEventListener("click", saveCurrentCity);
@@ -99,7 +77,7 @@ init();
 // INIT
 // =========================
 async function init() {
-  const savedCity = localStorage.getItem(STORAGE_KEY);
+  const savedCity = readStorage(STORAGE_KEY);
 
   if (savedCity) {
     currentCity = savedCity;
@@ -109,88 +87,62 @@ async function init() {
   try {
     await loadWeather(currentCity);
   } catch (error) {
-    const cachedWeather = getCachedWeather();
+    if (error.name === "AbortError") return;
+    const cachedWeather =
+      error.message === "NETWORK_ERROR" ? getCachedWeather() : null;
 
     if (cachedWeather) {
       currentWeatherData = cachedWeather;
+      currentCity = cachedWeather.location.name;
       displayWeather(cachedWeather, isFahrenheit);
-
-      // Show message after UI update
-      requestAnimationFrame(() => {
-        showError("You're offline. Showing the last saved weather data.");
-      });
+      showError("You're offline. Showing the last saved weather data.");
     } else {
       showError(
-        "Unable to load weather data. Please check your internet connection.",
+        error.message === "NETWORK_ERROR"
+          ? "Unable to load weather data. Please check your internet connection."
+          : error.message || "Unable to load weather data.",
       );
     }
   }
 }
-/*
-
-	try {
-		await loadWeather(currentCity);
-	} catch (error) {
-		if (error.message === "NETWORK_ERROR") {
-			const cachedWeather = getCachedWeather();
-
-			if (cachedWeather) {
-				displayWeather(cachedWeather);
-				requestAnimationFrame(() => {
-					showError("You're offline. Showing the last saved weather data.");
-				});
-			} else {
-				showError("No internet connection and no cached weather available.");
-			}
-		} else {
-			showError(error.message || "Failed to refresh weather.");
-		}
-	} finally {
-		setLoadingState(refreshButton, false);
-	}
-}
-*/
 
 // =========================
 // LOAD WEATHER
 // =========================
 async function loadWeather(cityName) {
-  // Cancel any previous weather request
-  if (weatherRequestController) {
-    weatherRequestController.abort();
-  }
-
-  // Create a controller for this request
+  weatherRequestController?.abort();
   const controller = new AbortController();
   weatherRequestController = controller;
-
+  invalidateSportsRequest();
   setWeatherSkeletons(true);
-  let weather;
+  setSportsLoading(true);
   try {
-    weather = await getWeather(cityName, controller.signal);
+    const weather = await getWeather(cityName, controller.signal);
+    if (weatherRequestController !== controller) return null;
+    currentWeatherData = weather;
+    displayWeather(weather, isFahrenheit);
+    currentCity = weather.location.name;
+    writeStorage(STORAGE_KEY, currentCity);
+    saveWeatherToCache(weather);
+    updateNotificationBadge();
+    // Sports must not keep weather searches pending or commit stale locations.
+    void loadSports(currentCity)
+      .then(() => {
+        if (weatherRequestController === controller) updateNotificationBadge();
+      })
+      .catch((error) => console.error("Sports refresh failed:", error));
+    return weather;
   } catch (error) {
-    if (weatherRequestController === controller) setWeatherSkeletons(false);
+    if (weatherRequestController !== controller) {
+      throw new DOMException("Superseded weather request", "AbortError");
+    }
+    invalidateSportsRequest(false);
+    setSportsLoading(false);
     throw error;
+  } finally {
+    if (weatherRequestController === controller) setWeatherSkeletons(false);
   }
-  // ignore this response if another request has started
-  if (weatherRequestController !== controller) {
-    return null;
-  }
-
-  currentWeatherData = weather;
-  displayWeather(weather, isFahrenheit);
-  setWeatherSkeletons(false);
-
-  if (weather.location?.name) {
-    await loadSports(weather.location.name);
-  }
-
-  updateNotificationBadge();
-
-  saveWeatherToCache(weather);
-  return weather;
 }
-
 // =========================
 // HANDLE SEARCH
 // =========================
@@ -204,13 +156,17 @@ async function handleSearch(event) {
     return;
   }
 
-  if (cityName.toLowerCase() === currentCity.toLowerCase()) {
+  if (
+    currentWeatherData &&
+    cityName.toLowerCase() === currentCity.toLowerCase()
+  ) {
     cityInput.value = "";
     cityInput.blur();
     return;
   }
 
   hideError();
+  const actionId = ++searchActionId;
   setLoadingState(searchButton, true, "Searching...");
 
   try {
@@ -218,10 +174,6 @@ async function handleSearch(event) {
     if (!weather) {
       return;
     }
-
-    currentCity = cityName;
-
-    localStorage.setItem(STORAGE_KEY, currentCity);
 
     cityInput.value = "";
     cityInput.blur();
@@ -234,13 +186,10 @@ async function handleSearch(event) {
 
       if (cachedWeather) {
         currentWeatherData = cachedWeather;
+        currentCity = cachedWeather.location.name;
         displayWeather(cachedWeather, isFahrenheit);
         updateNotificationBadge();
-
-        // Show message after UI update
-        requestAnimationFrame(() => {
-          showError("You're offline. Showing the last saved weather data.");
-        });
+        showError("You're offline. Showing the last saved weather data.");
       } else {
         showError("No internet connection and no cached weather available.");
       }
@@ -250,7 +199,7 @@ async function handleSearch(event) {
       );
     }
   } finally {
-    setLoadingState(searchButton, false);
+    if (actionId === searchActionId) setLoadingState(searchButton, false);
   }
 }
 
@@ -262,6 +211,11 @@ function getCurrentLocation() {
 
   setLoadingState(currentLocationButton, true, "Getting your location...");
 
+  if (!navigator.geolocation) {
+    setLoadingState(currentLocationButton, false);
+    showError("Geolocation is not supported by this browser.");
+    return;
+  }
   navigator.geolocation.getCurrentPosition(
     handleCurrentPosition,
     handleLocationError,
@@ -282,9 +236,6 @@ async function handleCurrentPosition(position) {
     if (!weather) {
       return;
     }
-
-    currentCity = weather.location.name;
-    localStorage.setItem(STORAGE_KEY, currentCity);
   } catch (error) {
     if (error.name === "AbortError") {
       return;
@@ -294,12 +245,9 @@ async function handleCurrentPosition(position) {
 
       if (cachedWeather) {
         currentWeatherData = cachedWeather;
+        currentCity = cachedWeather.location.name;
         displayWeather(cachedWeather, isFahrenheit);
-
-        // Show message after UI update
-        requestAnimationFrame(() => {
-          showError("You're offline. Showing the last saved weather data.");
-        });
+        showError("You're offline. Showing the last saved weather data.");
       } else {
         showError("No internet connection and no cached weather available.");
       }
@@ -343,7 +291,7 @@ function handleLocationError(error) {
 // =========================
 function setLoadingState(button, isLoading, loadingText = "Loading...") {
   if (isLoading) {
-    button.dataset.originalText = button.textContent;
+    if (!button.disabled) button.dataset.originalText = button.textContent;
     button.textContent = loadingText;
     button.disabled = true;
   } else {
@@ -367,21 +315,25 @@ function hideError() {
 
 // SAVE WEATHER TO CACHE
 function saveWeatherToCache(weather) {
-  localStorage.setItem(WEATHER_CACHE_KEY, JSON.stringify(weather));
+  writeStorage(WEATHER_CACHE_KEY, JSON.stringify(weather));
 }
 
 // GET WEATHER FROM CACHE
 function getCachedWeather() {
-  const cached = localStorage.getItem(WEATHER_CACHE_KEY);
-
-  return cached ? JSON.parse(cached) : null;
+  try {
+    const cached = JSON.parse(readStorage(WEATHER_CACHE_KEY));
+    return isWeatherData(cached) ? cached : null;
+  } catch {
+    removeStorage(WEATHER_CACHE_KEY);
+    return null;
+  }
 }
 // =========================
 // FAVORITES
 // =========================
 
 function loadFavorites() {
-  const saved = localStorage.getItem(FAVORITES_KEY);
+  const saved = readStorage(FAVORITES_KEY);
 
   if (!saved) {
     favoriteCities = [];
@@ -390,13 +342,20 @@ function loadFavorites() {
   }
 
   try {
-    favoriteCities = JSON.parse(saved);
+    const parsed = JSON.parse(saved);
+    favoriteCities = Array.isArray(parsed)
+      ? [
+          ...new Set(
+            parsed.filter((city) => typeof city === "string" && city.trim()),
+          ),
+        ]
+      : [];
   } catch (error) {
     console.error("Invalid favorites data:", error);
 
     favoriteCities = [];
 
-    localStorage.removeItem(FAVORITES_KEY);
+    removeStorage(FAVORITES_KEY);
   }
 
   renderFavorites();
@@ -416,6 +375,7 @@ function renderFavorites() {
   favoriteCities.forEach((city) => {
     const chip = document.createElement("button");
 
+    chip.type = "button";
     chip.className = "favorite-chip";
     chip.textContent = city;
 
@@ -441,10 +401,6 @@ async function handleFavoriteCity(city) {
     if (!weather) {
       return;
     }
-    currentCity = city;
-
-    localStorage.setItem(STORAGE_KEY, currentCity);
-
     cityInput.value = "";
   } catch (error) {
     if (error.name === "AbortError") {
@@ -457,6 +413,7 @@ async function handleFavoriteCity(city) {
 
       if (cachedWeather) {
         currentWeatherData = cachedWeather;
+        currentCity = cachedWeather.location.name;
         displayWeather(cachedWeather, isFahrenheit);
 
         showError("You're offline. Showing the last saved weather data.");
@@ -474,19 +431,24 @@ async function handleFavoriteCity(city) {
 // =========================
 
 function saveCurrentCity() {
-  if (!currentCity) {
+  if (!currentWeatherData) {
     showError("No city found.");
     return;
   }
 
-  if (favoriteCities.includes(currentCity)) {
+  currentCity = currentWeatherData.location.name;
+  if (
+    favoriteCities.some(
+      (city) => city.toLowerCase() === currentCity.toLowerCase(),
+    )
+  ) {
     showError(`${currentCity} is already in favorites.`);
     return;
   }
 
   favoriteCities.push(currentCity);
 
-  localStorage.setItem(FAVORITES_KEY, JSON.stringify(favoriteCities));
+  writeStorage(FAVORITES_KEY, JSON.stringify(favoriteCities));
 
   renderFavorites();
 
@@ -506,7 +468,7 @@ function removeFavoriteCity(city) {
   }
   favoriteCities = favoriteCities.filter((favorite) => favorite !== city);
 
-  localStorage.setItem(FAVORITES_KEY, JSON.stringify(favoriteCities));
+  writeStorage(FAVORITES_KEY, JSON.stringify(favoriteCities));
 
   renderFavorites();
 
@@ -526,10 +488,7 @@ function toggleNotificationsPanel(event) {
 
   const isOpen = notificationsPanel.classList.toggle("is-open");
 
-  notificationsPanel.setAttribute(
-    "aria-hidden",
-    isOpen ? "false" : "true",
-  );
+  notificationsPanel.setAttribute("aria-hidden", isOpen ? "false" : "true");
 
   if (isOpen) {
     renderNotifications();
@@ -553,16 +512,13 @@ function handleMarkAllNotificationsAsRead(event) {
 }
 
 function handleNotificationClick(event) {
-  const notificationItem = event.target.closest(
-    ".notification-item",
-  );
+  const notificationItem = event.target.closest(".notification-item");
 
   if (!notificationItem) {
     return;
   }
 
-  const notificationId =
-    notificationItem.dataset.notificationId;
+  const notificationId = notificationItem.dataset.notificationId;
 
   if (!notificationId) {
     return;
@@ -577,11 +533,9 @@ function handleOutsideNotificationClick(event) {
     return;
   }
 
-  const clickedInsidePanel =
-    notificationsPanel.contains(event.target);
+  const clickedInsidePanel = notificationsPanel.contains(event.target);
 
-  const clickedBell =
-    notificationButton.contains(event.target);
+  const clickedBell = notificationButton.contains(event.target);
 
   if (!clickedInsidePanel && !clickedBell) {
     closeNotificationsPanel();
@@ -620,7 +574,7 @@ function renderNotifications() {
       (notification) => `
         <div
           class="notification-item ${notification.read ? "read" : "unread"}"
-          data-notification-id="${notification.id}"
+          data-notification-id="${escapeHtml(notification.id)}"
         >
           <div class="notification-item-header">
             <span class="notification-item-icon">
@@ -654,11 +608,9 @@ function updateNotificationBadge() {
 
   const unreadCount = getUnreadNotificationCount();
 
-  notificationBadge.textContent =
-    unreadCount > 99 ? "99+" : unreadCount;
+  notificationBadge.textContent = unreadCount > 99 ? "99+" : unreadCount;
 
-  notificationBadge.style.display =
-    unreadCount > 0 ? "block" : "none";
+  notificationBadge.style.display = unreadCount > 0 ? "block" : "none";
 
   notificationBadge.setAttribute(
     "aria-hidden",

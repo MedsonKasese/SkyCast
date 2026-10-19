@@ -241,3 +241,10 @@ container
 :root[data-theme="light"] .notifications-panel {
   border-color: var(--border-color);
 }
+/* Keep icon-only navigation comfortably tappable on phones. */
+.header-settings-link,
+.notification-button {
+  min-width: 44px;
+  min-height: 44px;
+  justify-content: center;
+}
