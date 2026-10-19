@@ -38,9 +38,13 @@ function normalizeEvent(event, league) {
  * @returns {Promise<Object>} The response returned by res.json().
  */
 export default async function handler(req, res) {
-  const leagueKey = req.query.league;
+  if (req.method !== "GET") {
+    return res.status(405).json({ error: "Method not allowed" });
+  }
 
-  if (!Object.hasOwn(LEAGUES, leagueKey)) {
+  const leagueKey = req.query?.league;
+
+  if (typeof leagueKey !== "string" || !Object.hasOwn(LEAGUES, leagueKey)) {
     return res.status(400).json({ error: "Unsupported league" });
   }
 
@@ -50,18 +54,21 @@ export default async function handler(req, res) {
     // TheSportsDB's public test key supports these popular league schedules.
     const response = await fetch(
       `https://www.thesportsdb.com/api/v1/json/3/eventsnextleague.php?id=${league.id}`,
+      { signal: AbortSignal.timeout(10000) },
     );
     const data = await response.json();
 
     if (!response.ok) {
-      return res.status(response.status).json({ error: "League schedule is unavailable" });
+      return res
+        .status(response.status)
+        .json({ error: "League schedule is unavailable" });
     }
 
     return res.status(200).json({
       league: league.label,
       events: (data.events || []).map((event) => normalizeEvent(event, league)),
     });
-  } catch (error) {
-    return res.status(502).json({ error: error.message || "League schedule is unavailable" });
+  } catch {
+    return res.status(502).json({ error: "League schedule is unavailable" });
   }
 }

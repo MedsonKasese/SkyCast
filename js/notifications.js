@@ -14,7 +14,14 @@ function getStoredNotifications() {
 
     const notifications = JSON.parse(stored);
 
-    return Array.isArray(notifications) ? notifications : [];
+    return Array.isArray(notifications)
+      ? notifications.filter(
+          (item) =>
+            item &&
+            typeof item.id === "string" &&
+            typeof item.type === "string",
+        )
+      : [];
   } catch (error) {
     console.error("Failed to read notifications:", error);
     return [];
@@ -63,8 +70,9 @@ function normalizeWeatherAlert(alert, cityName) {
   return {
     id: createWeatherAlertId(alert, cityName),
     type: alert.type || "weather-alert",
-    title: alert.headline || alert.event || "Weather Alert",
+    title: alert.title || alert.headline || alert.event || "Weather Alert",
     message:
+      alert.message ||
       alert.desc ||
       alert.note ||
       "Please stay alert and monitor local weather conditions.",
@@ -73,13 +81,22 @@ function normalizeWeatherAlert(alert, cityName) {
     effective: alert.effective || null,
     expires: alert.expires || null,
     location: cityName,
+    ...(alert.forecastDate ? { forecastDate: alert.forecastDate } : {}),
+    ...(alert.conditionKey ? { conditionKey: alert.conditionKey } : {}),
+    ...(alert.locationQuery ? { locationQuery: alert.locationQuery } : {}),
     read: false,
   };
 }
 
-export function syncWeatherNotifications(weather) {
+export function syncWeatherNotifications(
+  weather,
+  isFahrenheit = getSettings().units === "f",
+) {
   const cityName = weather.location?.name || "this location";
-  const evaluatedNotifications = evaluateWeatherNotifications(weather);
+  const evaluatedNotifications = evaluateWeatherNotifications(
+    weather,
+    isFahrenheit,
+  );
   const uniqueEvaluatedNotifications = new Map();
 
   evaluatedNotifications.forEach((notification) => {
@@ -106,23 +123,23 @@ export function syncWeatherNotifications(weather) {
       .map((notification) => [notification.id, notification]),
   );
 
-  const weatherNotifications = [
-    ...uniqueEvaluatedNotifications.values(),
-  ].map((notification) => {
-    const existing = existingWeatherNotifications.get(notification.id);
+  const weatherNotifications = [...uniqueEvaluatedNotifications.values()].map(
+    (notification) => {
+      const existing = existingWeatherNotifications.get(notification.id);
 
-    if (existing) {
+      if (existing) {
+        return {
+          ...notification,
+          read: existing.read,
+        };
+      }
+
       return {
         ...notification,
-        read: existing.read,
+        read: false,
       };
-    }
-
-    return {
-      ...notification,
-      read: false,
-    };
-  });
+    },
+  );
 
   const otherNotifications = existingNotifications.filter(
     (notification) =>
@@ -132,11 +149,9 @@ export function syncWeatherNotifications(weather) {
 
   const uniqueNotifications = new Map();
 
-  [...weatherNotifications, ...otherNotifications].forEach(
-    (notification) => {
-      uniqueNotifications.set(notification.id, notification);
-    },
-  );
+  [...weatherNotifications, ...otherNotifications].forEach((notification) => {
+    uniqueNotifications.set(notification.id, notification);
+  });
 
   const notifications = [...uniqueNotifications.values()];
 
@@ -153,10 +168,15 @@ export function syncWeatherNotifications(weather) {
  * @param {Object<string, Object[]>} sportsData - Events grouped by sport key.
  * @returns {Object[]} The merged notification list, even if persistence fails.
  */
-export function syncSportsNotifications(sportsData) {
+export function syncSportsNotifications(
+  sportsData,
+  refreshedSports = Object.keys(sportsData),
+) {
+  const refreshed = new Set(refreshedSports);
   const enabledSports = getSettings().sportsUpdates;
   const favoriteTeams = getSettings().favoriteTeams || [];
   const evaluatedNotifications = evaluateSportsNotifications(sportsData)
+    .filter((notification) => refreshed.has(notification.sportsEvent.sport))
     .filter((notification) =>
       enabledSports.includes(notification.sportsEvent.sport),
     )
@@ -189,16 +209,16 @@ export function syncSportsNotifications(sportsData) {
   });
 
   const otherNotifications = existingNotifications.filter(
-    (notification) => notification.type !== "sports-event",
+    (notification) =>
+      notification.type !== "sports-event" ||
+      !refreshed.has(notification.sportsEvent?.sport),
   );
 
   const uniqueNotifications = new Map();
 
-  [...otherNotifications, ...sportsNotifications].forEach(
-    (notification) => {
-      uniqueNotifications.set(notification.id, notification);
-    },
-  );
+  [...otherNotifications, ...sportsNotifications].forEach((notification) => {
+    uniqueNotifications.set(notification.id, notification);
+  });
 
   const notifications = [...uniqueNotifications.values()];
 
@@ -215,7 +235,10 @@ export function syncSportsNotifications(sportsData) {
  * @param {string[]} [favoriteTeams=[]] - Optional team names to keep alerts for.
  * @returns {boolean} True when the filtered list was persisted successfully.
  */
-export function removeDisabledSportsNotifications(enabledSports, favoriteTeams = []) {
+export function removeDisabledSportsNotifications(
+  enabledSports,
+  favoriteTeams = [],
+) {
   const enabled = new Set(enabledSports);
   const notifications = getStoredNotifications().filter((notification) => {
     if (notification.type !== "sports-event") return true;
@@ -239,9 +262,8 @@ export function getNotifications() {
 }
 
 export function getUnreadNotificationCount() {
-  return getStoredNotifications().filter(
-    (notification) => !notification.read,
-  ).length;
+  return getStoredNotifications().filter((notification) => !notification.read)
+    .length;
 }
 
 export function markNotificationAsRead(notificationId) {

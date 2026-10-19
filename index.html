@@ -124,15 +124,15 @@
           </div>
         </form>
 
-        <p id="error-message"></p>
+        <p id="error-message" role="status" aria-live="polite"></p>
 
         <!--WEATHER CARD SECTION-->
 
-        <section class="weather-card">
+        <section class="weather-card sky-is-loading" data-weather-loading aria-busy="true" data-sky-inert="false" inert>
           <!--<img src="/assets/icons/bg-today-large.svg" alt="">-->
           <div class="weather-info">
             <div class="location-info">
-              <h2 id="city-name">Mzuzu, Malawi</h2>
+              <h2 id="city-name">Weather unavailable</h2>
               <p id="current-date"></p>
             </div>
 
@@ -140,11 +140,11 @@
               <div class="temperature-main">
                 <img
                   class="weather-icon"
-                  id="weather-icon"
+                  id="weather-icon" hidden
                   src="/assets/images/icon-sunny.webp"
-                  alt="Sunny"
+                  alt=""
                 />
-                <p id="weather-condition">sunny</p>
+                <p id="weather-condition">—</p>
                 <h2 class="temperature" id="temperature">-</h2>
               </div>
             </div>
@@ -153,28 +153,28 @@
 
         <!--WEATHER DETAILS SECTION-->
         <section class="weather-details">
-          <div class="detail-card">
+          <div class="detail-card sky-is-loading" data-weather-loading aria-busy="true" data-sky-inert="false" inert>
             <div class="detail-header">
               <h3>Feels Like</h3>
               <p class="detail-value" id="feels-like">-</p>
             </div>
           </div>
 
-          <div class="detail-card">
+          <div class="detail-card sky-is-loading" data-weather-loading aria-busy="true" data-sky-inert="false" inert>
             <div class="detail-header">
               <h3>Humidity</h3>
               <p class="detail-value" id="humidity">-</p>
             </div>
           </div>
 
-          <div class="detail-card">
+          <div class="detail-card sky-is-loading" data-weather-loading aria-busy="true" data-sky-inert="false" inert>
             <div class="detail-header">
               <h3>Wind Speed</h3>
               <p class="detail-value" id="wind-speed">-</p>
             </div>
           </div>
 
-          <div class="detail-card">
+          <div class="detail-card sky-is-loading" data-weather-loading aria-busy="true" data-sky-inert="false" inert>
             <div class="detail-header">
               <h3>Precipitation</h3>
               <p class="detail-value" id="precipitation">-</p>
@@ -183,7 +183,7 @@
         </section>
 
         <!--SUN TIMES SECTION -->
-        <section class="sun-times-section">
+        <section class="sun-times-section sky-is-loading" data-weather-loading aria-busy="true" data-sky-inert="false" inert>
           <h2>Sun Times</h2>
 
           <div class="sun-times-grid">
@@ -212,7 +212,7 @@
         </section>
 
         <!-- WEATHER RADAR SECTION -->
-        <section class="weather-radar-section weather-card">
+        <section class="weather-radar-section weather-card sky-is-loading" data-weather-loading aria-busy="true" data-sky-inert="false" inert>
           <div class="radar-header">
             <div>
               <h2>Weather Radar</h2>
@@ -242,14 +242,14 @@
           </div>
         </section>
 <!-- SKYCAST SPORTS SECTION -->
-<section class="sports-section weather-card">
+<section class="sports-section weather-card sky-is-loading" aria-busy="true" data-sky-inert="false" inert>
   <div class="sports-header">
     <div>
       <h2>SkyCast Sports</h2>
       <p>Upcoming sports events</p>
     </div>
   </div>
-  <div id="sports-container" class="sports-container">
+  <div id="sports-container" class="sports-container" aria-busy="true">
     <!-- Sports preview cards will be injected here -->
   </div>
   <a href="sports.html" class="sports-see-all">
@@ -260,7 +260,7 @@
 
         <!-- HOURLY FORECAST SECTION -->
 
-        <section class="hourly-section weather-card">
+        <section class="hourly-section weather-card sky-is-loading" data-weather-loading aria-busy="true" data-sky-inert="false" inert>
           <h2>Hourly Forecast (Next 7 Hours)</h2>
           <div id="hourly-container" class="hourly-container">
             <!-- Cards will be injected here -->
@@ -268,7 +268,7 @@
         </section>
 
         <!--THREE DAYS FORECAST SECTION-->
-        <section class="forecast-section weather-card">
+        <section class="forecast-section weather-card sky-is-loading" data-weather-loading aria-busy="true" data-sky-inert="false" inert>
           <h2>3-Day Forecast</h2>
 
           <div id="forecast-container" class="forecast-container">

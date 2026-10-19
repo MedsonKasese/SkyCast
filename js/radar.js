@@ -1,3 +1,4 @@
+import { setCardLoading } from "./skeletons.js";
 let radarMap = null;
 let radarLayer = null;
 let currentCoordinates = null;
@@ -10,6 +11,11 @@ const RADAR_ZOOM = 8;
 const RADAR_FRAMES_TTL_MS = 5 * 60 * 1000;
 let cachedRadarFrames = null;
 let cachedRadarFramesAt = 0;
+let radarRequestId = 0;
+function setRadarStatus(message) {
+  const status = document.querySelector(".radar-status");
+  if (status) status.textContent = message;
+}
 
 export function initializeRadar(weather) {
   const mapElement = document.getElementById("weather-radar");
@@ -19,6 +25,13 @@ export function initializeRadar(weather) {
     return;
   }
 
+  if (typeof L === "undefined") {
+    if (locationElement)
+      locationElement.textContent =
+        "Radar unavailable. Weather data is still up to date.";
+    setRadarStatus("Radar library could not be loaded");
+    return;
+  }
   const { lat, lon, name } = weather.location;
 
   currentCoordinates = {
@@ -32,10 +45,7 @@ export function initializeRadar(weather) {
   }
 
   if (!radarMap) {
-    radarMap = L.map("weather-radar").setView(
-      [lat, lon],
-      DEFAULT_ZOOM,
-    );
+    radarMap = L.map("weather-radar").setView([lat, lon], DEFAULT_ZOOM);
 
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       maxZoom: 19,
@@ -53,9 +63,17 @@ export function initializeRadar(weather) {
 }
 
 async function loadRadarLayer() {
+  const requestId = ++radarRequestId;
+  const section = document.querySelector(".weather-radar-section");
+  if (section) {
+    section.dataset.radarPending = "true";
+    setCardLoading(section, true);
+  }
+  setRadarStatus("Loading precipitation map…");
   try {
     const isCacheFresh =
-      cachedRadarFrames && Date.now() - cachedRadarFramesAt < RADAR_FRAMES_TTL_MS;
+      cachedRadarFrames &&
+      Date.now() - cachedRadarFramesAt < RADAR_FRAMES_TTL_MS;
 
     let radarFrames;
 
@@ -64,6 +82,7 @@ async function loadRadarLayer() {
     } else {
       const response = await fetch(
         "https://api.rainviewer.com/public/weather-maps.json",
+        { signal: AbortSignal.timeout(10000) },
       );
 
       if (!response.ok) {
@@ -77,7 +96,9 @@ async function loadRadarLayer() {
       cachedRadarFramesAt = Date.now();
     }
 
+    if (requestId !== radarRequestId) return;
     if (radarFrames.length === 0) {
+      setRadarStatus("No precipitation frames available");
       return;
     }
 
@@ -94,8 +115,17 @@ async function loadRadarLayer() {
         maxZoom: 12,
       },
     ).addTo(radarMap);
+    setRadarStatus("Latest available precipitation map");
   } catch (error) {
     console.error("Radar error:", error);
+    if (requestId === radarRequestId)
+      setRadarStatus("Precipitation unavailable. Showing base map only.");
+  } finally {
+    if (requestId === radarRequestId && section) {
+      delete section.dataset.radarPending;
+      if (section.dataset.weatherPending !== "true")
+        setCardLoading(section, false);
+    }
   }
 }
 

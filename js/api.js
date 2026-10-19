@@ -1,3 +1,18 @@
+export function isWeatherData(data) {
+  return Boolean(
+    data?.location &&
+      typeof data.location.name === "string" &&
+      data.location.localtime &&
+      data.current?.condition &&
+      typeof data.current.temp_c === "number" &&
+      Array.isArray(data.forecast?.forecastday) &&
+      data.forecast.forecastday.length &&
+      data.forecast.forecastday.every(
+        (day) => day?.day?.condition && Array.isArray(day.hour),
+      ),
+  );
+}
+
 const BASE_URL = "/api/weather";
 
 export async function getWeather(city, signal) {
@@ -20,7 +35,10 @@ export async function getWeather(city, signal) {
       throw new Error(message);
     }
 
-    return await response.json();
+    const data = await response.json();
+    if (!isWeatherData(data))
+      throw new Error("Invalid weather data received. Please try again.");
+    return data;
   } catch (error) {
     if (error.name === "AbortError") {
       throw error;
@@ -70,7 +88,9 @@ export async function getSports(location) {
  * @throws {Error} If the request fails or the response cannot be parsed as JSON.
  */
 export async function getLeagueEvents(league) {
-  const response = await fetch(`/api/leagues?league=${encodeURIComponent(league)}`);
+  const response = await fetch(
+    `/api/leagues?league=${encodeURIComponent(league)}`,
+  );
 
   if (!response.ok) {
     const data = await response.json().catch(() => ({}));

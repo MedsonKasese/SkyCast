@@ -1,32 +1,34 @@
-// Loading placeholders are rendered only while fresh API data is pending.
-const line = (width = "70%") => `<span class="sky-skeleton sky-skeleton-line" style="width:${width}"></span>`;
-const forecastCard = () => `<div class="forecast-card sky-skeleton-card" aria-hidden="true">${line("45%")}<span class="sky-skeleton sky-skeleton-icon"></span>${line("65%")}${line("80%")}</div>`;
-
-export function setWeatherSkeletons(loading) {
-  const targets = [".weather-card:not(.weather-radar-section):not(.hourly-section):not(.forecast-section):not(.sports-section)", ".weather-details", ".sun-times-section", ".hourly-section", ".forecast-section"];
-  for (const selector of targets) {
-    const section = document.querySelector(selector);
-    if (!section) continue;
-    section.classList.toggle("sky-is-loading", loading);
-    section.setAttribute("aria-busy", String(loading));
-  }
+// Keep real content in place so a failed refresh can reveal the last good data.
+// CSS covers the entire card, including headings, icons, controls and padding.
+export function setCardLoading(section, loading) {
+  if (!section) return;
+  section.classList.toggle("sky-is-loading", loading);
+  section.setAttribute("aria-busy", String(loading));
   if (loading) {
-    for (const [id, count] of [["hourly-container", 7], ["forecast-container", 3]]) {
-      const container = document.getElementById(id);
-      if (container) container.innerHTML = Array.from({length: count}, forecastCard).join("");
+    if (!section.hasAttribute("data-sky-inert")) {
+      section.dataset.skyInert = String(section.hasAttribute("inert"));
     }
-  } else {
-    // On failure, never leave placeholder cards in the forecast.
-    for (const id of ["hourly-container", "forecast-container"]) {
-      const container = document.getElementById(id);
-      if (container) container.querySelectorAll(".sky-skeleton-card").forEach(card => card.remove());
-    }
+    section.setAttribute("inert", "");
+  } else if (section.hasAttribute("data-sky-inert")) {
+    if (section.dataset.skyInert !== "true") section.removeAttribute("inert");
+    delete section.dataset.skyInert;
   }
 }
 
-export function showSportsSkeleton() {
+export function setWeatherSkeletons(loading) {
+  document.querySelectorAll("[data-weather-loading]").forEach((section) => {
+    section.dataset.weatherPending = String(loading);
+    setCardLoading(section, loading || section.dataset.radarPending === "true");
+  });
+}
+
+export function setSportsLoading(loading) {
   const container = document.getElementById("sports-container");
   if (!container) return;
-  container.setAttribute("aria-busy", "true");
-  container.innerHTML = Array.from({length: 3}, () => `<div class="sports-card sky-skeleton-card" aria-hidden="true">${line("35%")}${line("90%")}${line("65%")}${line("80%")}</div>`).join("");
+  setCardLoading(container.closest(".sports-section") || container, loading);
+  container.setAttribute("aria-busy", String(loading));
+}
+
+export function showSportsSkeleton() {
+  setSportsLoading(true);
 }

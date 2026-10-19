@@ -1,0 +1,477 @@
+/* Settings page: keeps the SkyCast palette while giving every setting a clear, touch-friendly control. */
+.settings-main {
+  padding-bottom: 3rem;
+}
+
+.settings-container {
+  --settings-surface: #192331;
+  --settings-border: #39495a;
+  --settings-text: #f8fafc;
+  --settings-muted: #bdc9d8;
+  --settings-accent: #a5b4fc;
+  --settings-selected: rgba(99, 102, 241, 0.2);
+  max-width: 820px;
+  color: var(--settings-text);
+}
+
+:root[data-theme="light"] .settings-container {
+  --settings-surface: #ffffff;
+  --settings-border: #cbd5e1;
+  --settings-text: #172554;
+  --settings-muted: #475569;
+  --settings-accent: #3730a3;
+  --settings-selected: #eef2ff;
+}
+
+.settings-topline {
+  margin: 0.25rem 0 1rem;
+}
+
+.settings-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--settings-muted);
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+
+.settings-back-link:hover {
+  color: var(--settings-text);
+}
+
+.settings-intro {
+  margin: 0 0 1.5rem;
+}
+
+.settings-eyebrow {
+  margin-bottom: 0.4rem;
+  color: var(--settings-accent);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+
+.settings-intro h2 {
+  margin: 0 0 0.45rem;
+  font-size: clamp(1.8rem, 6vw, 2.35rem);
+  line-height: 1.15;
+}
+
+.settings-intro > p:last-child {
+  max-width: 42rem;
+  color: var(--settings-muted);
+  line-height: 1.55;
+}
+
+.settings-form {
+  display: grid;
+  gap: 1rem;
+}
+
+.settings-section {
+  min-width: 0;
+  padding: 1.2rem;
+  border: 1px solid var(--settings-border);
+  border-radius: 1.15rem;
+  background: var(--settings-surface);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12);
+}
+
+.section-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin-bottom: 1.4rem;
+}
+
+.section-icon {
+  display: grid;
+  flex: 0 0 2.65rem;
+  width: 2.65rem;
+  height: 2.65rem;
+  place-items: center;
+  border: 1px solid var(--settings-border);
+  border-radius: 0.85rem;
+  background: var(--settings-selected);
+  color: var(--settings-accent);
+}
+
+.section-heading h3 {
+  margin: 0 0 0.2rem;
+  font-size: 1.08rem;
+}
+
+.section-heading p {
+  margin: 0;
+  color: var(--settings-muted);
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+
+.settings-fieldset {
+  min-width: 0;
+  padding: 0;
+  border: 0;
+}
+
+.settings-fieldset + .settings-fieldset {
+  margin-top: 1.5rem;
+  padding-top: 1.35rem;
+  border-top: 1px solid var(--settings-border);
+}
+
+.settings-fieldset legend {
+  margin-bottom: 0.35rem;
+  color: var(--settings-text);
+  font-size: 0.98rem;
+  font-weight: 700;
+}
+
+.settings-help {
+  max-width: 42rem;
+  margin: 0 0 0.9rem;
+  color: var(--settings-muted);
+  font-size: 0.85rem;
+  line-height: 1.55;
+}
+
+.choice-grid {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.theme-grid {
+  grid-template-columns: 1fr;
+}
+
+.choice-card {
+  position: relative;
+  display: flex;
+  min-height: 4.35rem;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 2.2rem 0.75rem 0.8rem;
+  border: 1px solid var(--settings-border);
+  border-radius: 0.85rem;
+  background: transparent;
+  color: var(--settings-text);
+  cursor: pointer;
+  transition:
+    border-color 160ms ease,
+    background-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.choice-card:hover {
+  border-color: var(--settings-accent);
+}
+
+.choice-card:has(input:checked) {
+  border-color: var(--settings-accent);
+  background: var(--settings-selected);
+  box-shadow: inset 0 0 0 1px var(--settings-accent);
+}
+
+.choice-card:has(input:checked)::after {
+  position: absolute;
+  top: 50%;
+  right: 0.85rem;
+  width: 0.45rem;
+  height: 0.45rem;
+  border: 2px solid var(--settings-accent);
+  border-radius: 50%;
+  content: "";
+  transform: translateY(-50%);
+}
+
+.choice-card input[type="radio"] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  opacity: 0;
+}
+
+.choice-card:has(input:focus-visible),
+.sport-option:has(input:focus-visible) {
+  outline: 3px solid var(--settings-accent);
+  outline-offset: 3px;
+}
+
+.choice-symbol,
+.unit-mark {
+  display: grid;
+  flex: 0 0 2.35rem;
+  width: 2.35rem;
+  height: 2.35rem;
+  place-items: center;
+  border-radius: 0.7rem;
+  background: var(--settings-selected);
+  color: var(--settings-accent);
+  font-weight: 800;
+}
+
+.choice-copy {
+  display: grid;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.choice-copy strong {
+  font-size: 0.9rem;
+}
+
+.choice-copy small {
+  color: var(--settings-muted);
+  font-size: 0.75rem;
+}
+
+.unit-grid {
+  grid-template-columns: 1fr;
+}
+
+.unit-card {
+  min-height: 4.4rem;
+}
+
+.sports-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin: 0.1rem 0 0.65rem;
+  color: var(--settings-muted);
+  font-size: 0.78rem;
+}
+
+.sports-actions > div {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.text-button {
+  min-height: 2.25rem;
+  padding: 0.25rem 0;
+  border: 0;
+  background: transparent;
+  color: var(--settings-accent);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.text-button:hover {
+  color: var(--settings-text);
+}
+
+.sports-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.45rem;
+}
+
+.sport-option {
+  display: flex;
+  min-height: 2.9rem;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.45rem 0.6rem;
+  border: 1px solid transparent;
+  border-radius: 0.7rem;
+  color: var(--settings-text);
+  cursor: pointer;
+  font-size: 0.9rem;
+  line-height: 1.35;
+}
+
+.sport-option:hover {
+  border-color: var(--settings-border);
+  background: var(--settings-selected);
+}
+
+.sport-option input[type="checkbox"] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.sport-check {
+  display: grid;
+  flex: 0 0 1.2rem;
+  width: 1.2rem;
+  height: 1.2rem;
+  place-items: center;
+  border: 1.5px solid var(--settings-muted);
+  border-radius: 0.32rem;
+  color: transparent;
+  font-size: 0.65rem;
+}
+
+.sport-option input:checked + .sport-check {
+  border-color: var(--settings-accent);
+  background: var(--settings-accent);
+  color: #111827;
+}
+
+.field-label {
+  display: block;
+  margin-bottom: 0.45rem;
+  color: var(--settings-text);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.optional-label {
+  margin-left: 0.3rem;
+  color: var(--settings-muted);
+  font-size: 0.72rem;
+  font-weight: 500;
+}
+
+#favorite-teams {
+  display: block;
+  width: 100%;
+  min-height: 6rem;
+  padding: 0.8rem 0.9rem;
+  border: 1px solid var(--settings-border);
+  border-radius: 0.75rem;
+  background: var(--settings-surface);
+  color: var(--settings-text);
+  font: inherit;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+#favorite-teams::placeholder {
+  color: var(--settings-muted);
+  opacity: 0.8;
+}
+
+#favorite-teams:focus-visible {
+  outline: 3px solid var(--settings-accent);
+  outline-offset: 2px;
+}
+
+.settings-footer {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 0.7rem;
+  padding: 0.3rem 0;
+}
+
+.settings-save,
+.reset-button {
+  min-height: 3rem;
+  padding: 0.7rem 1.15rem;
+  border: 1px solid transparent;
+  border-radius: 0.8rem;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 750;
+  transition:
+    background-color 160ms ease,
+    opacity 160ms ease,
+    transform 160ms ease;
+}
+
+.settings-save {
+  background: #4f46e5;
+  color: #ffffff;
+}
+
+:root[data-theme="light"] .settings-save {
+  background: #4338ca;
+}
+
+.settings-save:hover:not(:disabled) {
+  background: #3730a3;
+}
+
+.settings-save:disabled {
+  cursor: not-allowed;
+  background: #475569;
+  color: #ffffff;
+}
+
+:root[data-theme="light"] .settings-save:disabled {
+  background: #64748b;
+  color: #ffffff;
+}
+
+.reset-button {
+  border-color: var(--settings-border);
+  background: transparent;
+  color: var(--settings-text);
+}
+
+.reset-button:hover {
+  background: var(--settings-selected);
+}
+
+.settings-save:active:not(:disabled),
+.reset-button:active {
+  transform: translateY(1px);
+}
+
+.settings-save:focus-visible,
+.reset-button:focus-visible,
+.text-button:focus-visible,
+.settings-back-link:focus-visible {
+  outline: 3px solid var(--settings-accent);
+  outline-offset: 3px;
+}
+
+.settings-status {
+  min-height: 1.45rem;
+  margin: -0.55rem 0 0;
+  color: var(--settings-muted);
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
+.settings-form.is-dirty .settings-status {
+  color: var(--settings-accent);
+}
+
+@media (min-width: 560px) {
+  .settings-section {
+    padding: 1.55rem;
+  }
+
+  .theme-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .unit-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .sports-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .settings-footer {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .settings-save {
+    min-width: 12rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .choice-card,
+  .settings-save,
+  .reset-button {
+    transition: none;
+  }
+}

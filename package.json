@@ -1,0 +1,21 @@
+{
+  "name": "skycast",
+  "version": "1.0.0",
+  "description": "SkyCast is a modern weather web application that prioritise simplicity, fast and easy to use.",
+  "scripts": {
+    "test": "node --experimental-vm-modules --test tests/*.test.js",
+    "preview:test": "node tests/preview-server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MedsonKasese/SkyCast.git"
+  },
+  "type": "module",
+  "devDependencies": {
+    "jsdom": "^26.1.0"
+  },
+  "private": true,
+  "engines": {
+    "node": ">=22.12"
+  }
+}

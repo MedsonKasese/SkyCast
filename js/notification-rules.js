@@ -29,10 +29,22 @@ function shouldNotifyForAlert(alert) {
   return ["severe", "moderate", "minor"].includes(severity);
 }
 
+function numericValue(value) {
+  if ((typeof value !== "number" && typeof value !== "string") || (typeof value === "string" && !value.trim())) {
+    return null;
+  }
+
+  const number = Number(value);
+  return Number.isFinite(number) ? number : null;
+}
+
+function roundedAmount(value, digits = 1) {
+  return Number(value.toFixed(digits)).toString();
+}
+
 function evaluateOfficialWeatherAlerts(weather) {
   const notifications = [];
-
-  const alerts = weather.alerts?.alert || [];
+  const alerts = weather?.alerts?.alert || [];
 
   alerts.forEach((alert) => {
     if (!shouldNotifyForAlert(alert)) {
@@ -57,87 +69,104 @@ function evaluateOfficialWeatherAlerts(weather) {
   return notifications;
 }
 
-function evaluateForecastConditions(weather) {
+function evaluateForecastConditions(weather, isFahrenheit) {
   const notifications = [];
-
-  const forecastDays = weather.forecast?.forecastday || [];
-  const cityName = weather.location?.name || "this location";
+  const forecastDays = weather?.forecast?.forecastday || [];
+  const cityName = weather?.location?.name || "this location";
+  const temperatureUnit = isFahrenheit ? "°F" : "°C";
+  const windUnit = isFahrenheit ? "mph" : "km/h";
+  const rainfallUnit = isFahrenheit ? "in" : "mm";
 
   forecastDays.forEach((forecastDay) => {
-    const day = forecastDay.day;
-
+    const day = forecastDay?.day;
     if (!day) {
       return;
     }
 
-    const date = forecastDay.date || "upcoming day";
+    const forecastDate = forecastDay.date || null;
+    const dateLabel = forecastDate || "an upcoming day";
+    const rainChance = numericValue(day.daily_chance_of_rain);
+    const rainfallMm = numericValue(day.totalprecip_mm);
+    const rainfallIn = numericValue(day.totalprecip_in);
+    const rainfall = isFahrenheit
+      ? (rainfallIn ?? (rainfallMm === null ? null : rainfallMm / 25.4))
+      : (rainfallMm ?? (rainfallIn === null ? null : rainfallIn * 25.4));
+    const maxWindKph = numericValue(day.maxwind_kph);
+    const maxWindMph = numericValue(day.maxwind_mph);
+    const windKph = maxWindKph ?? (maxWindMph === null ? null : maxWindMph * 1.609344);
+    const windAmount = isFahrenheit
+      ? (maxWindMph ?? (windKph === null ? null : windKph / 1.609344))
+      : windKph;
+    const maxTemperatureC = numericValue(day.maxtemp_c);
+    const maxTemperatureF = numericValue(day.maxtemp_f);
+    const minTemperatureC = numericValue(day.mintemp_c);
+    const minTemperatureF = numericValue(day.mintemp_f);
+    const highC = maxTemperatureC ?? (maxTemperatureF === null ? null : (maxTemperatureF - 32) * 5 / 9);
+    const lowC = minTemperatureC ?? (minTemperatureF === null ? null : (minTemperatureF - 32) * 5 / 9);
+    const highAmount = isFahrenheit
+      ? (maxTemperatureF ?? (maxTemperatureC === null ? null : maxTemperatureC * 9 / 5 + 32))
+      : (maxTemperatureC ?? (maxTemperatureF === null ? null : (maxTemperatureF - 32) * 5 / 9));
+    const lowAmount = isFahrenheit
+      ? (minTemperatureF ?? (minTemperatureC === null ? null : minTemperatureC * 9 / 5 + 32))
+      : (minTemperatureC ?? (minTemperatureF === null ? null : (minTemperatureF - 32) * 5 / 9));
 
-    const rainChance = Number(day.daily_chance_of_rain);
-    const maxWindKph = Number(day.maxwind_kph);
-    const maxTemperatureC = Number(day.maxtemp_c);
-    const minTemperatureC = Number(day.mintemp_c);
+    const common = {
+      type: "weather-condition",
+      severity: "Moderate",
+      effective: null,
+      expires: null,
+      location: cityName,
+      forecastDate,
+      locationQuery: Number.isFinite(weather.location?.lat) && Number.isFinite(weather.location?.lon)
+        ? `${weather.location.lat},${weather.location.lon}` : cityName,
+    };
 
     if (
-      !Number.isNaN(rainChance) &&
-      rainChance >= NOTIFICATION_THRESHOLDS.heavyRainChance
+      rainChance !== null &&
+      rainChance >= NOTIFICATION_THRESHOLDS.heavyRainChance &&
+      rainChance <= 100
     ) {
+      const rainfallDetail =
+        rainfall !== null && rainfall >= 0
+          ? ` Forecast rainfall: ${roundedAmount(rainfall)} ${rainfallUnit}.`
+          : "";
       notifications.push({
-        type: "weather-condition",
-        title: "Heavy Rain Expected",
-        message: `${rainChance}% chance of rain is expected in ${cityName} on ${date}.`,
-        severity: "Moderate",
-        event: `Heavy Rain Expected (${date})`,
-        effective: null,
-        expires: null,
-        location: cityName,
+        ...common,
+        conditionKey: "rain",
+        title: "Rain Likely",
+        message: `${Math.round(rainChance)}% chance of rain in ${cityName} on ${dateLabel}.${rainfallDetail}`,
+        // Retain the legacy identity; probability alone does not imply heavy rainfall.
+        event: `Heavy Rain Expected (${dateLabel})`,
       });
     }
 
-    if (
-      !Number.isNaN(maxWindKph) &&
-      maxWindKph >= NOTIFICATION_THRESHOLDS.strongWindKph
-    ) {
+    if (windKph !== null && windKph >= NOTIFICATION_THRESHOLDS.strongWindKph) {
       notifications.push({
-        type: "weather-condition",
+        ...common,
+        conditionKey: "wind",
         title: "Strong Winds Expected",
-        message: `Winds may reach ${Math.round(maxWindKph)} km/h in ${cityName} on ${date}.`,
-        severity: "Moderate",
-        event: `Strong Winds Expected (${date})`,
-        effective: null,
-        expires: null,
-        location: cityName,
+        message: `Winds may reach ${Math.round(windAmount)} ${windUnit} in ${cityName} on ${dateLabel}.`,
+        event: `Strong Winds Expected (${dateLabel})`,
       });
     }
 
-    if (
-      !Number.isNaN(maxTemperatureC) &&
-      maxTemperatureC >= NOTIFICATION_THRESHOLDS.highTemperatureC
-    ) {
+    if (highC !== null && highC >= NOTIFICATION_THRESHOLDS.highTemperatureC) {
       notifications.push({
-        type: "weather-condition",
+        ...common,
+        conditionKey: "high-temperature",
         title: "High Temperature Expected",
-        message: `Temperatures may reach ${Math.round(maxTemperatureC)}°C in ${cityName} on ${date}.`,
-        severity: "Moderate",
-        event: `High Temperature Expected (${date})`,
-        effective: null,
-        expires: null,
-        location: cityName,
+        message: `Temperatures may reach ${Math.round(highAmount)}${temperatureUnit} in ${cityName} on ${dateLabel}.`,
+        event: `High Temperature Expected (${dateLabel})`,
       });
     }
 
-    if (
-      !Number.isNaN(minTemperatureC) &&
-      minTemperatureC <= NOTIFICATION_THRESHOLDS.lowTemperatureC
-    ) {
+    if (lowC !== null && lowC <= NOTIFICATION_THRESHOLDS.lowTemperatureC) {
       notifications.push({
-        type: "weather-condition",
+        ...common,
+        conditionKey: "low-temperature",
         title: "Low Temperature Expected",
-        message: `Temperatures may fall to ${Math.round(minTemperatureC)}°C in ${cityName} on ${date}.`,
-        severity: "Moderate",
-        event: `Low Temperature Expected (${date})`,
-        effective: null,
-        expires: null,
-        location: cityName,
+        message: `Temperatures may fall to ${Math.round(lowAmount)}${temperatureUnit} in ${cityName} on ${dateLabel}.`,
+        event: `Low Temperature Expected (${dateLabel})`,
       });
     }
   });
@@ -145,10 +174,10 @@ function evaluateForecastConditions(weather) {
   return notifications;
 }
 
-export function evaluateWeatherNotifications(weather) {
+export function evaluateWeatherNotifications(weather, isFahrenheit = false) {
   return [
     ...evaluateOfficialWeatherAlerts(weather),
-    ...evaluateForecastConditions(weather),
+    ...evaluateForecastConditions(weather, isFahrenheit),
   ];
 }
 
