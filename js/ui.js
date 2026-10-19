@@ -1,6 +1,7 @@
 import { initializeRadar } from "./radar.js";
 import { syncWeatherNotifications } from "./notifications.js";
 import { escapeHtml } from "./utils.js";
+import { forecastUrl, temperature } from "./forecast-details.js";
 
 export function displayLocation(weather) {
   const city = document.getElementById("city-name");
@@ -175,37 +176,47 @@ export function displayForecast(weather, isFahrenheit = false) {
   container.innerHTML = "";
 
   weather.forecast.forecastday.forEach((day) => {
-    // Skip today (index 0)
-    //	if (index === 0) return;
-
+    const isToday = day.date === weather.location.localtime.slice(0, 10);
     const date = new Date(`${day.date}T12:00:00`);
-    const dayName = date.toLocaleDateString("en-US", {
+    const dayName = isToday ? "Today" : date.toLocaleDateString("en-US", {
       weekday: "short",
     });
 
-    const maxTemp = isFahrenheit ? day.day.maxtemp_f : day.day.maxtemp_c;
-    const minTemp = isFahrenheit ? day.day.mintemp_f : day.day.mintemp_c;
-
-    const card = document.createElement("div");
-    card.className = "forecast-card";
+    const maxTemp = temperature(day.day.maxtemp_c, day.day.maxtemp_f, isFahrenheit);
+    const minTemp = temperature(day.day.mintemp_c, day.day.mintemp_f, isFahrenheit);
+    const card = document.createElement(isToday ? "button" : "a");
+    card.className = "forecast-card forecast-action";
+    if (isToday) {
+      card.type = "button";
+      card.addEventListener("click", () => {
+        window.scrollTo({ top: 0, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
+        const current = document.getElementById("city-name");
+        current?.setAttribute("tabindex", "-1");
+        current?.focus({ preventScroll: true });
+      });
+    } else {
+      card.href = forecastUrl(weather, day.date);
+    }
+    card.setAttribute("aria-label", `${isToday ? "Today" : day.date}: high ${maxTemp}, low ${minTemp}, ${day.day.condition.text}, ${day.day.daily_chance_of_rain}% chance of rain. ${isToday ? "Back to current weather at the top" : "View forecast details"}`);
 
     card.innerHTML = `
-      <div class="forecast-day">${dayName}</div>
+      <span class="forecast-day">${dayName}</span>
       <img
         class="forecast-icon"
         src="https:${escapeHtml(day.day.condition.icon)}"
         alt="${escapeHtml(day.day.condition.text)}"
       />
-      <div class="forecast-temp">
-        ${Math.round(maxTemp)}° / ${Math.round(minTemp)}°
-      </div>
-      <div class="forecast-condition">
+      <span class="forecast-temp">
+        ${escapeHtml(maxTemp)} / ${escapeHtml(minTemp)}
+      </span>
+      <span class="forecast-condition">
         ${escapeHtml(day.day.condition.text)}
-      </div>
-			
-			  <div class="forecast-rain">
+      </span>
+
+				  <span class="forecast-rain">
       🌧 ${escapeHtml(day.day.daily_chance_of_rain)}%
-     </div>
+     </span>
+     <span class="forecast-action-hint">${isToday ? "Back to current weather" : "View day details"}</span>
     `;
 
     container.appendChild(card);

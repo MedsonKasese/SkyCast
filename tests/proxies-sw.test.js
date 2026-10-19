@@ -184,7 +184,7 @@ test("service worker scopes requests, uses navigation-only fallback, and cleans 
       caches.opened = name;
       return cache;
     },
-    keys: async () => ["skycast-v8", "skycast-v9", "unrelated-cache"],
+    keys: async () => ["skycast-v8", "skycast-v9", "skycast-v10", "unrelated-cache"],
     delete: async (key) => {
       deleted.push(key);
       return true;
@@ -217,8 +217,10 @@ test("service worker scopes requests, uses navigation-only fallback, and cleans 
     },
   });
   await pending;
-  assert.equal(caches.opened, "skycast-v9");
+  assert.equal(caches.opened, "skycast-v10");
   assert.ok(cache.addedFiles.includes("/js/storage.js"));
+  assert.ok(cache.addedFiles.includes("/forecast.html"));
+  assert.ok(cache.addedFiles.includes("/js/forecast-page.js"));
 
   listeners.get("activate")({
     waitUntil: (promise) => {
@@ -226,7 +228,7 @@ test("service worker scopes requests, uses navigation-only fallback, and cleans 
     },
   });
   await pending;
-  assert.deepEqual(deleted, ["skycast-v8"]);
+  assert.deepEqual(deleted, ["skycast-v8", "skycast-v9"]);
 
   const dispatchFetch = (request) => {
     let intercepted = false;
@@ -273,5 +275,14 @@ test("service worker scopes requests, uses navigation-only fallback, and cleans 
   });
   assert.equal(api.intercepted, true);
   await assert.rejects(api.result, /offline/);
+  assert.equal(networkCalls.length, 2);
+
+  cacheEntries.set("/forecast.html", { offline: "forecast-shell" });
+  const forecast = dispatchFetch({
+    url: "https://skycast.example/forecast.html?q=Mzuzu&date=2026-10-21",
+    method: "GET",
+    mode: "navigate",
+  });
+  assert.deepEqual(await forecast.result, { offline: "forecast-shell" });
   assert.equal(networkCalls.length, 2);
 });

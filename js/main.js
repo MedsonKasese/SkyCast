@@ -12,6 +12,7 @@ import {
 } from "./notifications.js";
 import { escapeHtml } from "./utils.js";
 import { applyTheme, getSettings } from "./settings.js";
+import { notificationForecastUrl } from "./forecast-details.js";
 
 import { readStorage, writeStorage, removeStorage } from "./storage.js";
 // Global Variables
@@ -524,8 +525,11 @@ function handleNotificationClick(event) {
     return;
   }
 
+  const notification = getNotifications().find((item) => item.id === notificationId);
+  const detailUrl = notificationItem.dataset.forecastUrl || notificationForecastUrl(notification);
   markNotificationAsRead(notificationId);
   renderNotifications();
+  if (detailUrl) window.location.assign(detailUrl);
 }
 
 function handleOutsideNotificationClick(event) {
@@ -572,28 +576,30 @@ function renderNotifications() {
   notificationsList.innerHTML = notifications
     .map(
       (notification) => `
-        <div
+        <button type="button"
           class="notification-item ${notification.read ? "read" : "unread"}"
           data-notification-id="${escapeHtml(notification.id)}"
+          data-forecast-url="${escapeHtml(notificationForecastUrl(notification) || "")}"
         >
-          <div class="notification-item-header">
+          <span class="notification-item-header">
             <span class="notification-item-icon">
               ${notification.type === "weather-alert" ? "⚠️" : "🔔"}
             </span>
 
-            <h3 class="notification-item-title">
+            <span class="notification-item-title">
               ${escapeHtml(notification.title)}
-            </h3>
-          </div>
+            </span>
+          </span>
 
-          <p class="notification-item-message">
+          <span class="notification-item-message">
             ${escapeHtml(notification.message)}
-          </p>
+          </span>
 
-          <div class="notification-item-meta">
-            ${escapeHtml(notification.event || "Notification")}
-          </div>
-        </div>
+          <span class="notification-item-meta">
+            ${escapeHtml(notification.forecastDate || notification.event || "Notification")}
+          </span>
+          ${notificationForecastUrl(notification) ? '<span class="forecast-action-hint">View forecast details</span>' : ""}
+        </button>
       `,
     )
     .join("");

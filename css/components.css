@@ -1104,3 +1104,54 @@ footer {
   ):not(.weather-radar-section) {
   min-height: 200px;
 }
+
+/* Forecast navigation and the selected day's details. */
+.forecast-action {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  color: inherit;
+  font: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+.forecast-action:focus-visible,
+.forecast-back-link:focus-visible,
+.forecast-day-navigation a:focus-visible,
+.notification-item:focus-visible {
+  outline: 3px solid var(--accent-color);
+  outline-offset: 3px;
+}
+.forecast-action-hint { display: block; margin-top: 10px; font-size: 0.75rem; }
+.forecast-back-link { color: var(--text-color); padding: 12px 4px; }
+.forecast-detail-page { padding-bottom: 2rem; }
+.forecast-detail-heading { display: grid; gap: 12px; margin-bottom: 24px; }
+.forecast-detail-heading h1 { font-size: clamp(1.5rem, 5vw, 2.3rem); }
+.forecast-facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
+  gap: 12px;
+  margin-bottom: 28px;
+}
+.forecast-facts > div { background: var(--surface-color); border-radius: 12px; padding: 16px; }
+.forecast-facts dt { font-size: 0.9rem; margin-bottom: 8px; }
+.forecast-facts dd { margin: 0; font-weight: 700; font-size: 1.3rem; }
+.forecast-time-note { margin: 12px 0; }
+.forecast-hour-list { display: grid; gap: 12px; }
+.forecast-hour-row { border-top: 1px solid var(--border-color); padding-block: 14px; overflow-wrap: anywhere; }
+.forecast-hour-row p { margin-top: 6px; }
+.forecast-day-navigation { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+.forecast-day-navigation a { color: var(--text-color); padding: 12px; border: 1px solid var(--border-color); border-radius: 10px; }
+.forecast-day-navigation a[aria-current] { font-weight: 700; outline: 2px solid var(--accent-color); }
+button.notification-item { width: 100%; text-align: left; color: inherit; font: inherit; cursor: pointer; }
+@media (prefers-reduced-motion: reduce) {
+  .forecast-action { transition: none; }
+  .forecast-action:hover { transform: none; }
+}
+
+.forecast-action > .forecast-day,
+.forecast-action > .forecast-temp,
+.forecast-action > .forecast-condition,
+.forecast-action > .forecast-rain,
+.notification-item-message,
+.notification-item-meta { display: block; }

@@ -1,9 +1,10 @@
-const CACHE = "skycast-v9";
+const CACHE = "skycast-v10";
 const CACHE_PREFIX = "skycast-";
 
 const FILES = [
   "/",
   "/index.html",
+  "/forecast.html",
   "/sports.html",
   "/settings.html",
   "/css/base.css",
@@ -15,6 +16,8 @@ const FILES = [
 
   "/js/main.js",
   "/js/ui.js",
+  "/js/forecast-details.js",
+  "/js/forecast-page.js",
   "/js/skeletons.js",
   "/js/api.js",
   "/js/radar.js",
@@ -67,6 +70,11 @@ self.addEventListener("fetch", (event) => {
     caches.open(CACHE).then(async (cache) => {
       const cached = await cache.match(request);
       if (cached) return cached;
+
+      if (request.mode === "navigate" && url.pathname === "/forecast.html") {
+        const forecastPage = await cache.match("/forecast.html");
+        if (forecastPage) return forecastPage;
+      }
 
       try {
         return await fetch(request);

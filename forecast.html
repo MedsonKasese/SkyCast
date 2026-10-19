@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#1976d2" />
+    <title>Daily Forecast Details | SkyCast</title>
+    <link rel="icon" href="/favicon_io/favicon.ico" />
+    <link rel="stylesheet" href="css/variables.css" />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <a class="forecast-back-link" href="index.html#forecast-container">Back to forecast</a>
+      <a class="forecast-back-link" href="settings.html">Settings</a>
+    </header>
+    <main class="container forecast-detail-page">
+      <p id="forecast-status" role="status" aria-live="polite">Loading daily forecast…</p>
+      <section id="forecast-details" class="weather-card sky-is-loading" aria-busy="true" aria-labelledby="forecast-title" inert>
+        <h1 id="forecast-title">Daily forecast details</h1>
+      </section>
+      <nav id="forecast-day-navigation" class="forecast-day-navigation" aria-label="Forecast days"></nav>
+    </main>
+    <script type="module" src="js/forecast-page.js"></script>
+  </body>
+</html>

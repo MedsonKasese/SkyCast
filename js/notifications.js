@@ -70,8 +70,9 @@ function normalizeWeatherAlert(alert, cityName) {
   return {
     id: createWeatherAlertId(alert, cityName),
     type: alert.type || "weather-alert",
-    title: alert.headline || alert.event || "Weather Alert",
+    title: alert.title || alert.headline || alert.event || "Weather Alert",
     message:
+      alert.message ||
       alert.desc ||
       alert.note ||
       "Please stay alert and monitor local weather conditions.",
@@ -80,13 +81,22 @@ function normalizeWeatherAlert(alert, cityName) {
     effective: alert.effective || null,
     expires: alert.expires || null,
     location: cityName,
+    ...(alert.forecastDate ? { forecastDate: alert.forecastDate } : {}),
+    ...(alert.conditionKey ? { conditionKey: alert.conditionKey } : {}),
+    ...(alert.locationQuery ? { locationQuery: alert.locationQuery } : {}),
     read: false,
   };
 }
 
-export function syncWeatherNotifications(weather) {
+export function syncWeatherNotifications(
+  weather,
+  isFahrenheit = getSettings().units === "f",
+) {
   const cityName = weather.location?.name || "this location";
-  const evaluatedNotifications = evaluateWeatherNotifications(weather);
+  const evaluatedNotifications = evaluateWeatherNotifications(
+    weather,
+    isFahrenheit,
+  );
   const uniqueEvaluatedNotifications = new Map();
 
   evaluatedNotifications.forEach((notification) => {
